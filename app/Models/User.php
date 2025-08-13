@@ -6,9 +6,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use LdapRecord\Laravel\Auth\AuthenticatesWithLdap;
+use LdapRecord\Laravel\Auth\HasLdapUser;
+use LdapRecord\Laravel\Auth\LdapAuthenticatable;
 
-class User extends Authenticatable
+class User extends Authenticatable implements LdapAuthenticatable
 {
+    use AuthenticatesWithLdap, HasLdapUser;
+
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
 
@@ -19,8 +24,11 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
+        'username',
         'email',
         'password',
+        'guid',
+        'domain',
     ];
 
     /**
@@ -44,5 +52,20 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function getLdapDomainColumn(): string
+    {
+        return 'domain';
+    }
+
+    public function getLdapGuidColumn(): string
+    {
+        return 'guid';
+    }
+
+    public function getAuthPasswordName(): string
+    {
+        return 'password';
     }
 }

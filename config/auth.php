@@ -60,15 +60,37 @@ return [
     */
 
     'providers' => [
-        'users' => [
-            'driver' => 'eloquent',
-            'model' => env('AUTH_MODEL', App\Models\User::class),
-        ],
+        // 'users' => [
+        //     'driver' => 'eloquent',
+        //     'model' => env('AUTH_MODEL', App\Models\User::class),
+        // ],
 
         // 'users' => [
         //     'driver' => 'database',
         //     'table' => 'users',
         // ],
+
+        'users' => [
+            'driver' => 'ldap',
+            'model' => LdapRecord\Models\OpenLDAP\User::class,
+            'rules' => [],
+            'scopes' => [],
+            'database' => [
+                'model' => App\Models\User::class,
+                'sync_passwords' => true,
+                'sync_attributes' => [
+                    'name' => 'cn',
+                    'username' => 'uid',
+                    'guid' => 'guid',
+                    'domain' => 'domain',
+                    'email' => 'mail',
+                ],
+                'sync_existing' => [
+                    'username' => 'uid',
+                ],
+                'password_column' => 'password',
+            ],
+        ],
     ],
 
     /*
