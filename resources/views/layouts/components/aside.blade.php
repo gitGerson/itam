@@ -39,6 +39,13 @@
              </a>
          </li>
 
+         <!-- Mobile Kit -->
+         <li class="menu-item {{ request()->routeIs('mobile.*') ? 'active' : '' }}">
+             <a href="{{ route('mobile.index') }}" class="menu-link">
+                 <i class="menu-icon tf-icons bx bx-user"></i>
+                 <div class="text-truncate" data-i18n="mobile">Mobile</div>
+             </a>
+         </li>
 
      </ul>
  </aside>
