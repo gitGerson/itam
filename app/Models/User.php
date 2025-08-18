@@ -87,6 +87,83 @@ class User extends Authenticatable implements LdapAuthenticatable
         return $this->belongsTo(User::class, 'deleted_by');
     }
 
+    public function logs()
+    {
+        return $this->hasMany(UserLog::class, 'user_id');
+    }
+
+    public function targetLogs()
+    {
+        return $this->hasMany(UserLog::class, 'target_user_id');
+    }
+
+    public function roles()
+    {
+        return $this->belongsToMany(Role::class, 'user_role')
+                    ->withPivot(['assigned_by', 'assigned_at'])
+                    ->withTimestamps();
+    }
+
+    public function hasRole($role)
+    {
+        if (is_string($role)) {
+            return $this->roles()->where('roles.name', $role)->exists();
+        }
+
+        if (is_object($role)) {
+            return $this->roles()->where('roles.id', $role->id)->exists();
+        }
+
+        return false;
+    }
+
+    public function hasPermission($permission)
+    {
+        foreach ($this->roles as $role) {
+            if ($role->hasPermission($permission)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public function assignRole($role)
+    {
+        if (is_string($role)) {
+            $role = Role::where('name', $role)->first();
+        }
+
+        if ($role) {
+            $exists = $this->roles()->where('roles.id', $role->id)->exists();
+            
+            if (!$exists) {
+                $this->roles()->attach($role->id, [
+                    'assigned_by' => auth()->id(),
+                    'assigned_at' => now(),
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+            }
+        }
+
+        return $this;
+    }
+
+    public function removeRole($role)
+    {
+        if (is_string($role)) {
+            $role = Role::where('name', $role)->first();
+        }
+
+        if ($role) {
+            $this->roles()->detach($role->id);
+        }
+
+        return $this;
+    }
+
+
     protected static function boot()
     {
         parent::boot();

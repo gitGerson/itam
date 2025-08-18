@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\UserLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
@@ -46,13 +47,21 @@ class UserController extends Controller
             'domain' => 'nullable|string|max:255',
         ]);
 
-        User::create([
+        $user = User::create([
             'name' => $request->name,
             'username' => $request->username,
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'domain' => $request->domain,
         ]);
+
+        UserLog::log(
+            'CREATE_USER',
+            "Created user: {$user->name} ({$user->username})",
+            $user,
+            null,
+            $request->only(['name', 'username', 'email', 'domain'])
+        );
 
         return redirect()->route('users.index')->with('success', 'User berhasil ditambahkan');
     }
@@ -62,7 +71,14 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
-        $user->load(['creator', 'updater', 'deleter']);
+        $user->load(['creator', 'updater', 'deleter', 'roles']);
+        
+        UserLog::log(
+            'VIEW_USER',
+            "Viewed user: {$user->name} ({$user->username})",
+            $user
+        );
+        
         return view('users.show', compact('user'));
     }
 
@@ -98,7 +114,16 @@ class UserController extends Controller
             $updateData['password'] = Hash::make($request->password);
         }
 
+        $oldValues = $user->only(['name', 'username', 'email', 'domain']);
         $user->update($updateData);
+
+        UserLog::log(
+            'UPDATE_USER',
+            "Updated user: {$user->name} ({$user->username})",
+            $user,
+            $oldValues,
+            $request->only(['name', 'username', 'email', 'domain'])
+        );
 
         return redirect()->route('users.index')->with('success', 'User berhasil diperbarui');
     }
@@ -108,7 +133,16 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
+        $userName = $user->name;
+        $userUsername = $user->username;
+        
         $user->delete();
+
+        UserLog::log(
+            'DELETE_USER',
+            "Soft deleted user: {$userName} ({$userUsername})",
+            $user
+        );
 
         return redirect()->route('users.index')->with('success', 'User berhasil dihapus');
     }
@@ -122,6 +156,12 @@ class UserController extends Controller
         $user->deleted_by = null;
         $user->restore();
 
+        UserLog::log(
+            'RESTORE_USER',
+            "Restored user: {$user->name} ({$user->username})",
+            $user
+        );
+
         return redirect()->route('users.trash')->with('success', 'User berhasil dipulihkan');
     }
 
@@ -131,6 +171,15 @@ class UserController extends Controller
     public function forceDelete($id)
     {
         $user = User::withTrashed()->findOrFail($id);
+        $userName = $user->name;
+        $userUsername = $user->username;
+        
+        UserLog::log(
+            'FORCE_DELETE_USER',
+            "Permanently deleted user: {$userName} ({$userUsername})",
+            $user
+        );
+        
         $user->forceDelete();
 
         return redirect()->route('users.trash')->with('success', 'User berhasil dihapus permanen');
@@ -152,28 +201,50 @@ class UserController extends Controller
                 return $user->updater ? $user->updater->name : '-';
             })
             ->addColumn('action', function ($user) {
-                return '
-                    <div class="dropdown">
-                        <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
-                            <i class="bx bx-dots-vertical-rounded"></i>
+                $actions = '<div class="dropdown">
+                    <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
+                        <i class="bx bx-dots-vertical-rounded"></i>
+                    </button>
+                    <div class="dropdown-menu">';
+
+                // View action - always available if user has users.view permission
+                if (auth()->user()->hasPermission('users.view')) {
+                    $actions .= '<a class="dropdown-item" href="' . route('users.show', $user->id) . '">
+                        <i class="bx bx-show me-1"></i> Lihat
+                    </a>';
+                }
+
+                // Activity logs
+                if (auth()->user()->hasPermission('users.logs')) {
+                    $actions .= '<a class="dropdown-item" href="' . route('users.user-logs', $user->id) . '">
+                        <i class="bx bx-history me-1"></i> Activity Log
+                    </a>';
+                }
+
+                // Edit action
+                if (auth()->user()->hasPermission('users.edit')) {
+                    $actions .= '<a class="dropdown-item" href="' . route('users.edit', $user->id) . '">
+                        <i class="bx bx-edit-alt me-1"></i> Edit
+                    </a>';
+                    $actions .= '<a class="dropdown-item" href="' . route('users.roles', $user->id) . '">
+                        <i class="bx bx-shield me-1"></i> Kelola Role
+                    </a>';
+                }
+
+                // Delete action
+                if (auth()->user()->hasPermission('users.delete')) {
+                    $actions .= '<form action="' . route('users.destroy', $user->id) . '" method="POST" style="display: inline;">
+                        ' . csrf_field() . '
+                        ' . method_field('DELETE') . '
+                        <button type="submit" class="dropdown-item" onclick="return confirm(\'Yakin ingin menghapus user ini?\')">
+                            <i class="bx bx-trash me-1"></i> Hapus
                         </button>
-                        <div class="dropdown-menu">
-                            <a class="dropdown-item" href="' . route('users.show', $user->id) . '">
-                                <i class="bx bx-show me-1"></i> Lihat
-                            </a>
-                            <a class="dropdown-item" href="' . route('users.edit', $user->id) . '">
-                                <i class="bx bx-edit-alt me-1"></i> Edit
-                            </a>
-                            <form action="' . route('users.destroy', $user->id) . '" method="POST" style="display: inline;">
-                                ' . csrf_field() . '
-                                ' . method_field('DELETE') . '
-                                <button type="submit" class="dropdown-item" onclick="return confirm(\'Yakin ingin menghapus user ini?\')">
-                                    <i class="bx bx-trash me-1"></i> Hapus
-                                </button>
-                            </form>
-                        </div>
-                    </div>
-                ';
+                    </form>';
+                }
+
+                $actions .= '</div></div>';
+                
+                return $actions;
             })
             ->rawColumns(['action'])
             ->make(true);
@@ -199,30 +270,122 @@ class UserController extends Controller
                 return $user->deleter ? $user->deleter->name : '-';
             })
             ->addColumn('action', function ($user) {
-                return '
-                    <div class="dropdown">
-                        <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
-                            <i class="bx bx-dots-vertical-rounded"></i>
+                $actions = '<div class="dropdown">
+                    <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
+                        <i class="bx bx-dots-vertical-rounded"></i>
+                    </button>
+                    <div class="dropdown-menu">';
+
+                // Restore action
+                if (auth()->user()->hasPermission('users.restore')) {
+                    $actions .= '<form action="' . route('users.restore', $user->id) . '" method="POST" style="display: inline;">
+                        ' . csrf_field() . '
+                        <button type="submit" class="dropdown-item" onclick="return confirm(\'Yakin ingin memulihkan user ini?\')">
+                            <i class="bx bx-refresh me-1"></i> Pulihkan
                         </button>
-                        <div class="dropdown-menu">
-                            <form action="' . route('users.restore', $user->id) . '" method="POST" style="display: inline;">
-                                ' . csrf_field() . '
-                                <button type="submit" class="dropdown-item" onclick="return confirm(\'Yakin ingin memulihkan user ini?\')">
-                                    <i class="bx bx-refresh me-1"></i> Pulihkan
-                                </button>
-                            </form>
-                            <form action="' . route('users.force-delete', $user->id) . '" method="POST" style="display: inline;">
-                                ' . csrf_field() . '
-                                ' . method_field('DELETE') . '
-                                <button type="submit" class="dropdown-item" onclick="return confirm(\'Yakin ingin menghapus permanen user ini? Data tidak dapat dipulihkan!\')">
-                                    <i class="bx bx-trash me-1"></i> Hapus Permanen
-                                </button>
-                            </form>
-                        </div>
-                    </div>
-                ';
+                    </form>';
+                }
+
+                // Force delete action
+                if (auth()->user()->hasPermission('users.force_delete')) {
+                    $actions .= '<form action="' . route('users.force-delete', $user->id) . '" method="POST" style="display: inline;">
+                        ' . csrf_field() . '
+                        ' . method_field('DELETE') . '
+                        <button type="submit" class="dropdown-item" onclick="return confirm(\'Yakin ingin menghapus permanen user ini? Data tidak dapat dipulihkan!\')">
+                            <i class="bx bx-trash me-1"></i> Hapus Permanen
+                        </button>
+                    </form>';
+                }
+
+                $actions .= '</div></div>';
+                
+                return $actions;
             })
             ->rawColumns(['action'])
+            ->make(true);
+    }
+
+    /**
+     * Display user logs
+     */
+    public function logs()
+    {
+        return view('users.logs');
+    }
+
+    /**
+     * Get user logs data
+     */
+    public function getLogsData(Request $request)
+    {
+        $logs = UserLog::with(['user', 'targetUser'])
+            ->select(['id', 'user_id', 'target_user_id', 'action', 'description', 'ip_address', 'created_at'])
+            ->orderBy('created_at', 'desc');
+
+        return datatables()->of($logs)
+            ->addColumn('user_name', function ($log) {
+                return $log->user ? $log->user->name : 'System';
+            })
+            ->addColumn('target_user_name', function ($log) {
+                return $log->targetUser ? $log->targetUser->name : '-';
+            })
+            ->addColumn('formatted_date', function ($log) {
+                return $log->created_at->format('d M Y H:i:s');
+            })
+            ->addColumn('action_badge', function ($log) {
+                $badges = [
+                    'CREATE_USER' => 'success',
+                    'UPDATE_USER' => 'warning',
+                    'DELETE_USER' => 'danger',
+                    'RESTORE_USER' => 'info',
+                    'FORCE_DELETE_USER' => 'dark',
+                    'VIEW_USER' => 'secondary',
+                ];
+                $badgeClass = $badges[$log->action] ?? 'primary';
+                return '<span class="badge bg-' . $badgeClass . '">' . str_replace('_', ' ', $log->action) . '</span>';
+            })
+            ->rawColumns(['action_badge'])
+            ->make(true);
+    }
+
+    /**
+     * Display user logs for specific user
+     */
+    public function userLogs(User $user)
+    {
+        return view('users.user-logs', compact('user'));
+    }
+
+    /**
+     * Get user logs data for specific user
+     */
+    public function getUserLogsData(Request $request, User $user)
+    {
+        $logs = UserLog::with(['user'])
+            ->where('target_user_id', $user->id)
+            ->select(['id', 'user_id', 'action', 'description', 'ip_address', 'created_at'])
+            ->orderBy('created_at', 'desc');
+
+        return datatables()->of($logs)
+            ->addColumn('user_name', function ($log) {
+                return $log->user ? $log->user->name : 'System';
+            })
+            ->addColumn('formatted_date', function ($log) {
+                return $log->created_at->format('d M Y H:i:s');
+            })
+            ->addColumn('action_badge', function ($log) {
+                $badges = [
+                    'CREATE_USER' => 'success',
+                    'UPDATE_USER' => 'warning',
+                    'DELETE_USER' => 'danger',
+                    'RESTORE_USER' => 'info',
+                    'FORCE_DELETE_USER' => 'dark',
+                    'VIEW_USER' => 'secondary',
+                ];
+                $badgeClass = $badges[$log->action] ?? 'primary';
+                return '<span class="badge bg-' . $badgeClass . '">' . str_replace('_', ' ', $log->action) . '</span>';
+            })
+            ->rawColumns(['action_badge'])
             ->make(true);
     }
 }

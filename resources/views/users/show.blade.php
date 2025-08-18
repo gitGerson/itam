@@ -12,9 +12,19 @@
                     <div class="card-header d-flex justify-content-between align-items-center">
                         <h5 class="mb-0">Detail User</h5>
                         <div>
-                            <a href="{{ route('users.edit', $user) }}" class="btn btn-warning me-2">
-                                <i class="bx bx-edit-alt me-1"></i> Edit
-                            </a>
+                            @if(auth()->user()->hasPermission('users.edit'))
+                                <a href="{{ route('users.edit', $user) }}" class="btn btn-warning me-2">
+                                    <i class="bx bx-edit-alt me-1"></i> Edit
+                                </a>
+                                <a href="{{ route('users.roles', $user) }}" class="btn btn-success me-2">
+                                    <i class="bx bx-shield me-1"></i> Kelola Role
+                                </a>
+                            @endif
+                            @if(auth()->user()->hasPermission('users.logs'))
+                                <a href="{{ route('users.user-logs', $user) }}" class="btn btn-info me-2">
+                                    <i class="bx bx-history me-1"></i> Activity Log
+                                </a>
+                            @endif
                             <a href="{{ route('users.index') }}" class="btn btn-secondary">
                                 <i class="bx bx-arrow-back me-1"></i> Kembali
                             </a>
@@ -43,6 +53,18 @@
                                     <tr>
                                         <th>Domain</th>
                                         <td>{{ $user->domain ?? '-' }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Role</th>
+                                        <td>
+                                            @if($user->roles->count() > 0)
+                                                @foreach($user->roles as $role)
+                                                    <span class="badge bg-primary me-1">{{ $role->display_name }}</span>
+                                                @endforeach
+                                            @else
+                                                <span class="text-muted">Tidak ada role</span>
+                                            @endif
+                                        </td>
                                     </tr>
                                     <tr>
                                         <th>GUID</th>

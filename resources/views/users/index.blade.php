@@ -17,12 +17,26 @@
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h5 class="mb-0">Daftar User</h5>
                 <div>
-                    <a href="{{ route('users.trash') }}" class="btn btn-secondary me-2">
-                        <i class="bx bx-trash me-1"></i> Tempat Sampah
-                    </a>
-                    <a href="{{ route('users.create') }}" class="btn btn-primary">
-                        <i class="bx bx-plus me-1"></i> Tambah User
-                    </a>
+                    @if(auth()->user()->hasPermission('users.logs'))
+                        <a href="{{ route('users.logs') }}" class="btn btn-info me-2">
+                            <i class="bx bx-history me-1"></i> Activity Logs
+                        </a>
+                    @endif
+                    @if(auth()->user()->hasPermission('users.delete'))
+                        <a href="{{ route('users.trash') }}" class="btn btn-secondary me-2">
+                            <i class="bx bx-trash me-1"></i> Tempat Sampah
+                        </a>
+                    @endif
+                    @if(auth()->user()->hasPermission('roles.view'))
+                        <a href="{{ route('roles.index') }}" class="btn btn-warning me-2">
+                            <i class="bx bx-shield me-1"></i> Kelola Role
+                        </a>
+                    @endif
+                    @if(auth()->user()->hasPermission('users.create'))
+                        <a href="{{ route('users.create') }}" class="btn btn-primary">
+                            <i class="bx bx-plus me-1"></i> Tambah User
+                        </a>
+                    @endif
                 </div>
             </div>
             <div class="card-body">

@@ -4,7 +4,9 @@
       "Bash(php artisan route:list:*)",
       "Bash(composer run:*)",
       "Bash(php artisan:*)",
-      "Bash(php:*)"
+      "Bash(php:*)",
+      "Bash(rm:*)",
+      "Bash(mkdir:*)"
     ],
     "deny": [],
     "ask": []
