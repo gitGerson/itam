@@ -26,6 +26,14 @@
              </a>
          </li>
 
+          <!-- Mobile Kit -->
+         <li class="menu-item {{ request()->routeIs('mobile.*') ? 'active' : '' }}">
+             <a href="{{ route('mobile.index') }}" class="menu-link">
+                 <i class="menu-icon tf-icons bx bx-user"></i>
+                 <div class="text-truncate" data-i18n="mobile">Mobile</div>
+             </a>
+         </li>
+
          <!-- Management -->
          <li class="menu-header small text-uppercase">
              <span class="menu-header-text">Management</span>
@@ -39,13 +47,15 @@
              </a>
          </li>
 
-         <!-- Mobile Kit -->
-         <li class="menu-item {{ request()->routeIs('mobile.*') ? 'active' : '' }}">
-             <a href="{{ route('mobile.index') }}" class="menu-link">
-                 <i class="menu-icon tf-icons bx bx-user"></i>
-                 <div class="text-truncate" data-i18n="mobile">Mobile</div>
+         <!-- Roles (RBAC) -->
+         @if(auth()->user()->hasPermission('roles.view'))
+         <li class="menu-item {{ request()->routeIs('roles.*') ? 'active' : '' }}">
+             <a href="{{ route('roles.index') }}" class="menu-link">
+                 <i class="menu-icon tf-icons bx bx-shield"></i>
+                 <div class="text-truncate" data-i18n="Roles">Roles</div>
              </a>
          </li>
+         @endif
 
      </ul>
  </aside>

@@ -19,19 +19,19 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name
 // Route group middleware for authenticated users
 Route::middleware(['auth'])->group(function () {
     // User management routes with permissions
-    Route::middleware(['permission:users.view'])->group(function () {
-        Route::get('/users', [UserController::class, 'index'])->name('users.index');
-        Route::get('/users/data', [UserController::class, 'getData'])->name('users.data');
-        Route::get('/users/{user}', [UserController::class, 'show'])->name('users.show');
-        Route::get('/users/logs', [UserController::class, 'logs'])->name('users.logs');
-        Route::get('/users/logs/data', [UserController::class, 'getLogsData'])->name('users.logs.data');
-        Route::get('/users/{user}/logs', [UserController::class, 'userLogs'])->name('users.user-logs');
-        Route::get('/users/{user}/logs/data', [UserController::class, 'getUserLogsData'])->name('users.user-logs.data');
-    });
-
     Route::middleware(['permission:users.create'])->group(function () {
         Route::get('/users/create', [UserController::class, 'create'])->name('users.create');
         Route::post('/users', [UserController::class, 'store'])->name('users.store');
+    });
+
+    Route::middleware(['permission:users.view'])->group(function () {
+        Route::get('/users', [UserController::class, 'index'])->name('users.index');
+        Route::get('/users/data', [UserController::class, 'getData'])->name('users.data');
+        Route::get('/users/logs', [UserController::class, 'logs'])->name('users.logs');
+        Route::get('/users/logs/data', [UserController::class, 'getLogsData'])->name('users.logs.data');
+        Route::get('/users/{user}', [UserController::class, 'show'])->name('users.show');
+        Route::get('/users/{user}/logs', [UserController::class, 'userLogs'])->name('users.user-logs');
+        Route::get('/users/{user}/logs/data', [UserController::class, 'getUserLogsData'])->name('users.user-logs.data');
     });
 
     Route::middleware(['permission:users.edit'])->group(function () {
@@ -41,9 +41,9 @@ Route::middleware(['auth'])->group(function () {
     });
 
     Route::middleware(['permission:users.delete'])->group(function () {
-        Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
         Route::get('/users/trash', [UserController::class, 'trash'])->name('users.trash');
         Route::get('/users/trash/data', [UserController::class, 'getTrashData'])->name('users.trash.data');
+        Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
         Route::delete('/users/{id}/force-delete', [UserController::class, 'forceDelete'])->name('users.force-delete');
     });
 
@@ -52,15 +52,15 @@ Route::middleware(['auth'])->group(function () {
     });
 
     // Role management routes with permissions
+    Route::middleware(['permission:roles.create'])->group(function () {
+        Route::get('/roles/create', [RoleController::class, 'create'])->name('roles.create');
+        Route::post('/roles', [RoleController::class, 'store'])->name('roles.store');
+    });
+
     Route::middleware(['permission:roles.view'])->group(function () {
         Route::get('/roles', [RoleController::class, 'index'])->name('roles.index');
         Route::get('/roles/data', [RoleController::class, 'getData'])->name('roles.data');
         Route::get('/roles/{role}', [RoleController::class, 'show'])->name('roles.show');
-    });
-
-    Route::middleware(['permission:roles.create'])->group(function () {
-        Route::get('/roles/create', [RoleController::class, 'create'])->name('roles.create');
-        Route::post('/roles', [RoleController::class, 'store'])->name('roles.store');
     });
 
     Route::middleware(['permission:roles.edit'])->group(function () {

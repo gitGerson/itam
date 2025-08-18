@@ -6,7 +6,8 @@
       "Bash(php artisan:*)",
       "Bash(php:*)",
       "Bash(rm:*)",
-      "Bash(mkdir:*)"
+      "Bash(mkdir:*)",
+      "Bash(sed:*)"
     ],
     "deny": [],
     "ask": []
