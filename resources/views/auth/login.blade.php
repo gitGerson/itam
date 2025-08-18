@@ -31,22 +31,54 @@
                                 ✅ DataTables with Server-side Processing</p>
                         </div>
                     </div>
-                    <div class="feature-item" style="--delay: 0.1s">
+                    
+                    <!-- Collapsible Updates Section -->
+                    <div class="feature-item collapsible-section" style="--delay: 0.1s">
                         <div class="feature-icon">🚀</div>
                         <div class="feature-content">
-                            <h5>Updates</h5>
-                            <p>• Sneat Admin Template Integration<br>
-                                • Enhanced Login UI with Tea Theme<br>
-                                • Responsive Design Implementation</p>
+                            <h5>
+                                <button class="btn btn-link text-white p-0 text-start w-100 d-flex align-items-center justify-content-between collapsed" 
+                                        type="button" 
+                                        data-bs-toggle="collapse" 
+                                        data-bs-target="#updatesCollapse" 
+                                        aria-expanded="false" 
+                                        aria-controls="updatesCollapse">
+                                    <span>Updates</span>
+                                    <i class="bx bx-chevron-down ms-2 collapse-icon"></i>
+                                </button>
+                            </h5>
+                            <div class="collapse" id="updatesCollapse">
+                                <p class="collapse-content">• Sneat Admin Template Integration<br>
+                                    • Enhanced Login UI with Tea Theme<br>
+                                    • Responsive Design Implementation<br>
+                                    • Audit Trail Implementation<br>
+                                    • Soft Delete Functionality</p>
+                            </div>
                         </div>
                     </div>
-                    <div class="feature-item" style="--delay: 0.2s">
+                    
+                    <!-- Collapsible Fix Section -->
+                    <div class="feature-item collapsible-section" style="--delay: 0.2s">
                         <div class="feature-icon">🔧</div>
                         <div class="feature-content">
-                            <h5>Fix</h5>
-                            <p>• Advanced User Roles & Permissions<br>
-                                • Export Functionality Enhancement<br>
-                                • Real-time Notifications</p>
+                            <h5>
+                                <button class="btn btn-link text-white p-0 text-start w-100 d-flex align-items-center justify-content-between collapsed" 
+                                        type="button" 
+                                        data-bs-toggle="collapse" 
+                                        data-bs-target="#fixCollapse" 
+                                        aria-expanded="false" 
+                                        aria-controls="fixCollapse">
+                                    <span>Fix</span>
+                                    <i class="bx bx-chevron-down ms-2 collapse-icon"></i>
+                                </button>
+                            </h5>
+                            <div class="collapse" id="fixCollapse">
+                                <p class="collapse-content">• Advanced User Roles & Permissions<br>
+                                    • Export Functionality Enhancement<br>
+                                    • Real-time Notifications<br>
+                                    • Mobile Responsive Improvements<br>
+                                    • Performance Optimizations</p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -425,6 +457,50 @@
             }
         }
 
+        /* Collapsible Styles */
+        .collapsible-section .btn-link {
+            text-decoration: none !important;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .collapsible-section .btn-link:hover {
+            color: rgba(255, 255, 255, 0.9) !important;
+        }
+
+        .collapsible-section .btn-link:focus {
+            box-shadow: none !important;
+        }
+
+        .collapse-icon {
+            transition: transform 0.3s ease;
+            font-size: 1.2rem;
+        }
+
+        .collapsed .collapse-icon {
+            transform: rotate(-90deg);
+        }
+
+        .collapse-content {
+            margin-top: 0.5rem;
+            padding-left: 0;
+        }
+
+        .collapsible-section .collapse.show {
+            animation: slideDown 0.3s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                max-height: 0;
+            }
+            to {
+                opacity: 1;
+                max-height: 200px;
+            }
+        }
+
         @media (max-width: 768px) {
             .tea-title {
                 font-size: 2rem;
@@ -434,6 +510,76 @@
             .login-form-container {
                 margin-bottom: 1rem;
             }
+
+            /* Mobile: Default collapsed state */
+            .collapsible-section .collapse {
+                display: none !important;
+            }
+
+            .collapsible-section .collapse.show {
+                display: block !important;
+                animation: slideDown 0.3s ease-out;
+            }
+
+            .left-section {
+                padding: 1rem !important;
+            }
+
+            .w-100.p-5 {
+                padding: 1rem !important;
+            }
         }
     </style>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Function to handle responsive collapse behavior
+            function handleResponsiveCollapse() {
+                const isMobile = window.innerWidth <= 768;
+                const updateCollapse = document.getElementById('updatesCollapse');
+                const fixCollapse = document.getElementById('fixCollapse');
+                const updateButton = document.querySelector('[data-bs-target="#updatesCollapse"]');
+                const fixButton = document.querySelector('[data-bs-target="#fixCollapse"]');
+                
+                if (!isMobile) {
+                    // On desktop: show both sections by default
+                    if (updateCollapse && !updateCollapse.classList.contains('show')) {
+                        updateCollapse.classList.add('show');
+                        updateButton.classList.remove('collapsed');
+                        updateButton.setAttribute('aria-expanded', 'true');
+                    }
+                    if (fixCollapse && !fixCollapse.classList.contains('show')) {
+                        fixCollapse.classList.add('show');
+                        fixButton.classList.remove('collapsed');
+                        fixButton.setAttribute('aria-expanded', 'true');
+                    }
+                }
+                // On mobile: keep them collapsed (default state)
+            }
+
+            // Initialize on page load
+            handleResponsiveCollapse();
+
+            // Handle window resize
+            window.addEventListener('resize', function() {
+                setTimeout(handleResponsiveCollapse, 100);
+            });
+
+            // Handle collapse icon rotation
+            document.querySelectorAll('[data-bs-toggle="collapse"]').forEach(button => {
+                button.addEventListener('click', function() {
+                    setTimeout(() => {
+                        const target = document.querySelector(this.getAttribute('data-bs-target'));
+                        if (target.classList.contains('show')) {
+                            this.classList.remove('collapsed');
+                            this.setAttribute('aria-expanded', 'true');
+                        } else {
+                            this.classList.add('collapsed');
+                            this.setAttribute('aria-expanded', 'false');
+                        }
+                    }, 10);
+                });
+            });
+        });
+    </script>
 @endsection

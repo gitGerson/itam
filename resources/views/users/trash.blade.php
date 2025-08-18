@@ -1,7 +1,7 @@
 @extends('layouts.sneat')
 
 @section('title')
-    Daftar User
+    Tempat Sampah User
 @endsection
 
 @section('content')
@@ -15,30 +15,23 @@
 
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center">
-                <h5 class="mb-0">Daftar User</h5>
-                <div>
-                    <a href="{{ route('users.trash') }}" class="btn btn-secondary me-2">
-                        <i class="bx bx-trash me-1"></i> Tempat Sampah
-                    </a>
-                    <a href="{{ route('users.create') }}" class="btn btn-primary">
-                        <i class="bx bx-plus me-1"></i> Tambah User
-                    </a>
-                </div>
+                <h5 class="mb-0">Tempat Sampah User</h5>
+                <a href="{{ route('users.index') }}" class="btn btn-secondary">
+                    <i class="bx bx-arrow-back me-1"></i> Kembali ke Daftar User
+                </a>
             </div>
             <div class="card-body">
                 <div class="table-responsive text-nowrap">
 
-                    <table id="users-table" class="table table-striped">
+                    <table id="trash-table" class="table table-striped">
                         <thead>
                             <tr>
                                 <th>ID</th>
                                 <th>Nama</th>
                                 <th>Username</th>
                                 <th>Email</th>
-                                <th>Dibuat</th>
-                                <th>Dibuat Oleh</th>
-                                <th>Diperbarui</th>
-                                <th>Diperbarui Oleh</th>
+                                <th>Dihapus</th>
+                                <th>Dihapus Oleh</th>
                                 <th>Aksi</th>
                             </tr>
                         </thead>
@@ -53,10 +46,10 @@
 @push('scripts')
     <script>
         $(function() {
-            $('#users-table').DataTable({
+            $('#trash-table').DataTable({
                 processing: true,
                 serverSide: true,
-                ajax: '{{ route('users.data') }}',
+                ajax: '{{ route('users.trash.data') }}',
                 columns: [{
                         data: 'id',
                         name: 'id'
@@ -74,26 +67,15 @@
                         name: 'email'
                     },
                     {
-                        data: 'created_at',
-                        name: 'created_at',
+                        data: 'deleted_at',
+                        name: 'deleted_at',
                         render: function(data, type, row) {
                             return moment(data).format('DD MMM YYYY HH:mm');
                         }
                     },
                     {
-                        data: 'created_by_name',
-                        name: 'created_by_name'
-                    },
-                    {
-                        data: 'updated_at',
-                        name: 'updated_at',
-                        render: function(data, type, row) {
-                            return moment(data).format('DD MMM YYYY HH:mm');
-                        }
-                    },
-                    {
-                        data: 'updated_by_name',
-                        name: 'updated_by_name'
+                        data: 'deleted_by_name',
+                        name: 'deleted_by_name'
                     },
                     {
                         data: 'action',

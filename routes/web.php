@@ -18,6 +18,10 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name
 Route::middleware(['auth'])->group(function () {
     // User routes
     Route::get('/users/data', [UserController::class, 'getData'])->name('users.data');
+    Route::get('/users/trash', [UserController::class, 'trash'])->name('users.trash');
+    Route::get('/users/trash/data', [UserController::class, 'getTrashData'])->name('users.trash.data');
+    Route::post('/users/{id}/restore', [UserController::class, 'restore'])->name('users.restore');
+    Route::delete('/users/{id}/force-delete', [UserController::class, 'forceDelete'])->name('users.force-delete');
     Route::resource('users', UserController::class);
 
     // Mobile routes
