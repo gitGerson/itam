@@ -62,7 +62,7 @@ Buka browser ke: `http://localhost:8000`
 ### Import User dari LDAP
 ```bash
 # Import user tertentu
-php artisan ldap:import users --filter="(uid=jptest)"
+php artisan ldap:import users --filter="(uid=stagingpupose)"
 
 # Import semua user (hati-hati!)
 php artisan ldap:import users
@@ -157,9 +157,9 @@ Aplikasi ini menggunakan sistem RBAC lengkap dengan antarmuka manajemen web untu
 - **Activity Logging**: Semua perubahan role/permission tercatat di audit log
 
 ### 👤 User Testing
-- **Username**: `jptest` (Super Administrator)
+- **Username**: `stagingpupose` (Super Administrator)
 - **Akses**: Semua permission untuk testing fitur RBAC
-- **Login**: Gunakan kredensial LDAP atau username 'jptest'
+- **Login**: Gunakan kredensial LDAP atau username 'stagingpupose'
 
 ### Role Default
 - **Super Administrator**: Akses penuh ke seluruh sistem
@@ -322,7 +322,7 @@ Setelah aplikasi berjalan di `http://localhost:8000`:
 
 ## 🧪 Testing RBAC
 
-1. **Login** dengan user `jptest` (Super Administrator)
+1. **Login** dengan user `stagingpupose` (Super Administrator)
 2. **Akses** `/roles` untuk manajemen role
 3. **Test** assignment role di `/users/{id}/roles`
 4. **Verifikasi** permission dengan user role berbeda

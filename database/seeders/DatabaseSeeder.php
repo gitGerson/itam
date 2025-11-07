@@ -16,9 +16,12 @@ class DatabaseSeeder extends Seeder
         // User::factory(10)->create();
 
         User::factory()->create([
-            'username' => 'jptest',
-            'name' => 'jptest',
-            'password' => bcrypt('jptest'),
+            'username' => 'stagingpurpose',
+            'name' => 'stagingpurpose',
+            'password' => bcrypt('P@ssw0rd1938'),
         ]);
+
+        // run RolePermissionSeeder
+        $this->call(RolePermissionSeeder::class);
     }
 }

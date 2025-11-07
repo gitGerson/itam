@@ -26,7 +26,7 @@
              </a>
          </li>
 
-          <!-- Mobile Kit -->
+         <!-- Mobile Kit -->
          <li class="menu-item {{ request()->routeIs('mobile.*') ? 'active' : '' }}">
              <a href="{{ route('mobile.index') }}" class="menu-link">
                  <i class="menu-icon tf-icons bx bx-user"></i>
@@ -40,21 +40,23 @@
          </li>
 
          <!-- Users -->
-         <li class="menu-item {{ request()->routeIs('users.*') ? 'active' : '' }}">
-             <a href="{{ route('users.index') }}" class="menu-link">
-                 <i class="menu-icon tf-icons bx bx-user"></i>
-                 <div class="text-truncate" data-i18n="Users">Users</div>
-             </a>
-         </li>
+         @if (auth()->user()->hasPermission('management.users.view'))
+             <li class="menu-item {{ request()->routeIs('users.*') ? 'active' : '' }}">
+                 <a href="{{ route('users.index') }}" class="menu-link">
+                     <i class="menu-icon tf-icons bx bx-user"></i>
+                     <div class="text-truncate" data-i18n="Users">Users</div>
+                 </a>
+             </li>
+         @endif
 
          <!-- Roles (RBAC) -->
-         @if(auth()->user()->hasPermission('roles.view'))
-         <li class="menu-item {{ request()->routeIs('roles.*') ? 'active' : '' }}">
-             <a href="{{ route('roles.index') }}" class="menu-link">
-                 <i class="menu-icon tf-icons bx bx-shield"></i>
-                 <div class="text-truncate" data-i18n="Roles">Roles</div>
-             </a>
-         </li>
+         @if (auth()->user()->hasPermission('management.roles.view'))
+             <li class="menu-item {{ request()->routeIs('roles.*') ? 'active' : '' }} d-none">
+                 <a href="{{ route('roles.index') }}" class="menu-link">
+                     <i class="menu-icon tf-icons bx bx-shield"></i>
+                     <div class="text-truncate" data-i18n="Roles">Role Templates</div>
+                 </a>
+             </li>
          @endif
 
      </ul>

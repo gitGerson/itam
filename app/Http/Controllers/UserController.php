@@ -4,9 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\UserLog;
+use App\Models\Role;
+use App\Models\Permission;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Log;
+use LdapRecord\Models\OpenLDAP\User as LdapUser;
 
 class UserController extends Controller
 {
@@ -40,30 +43,64 @@ class UserController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
             'username' => 'required|string|max:255|unique:users',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8|confirmed',
-            'domain' => 'nullable|string|max:255',
         ]);
 
-        $user = User::create([
-            'name' => $request->name,
-            'username' => $request->username,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'domain' => $request->domain,
-        ]);
+        try {
+            // Query LDAP untuk mencari user berdasarkan username (sesuai format: uid=username)
+            $ldapUser = LdapUser::where('uid', $request->username)->first();
 
-        UserLog::log(
-            'CREATE_USER',
-            "Created user: {$user->name} ({$user->username})",
-            $user,
-            null,
-            $request->only(['name', 'username', 'email', 'domain'])
-        );
+            if (!$ldapUser) {
+                return redirect()->back()
+                    ->withInput()
+                    ->with('error', 'Username tidak ditemukan di LDAP. Pastikan username sudah terdaftar di sistem LDAP.');
+            }
 
-        return redirect()->route('users.index')->with('success', 'User berhasil ditambahkan');
+            // Check if user already exists in our database
+            $existingUser = User::where('username', $request->username)->first();
+            if ($existingUser) {
+                return redirect()->back()
+                    ->withInput()
+                    ->with('error', 'User dengan username tersebut sudah ada di database.');
+            }
+
+            // Sync user dari LDAP ke database lokal
+            $user = User::create([
+                'name' => $ldapUser->cn[0] ?? $ldapUser->displayname[0] ?? $ldapUser->uid[0] ?? $request->username,
+                'username' => $request->username,
+                'email' => $ldapUser->mail[0] ?? $request->username . '@tongtji.com',
+                'password' => Hash::make(str()->random(32)), // Random password since we use LDAP auth
+                'domain' => $ldapUser->getDn(),
+                'guid' => $ldapUser->entryuuid[0] ?? null,
+                'pin' => Hash::make($request->pin),
+            ]);
+
+            UserLog::log(
+                'CREATE_USER',
+                "Created user from LDAP sync: {$user->name} ({$user->username})",
+                $user,
+                null,
+                [
+                    'username' => $request->username,
+                    'ldap_dn' => $ldapUser->getDn(),
+                    'ldap_guid' => $ldapUser->entryuuid[0] ?? null,
+                    'pin_set' => true
+                ]
+            );
+
+            return redirect()->route('users.index')
+                ->with('success', "User berhasil ditemukan di LDAP dan disinkronisasi ke database. User: {$user->name} ({$user->username})");
+
+        } catch (\Exception $e) {
+            Log::error('LDAP User Sync Error: ' . $e->getMessage(), [
+                'username' => $request->username,
+                'exception' => $e
+            ]);
+
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Terjadi kesalahan saat menghubungi LDAP server. Silakan coba lagi atau hubungi administrator.');
+        }
     }
 
     /**
@@ -72,13 +109,13 @@ class UserController extends Controller
     public function show(User $user)
     {
         $user->load(['creator', 'updater', 'deleter', 'roles']);
-        
+
         UserLog::log(
             'VIEW_USER',
             "Viewed user: {$user->name} ({$user->username})",
             $user
         );
-        
+
         return view('users.show', compact('user'));
     }
 
@@ -87,7 +124,10 @@ class UserController extends Controller
      */
     public function edit(User $user)
     {
-        return view('users.edit', compact('user'));
+        $permissions = Permission::all();
+        $roleTemplates = Role::where('name', 'like', '%_template')->get();
+
+        return view('users.edit', compact('user', 'permissions', 'roleTemplates'));
     }
 
     /**
@@ -96,34 +136,18 @@ class UserController extends Controller
     public function update(Request $request, User $user)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
-            'username' => ['required', 'string', 'max:255', Rule::unique('users')->ignore($user->id)],
-            'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
-            'password' => 'nullable|string|min:8|confirmed',
-            'domain' => 'nullable|string|max:255',
+            'pin' => 'nullable|string|max:6',
         ]);
 
         $updateData = [
-            'name' => $request->name,
-            'username' => $request->username,
-            'email' => $request->email,
-            'domain' => $request->domain,
+            'pin' => $request->pin,
         ];
 
-        if ($request->filled('password')) {
-            $updateData['password'] = Hash::make($request->password);
+        if ($request->filled('pin')) {
+            $updateData['pin'] = Hash::make($request->pin);
         }
-
-        $oldValues = $user->only(['name', 'username', 'email', 'domain']);
         $user->update($updateData);
 
-        UserLog::log(
-            'UPDATE_USER',
-            "Updated user: {$user->name} ({$user->username})",
-            $user,
-            $oldValues,
-            $request->only(['name', 'username', 'email', 'domain'])
-        );
 
         return redirect()->route('users.index')->with('success', 'User berhasil diperbarui');
     }
@@ -135,7 +159,7 @@ class UserController extends Controller
     {
         $userName = $user->name;
         $userUsername = $user->username;
-        
+
         $user->delete();
 
         UserLog::log(
@@ -173,13 +197,13 @@ class UserController extends Controller
         $user = User::withTrashed()->findOrFail($id);
         $userName = $user->name;
         $userUsername = $user->username;
-        
+
         UserLog::log(
             'FORCE_DELETE_USER',
             "Permanently deleted user: {$userName} ({$userUsername})",
             $user
         );
-        
+
         $user->forceDelete();
 
         return redirect()->route('users.trash')->with('success', 'User berhasil dihapus permanen');
@@ -190,15 +214,12 @@ class UserController extends Controller
      */
     public function getData(Request $request)
     {
-        $users = User::with(['creator', 'updater'])
-            ->select(['id', 'name', 'email', 'username', 'created_at', 'updated_at', 'created_by', 'updated_by']);
+        $users = User::with('roles')->select(['id', 'name', 'email', 'username']);
 
         return datatables()->of($users)
-            ->addColumn('created_by_name', function ($user) {
-                return $user->creator ? $user->creator->name : '-';
-            })
-            ->addColumn('updated_by_name', function ($user) {
-                return $user->updater ? $user->updater->name : '-';
+            ->addIndexColumn()
+            ->addColumn('roles', function ($user) {
+                return $user->roles->pluck('display_name')->join(', ') ?: '-';
             })
             ->addColumn('action', function ($user) {
                 $actions = '<div class="dropdown">
@@ -208,31 +229,31 @@ class UserController extends Controller
                     <div class="dropdown-menu">';
 
                 // View action - always available if user has users.view permission
-                if (auth()->user()->hasPermission('users.view')) {
+                if (auth()->user()->hasPermission('management.users.view')) {
                     $actions .= '<a class="dropdown-item" href="' . route('users.show', $user->id) . '">
                         <i class="bx bx-show me-1"></i> Lihat
                     </a>';
                 }
 
                 // Activity logs
-                if (auth()->user()->hasPermission('users.logs')) {
+                if (auth()->user()->hasPermission('management.users.logs')) {
                     $actions .= '<a class="dropdown-item" href="' . route('users.user-logs', $user->id) . '">
                         <i class="bx bx-history me-1"></i> Activity Log
                     </a>';
                 }
 
                 // Edit action
-                if (auth()->user()->hasPermission('users.edit')) {
+                if (auth()->user()->hasPermission('management.users.edit')) {
                     $actions .= '<a class="dropdown-item" href="' . route('users.edit', $user->id) . '">
                         <i class="bx bx-edit-alt me-1"></i> Edit
                     </a>';
-                    $actions .= '<a class="dropdown-item" href="' . route('users.roles', $user->id) . '">
+                    $actions .= '<a class="dropdown-item d-none" href="' . route('users.roles', $user->id) . '">
                         <i class="bx bx-shield me-1"></i> Kelola Role
                     </a>';
                 }
 
                 // Delete action
-                if (auth()->user()->hasPermission('users.delete')) {
+                if (auth()->user()->hasPermission('management.users.delete')) {
                     $actions .= '<form action="' . route('users.destroy', $user->id) . '" method="POST" style="display: inline;">
                         ' . csrf_field() . '
                         ' . method_field('DELETE') . '
@@ -243,7 +264,7 @@ class UserController extends Controller
                 }
 
                 $actions .= '</div></div>';
-                
+
                 return $actions;
             })
             ->rawColumns(['action'])
@@ -277,7 +298,7 @@ class UserController extends Controller
                     <div class="dropdown-menu">';
 
                 // Restore action
-                if (auth()->user()->hasPermission('users.restore')) {
+                if (auth()->user()->hasPermission('management.users.restore')) {
                     $actions .= '<form action="' . route('users.restore', $user->id) . '" method="POST" style="display: inline;">
                         ' . csrf_field() . '
                         <button type="submit" class="dropdown-item" onclick="return confirm(\'Yakin ingin memulihkan user ini?\')">
@@ -287,7 +308,7 @@ class UserController extends Controller
                 }
 
                 // Force delete action
-                if (auth()->user()->hasPermission('users.force_delete')) {
+                if (auth()->user()->hasPermission('management.users.force_delete')) {
                     $actions .= '<form action="' . route('users.force-delete', $user->id) . '" method="POST" style="display: inline;">
                         ' . csrf_field() . '
                         ' . method_field('DELETE') . '
@@ -298,7 +319,7 @@ class UserController extends Controller
                 }
 
                 $actions .= '</div></div>';
-                
+
                 return $actions;
             })
             ->rawColumns(['action'])
@@ -387,5 +408,120 @@ class UserController extends Controller
             })
             ->rawColumns(['action_badge'])
             ->make(true);
+    }
+
+    /**
+     * Update user permissions
+     */
+    public function updatePermissions(Request $request, User $user)
+    {
+        $request->validate([
+            'permissions' => 'array',
+            'permissions.*' => 'exists:permissions,id'
+        ]);
+
+        // Get current permissions for logging
+        $currentPermissions = $user->roles()->with('permissions')->get()
+            ->pluck('permissions')->flatten()->pluck('name')->unique()->toArray();
+
+        // Clear all current roles (since we're managing permissions directly)
+        $user->roles()->detach();
+
+        // Get selected permissions
+        $selectedPermissionIds = $request->permissions ?? [];
+        $selectedPermissions = Permission::whereIn('id', $selectedPermissionIds)->get();
+
+        if ($selectedPermissions->count() > 0) {
+            // Create a dynamic role for this user with selected permissions
+            $dynamicRoleName = 'user_' . $user->id . '_permissions';
+            $dynamicRole = Role::updateOrCreate(
+                ['name' => $dynamicRoleName],
+                [
+                    'display_name' => 'Custom Permissions for ' . $user->name,
+                    'description' => 'Dynamic role with custom permissions for user ' . $user->username
+                ]
+            );
+
+            // Clear existing permissions for this dynamic role
+            $dynamicRole->permissions()->detach();
+
+            // Assign new permissions to dynamic role
+            foreach ($selectedPermissions as $permission) {
+                $dynamicRole->assignPermission($permission);
+            }
+
+            // Assign dynamic role to user
+            $user->assignRole($dynamicRole);
+        }
+
+        // Log the permission update
+        $newPermissions = $selectedPermissions->pluck('name')->toArray();
+        UserLog::log(
+            'UPDATE_USER_PERMISSIONS',
+            "Updated permissions for user: {$user->name} ({$user->username})",
+            $user,
+            $user,
+            [
+                'previous_permissions' => $currentPermissions,
+                'new_permissions' => $newPermissions,
+                'permissions_count' => count($newPermissions)
+            ]
+        );
+
+        return redirect()->route('users.edit', $user)
+            ->with('success', 'User permissions updated successfully.');
+    }
+
+    /**
+     * Apply role template to user
+     */
+    public function applyTemplate(Request $request, User $user)
+    {
+        $request->validate([
+            'role_template' => 'required|exists:roles,id'
+        ]);
+
+        $roleTemplate = Role::findOrFail($request->role_template);
+
+        // Get current permissions for logging
+        $currentPermissions = $user->roles()->with('permissions')->get()
+            ->pluck('permissions')->flatten()->pluck('name')->unique()->toArray();
+
+        // Clear current roles
+        $user->roles()->detach();
+
+        // Apply the template
+        $user->assignRole($roleTemplate);
+
+        // Log the template application
+        $newPermissions = $roleTemplate->permissions->pluck('name')->toArray();
+        UserLog::log(
+            'APPLY_ROLE_TEMPLATE',
+            "Applied role template '{$roleTemplate->display_name}' to user: {$user->name} ({$user->username})",
+            $user,
+            $user,
+            [
+                'template_name' => $roleTemplate->display_name,
+                'template_id' => $roleTemplate->id,
+                'previous_permissions' => $currentPermissions,
+                'new_permissions' => $newPermissions
+            ]
+        );
+
+        return redirect()->route('users.edit', $user)
+            ->with('success', "Role template '{$roleTemplate->display_name}' applied successfully.");
+    }
+
+    /**
+     * Get template permissions for AJAX
+     */
+    public function getTemplatePermissions(Role $role)
+    {
+        $permissionIds = $role->permissions()->pluck('permissions.id')->toArray();
+
+        return response()->json([
+            'success' => true,
+            'permission_ids' => $permissionIds
+        ]);
     }
 }

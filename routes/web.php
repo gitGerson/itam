@@ -19,12 +19,12 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name
 // Route group middleware for authenticated users
 Route::middleware(['auth'])->group(function () {
     // User management routes with permissions
-    Route::middleware(['permission:users.create'])->group(function () {
+    Route::middleware(['permission:management.users.create'])->group(function () {
         Route::get('/users/create', [UserController::class, 'create'])->name('users.create');
         Route::post('/users', [UserController::class, 'store'])->name('users.store');
     });
 
-    Route::middleware(['permission:users.view'])->group(function () {
+    Route::middleware(['permission:management.users.view'])->group(function () {
         Route::get('/users', [UserController::class, 'index'])->name('users.index');
         Route::get('/users/data', [UserController::class, 'getData'])->name('users.data');
         Route::get('/users/logs', [UserController::class, 'logs'])->name('users.logs');
@@ -34,47 +34,53 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/users/{user}/logs/data', [UserController::class, 'getUserLogsData'])->name('users.user-logs.data');
     });
 
-    Route::middleware(['permission:users.edit'])->group(function () {
+    Route::middleware(['permission:management.users.edit'])->group(function () {
         Route::get('/users/{user}/edit', [UserController::class, 'edit'])->name('users.edit');
         Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update');
         Route::patch('/users/{user}', [UserController::class, 'update']);
     });
 
-    Route::middleware(['permission:users.delete'])->group(function () {
+    Route::middleware(['permission:management.users.permissions'])->group(function () {
+        Route::put('/users/{user}/permissions', [UserController::class, 'updatePermissions'])->name('users.update-permissions');
+        Route::post('/users/{user}/apply-template', [UserController::class, 'applyTemplate'])->name('users.apply-template');
+        Route::get('/roles/{role}/permissions', [UserController::class, 'getTemplatePermissions'])->name('roles.permissions');
+    });
+
+    Route::middleware(['permission:management.users.delete'])->group(function () {
         Route::get('/users/trash', [UserController::class, 'trash'])->name('users.trash');
         Route::get('/users/trash/data', [UserController::class, 'getTrashData'])->name('users.trash.data');
         Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
         Route::delete('/users/{id}/force-delete', [UserController::class, 'forceDelete'])->name('users.force-delete');
     });
 
-    Route::middleware(['permission:users.restore'])->group(function () {
+    Route::middleware(['permission:management.users.restore'])->group(function () {
         Route::post('/users/{id}/restore', [UserController::class, 'restore'])->name('users.restore');
     });
 
     // Role management routes with permissions
-    Route::middleware(['permission:roles.create'])->group(function () {
+    Route::middleware(['permission:management.roles.create'])->group(function () {
         Route::get('/roles/create', [RoleController::class, 'create'])->name('roles.create');
         Route::post('/roles', [RoleController::class, 'store'])->name('roles.store');
     });
 
-    Route::middleware(['permission:roles.view'])->group(function () {
+    Route::middleware(['permission:management.roles.view'])->group(function () {
         Route::get('/roles', [RoleController::class, 'index'])->name('roles.index');
         Route::get('/roles/data', [RoleController::class, 'getData'])->name('roles.data');
         Route::get('/roles/{role}', [RoleController::class, 'show'])->name('roles.show');
     });
 
-    Route::middleware(['permission:roles.edit'])->group(function () {
+    Route::middleware(['permission:management.roles.edit'])->group(function () {
         Route::get('/roles/{role}/edit', [RoleController::class, 'edit'])->name('roles.edit');
         Route::put('/roles/{role}', [RoleController::class, 'update'])->name('roles.update');
         Route::patch('/roles/{role}', [RoleController::class, 'update']);
     });
 
-    Route::middleware(['permission:roles.delete'])->group(function () {
+    Route::middleware(['permission:management.roles.delete'])->group(function () {
         Route::delete('/roles/{role}', [RoleController::class, 'destroy'])->name('roles.destroy');
     });
 
     // User role assignment routes
-    Route::middleware(['permission:users.edit'])->group(function () {
+    Route::middleware(['permission:management.users.edit'])->group(function () {
         Route::get('/users/{user}/roles', [UserRoleController::class, 'show'])->name('users.roles');
         Route::put('/users/{user}/roles', [UserRoleController::class, 'update'])->name('users.roles.update');
         Route::post('/users/{user}/roles/assign', [UserRoleController::class, 'assignRole'])->name('users.roles.assign');

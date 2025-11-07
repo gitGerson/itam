@@ -18,66 +18,73 @@
     <div class="row min-vh-100 g-0">
         <div class="col-md-8 col-12 d-flex align-items-center left-section p-3">
             <div class="w-100 p-5">
-                <h1 class="tea-title mb-4">Tong Tji Central Stock</h1>
-                <p class="tea-subtitle mb-4">Version Release Notes & Updates</p>
 
-                <div class="tea-features">
-                    <div class="feature-item" style="--delay: 0s">
-                        <div class="feature-icon">📦</div>
-                        <div class="feature-content">
-                            <h5>Version 1.0.0 - Initial Release</h5>
-                            <p>✅ LDAP Authentication Integration<br>
-                                ✅ User Management System<br>
-                                ✅ DataTables with Server-side Processing</p>
-                        </div>
-                    </div>
-                    
-                    <!-- Collapsible Updates Section -->
-                    <div class="feature-item collapsible-section" style="--delay: 0.1s">
-                        <div class="feature-icon">🚀</div>
-                        <div class="feature-content">
-                            <h5>
-                                <button class="btn btn-link text-white p-0 text-start w-100 d-flex align-items-center justify-content-between collapsed" 
-                                        type="button" 
-                                        data-bs-toggle="collapse" 
-                                        data-bs-target="#updatesCollapse" 
-                                        aria-expanded="false" 
-                                        aria-controls="updatesCollapse">
-                                    <span>Updates</span>
-                                    <i class="bx bx-chevron-down ms-2 collapse-icon"></i>
-                                </button>
-                            </h5>
-                            <div class="collapse" id="updatesCollapse">
-                                <p class="collapse-content">• Sneat Admin Template Integration<br>
-                                    • Enhanced Login UI with Tea Theme<br>
-                                    • Responsive Design Implementation<br>
-                                    • Audit Trail Implementation<br>
-                                    • Soft Delete Functionality</p>
+                <h1 class="tea-title mb-4">
+                    {{-- APP_NAME from ENV  --}}
+                    {{ config('app.name', 'Tong Tji Starter') }}
+                </h1>
+
+                <p class="tea-subtitle mb-4">
+                    <a class="btn btn-primary" data-bs-toggle="collapse" href="#collapseFeature" role="button"
+                        aria-expanded="false" aria-controls="collapseFeature">
+                        Version Release Notes & Updates
+                    </a>
+                </p>
+                <div class="collapse" id="collapseFeature">
+                    <div class="tea-features">
+                        <div class="feature-item" style="--delay: 0s">
+                            <div class="feature-icon">📦</div>
+                            <div class="feature-content">
+                                <h5>Version 1.0.0 - Initial Release</h5>
+                                <p>✅ LDAP Authentication Integration<br>
+                                    ✅ User Management System<br>
+                                    ✅ DataTables with Server-side Processing</p>
                             </div>
                         </div>
-                    </div>
-                    
-                    <!-- Collapsible Fix Section -->
-                    <div class="feature-item collapsible-section" style="--delay: 0.2s">
-                        <div class="feature-icon">🔧</div>
-                        <div class="feature-content">
-                            <h5>
-                                <button class="btn btn-link text-white p-0 text-start w-100 d-flex align-items-center justify-content-between collapsed" 
-                                        type="button" 
-                                        data-bs-toggle="collapse" 
-                                        data-bs-target="#fixCollapse" 
-                                        aria-expanded="false" 
-                                        aria-controls="fixCollapse">
-                                    <span>Fix</span>
-                                    <i class="bx bx-chevron-down ms-2 collapse-icon"></i>
-                                </button>
-                            </h5>
-                            <div class="collapse" id="fixCollapse">
-                                <p class="collapse-content">• Advanced User Roles & Permissions<br>
-                                    • Export Functionality Enhancement<br>
-                                    • Real-time Notifications<br>
-                                    • Mobile Responsive Improvements<br>
-                                    • Performance Optimizations</p>
+
+                        <!-- Collapsible Updates Section -->
+                        <div class="feature-item collapsible-section" style="--delay: 0.1s">
+                            <div class="feature-icon">🚀</div>
+                            <div class="feature-content">
+                                <h5>
+                                    <button
+                                        class="btn btn-link text-white p-0 text-start w-100 d-flex align-items-center justify-content-between collapsed"
+                                        type="button" data-bs-toggle="collapse" data-bs-target="#updatesCollapse"
+                                        aria-expanded="false" aria-controls="updatesCollapse">
+                                        <span>Updates</span>
+                                        <i class="bx bx-chevron-down ms-2 collapse-icon"></i>
+                                    </button>
+                                </h5>
+                                <div class="collapse" id="updatesCollapse">
+                                    <p class="collapse-content">• Sneat Admin Template Integration<br>
+                                        • Enhanced Login UI with Tea Theme<br>
+                                        • Responsive Design Implementation<br>
+                                        • Audit Trail Implementation<br>
+                                        • Soft Delete Functionality</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Collapsible Fix Section -->
+                        <div class="feature-item collapsible-section" style="--delay: 0.2s">
+                            <div class="feature-icon">🔧</div>
+                            <div class="feature-content">
+                                <h5>
+                                    <button
+                                        class="btn btn-link text-white p-0 text-start w-100 d-flex align-items-center justify-content-between collapsed"
+                                        type="button" data-bs-toggle="collapse" data-bs-target="#fixCollapse"
+                                        aria-expanded="false" aria-controls="fixCollapse">
+                                        <span>Fix</span>
+                                        <i class="bx bx-chevron-down ms-2 collapse-icon"></i>
+                                    </button>
+                                </h5>
+                                <div class="collapse" id="fixCollapse">
+                                    <p class="collapse-content">• Advanced User Roles & Permissions<br>
+                                        • Export Functionality Enhancement<br>
+                                        • Real-time Notifications<br>
+                                        • Mobile Responsive Improvements<br>
+                                        • Performance Optimizations</p>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -90,7 +97,7 @@
                 <!-- Logo -->
                 <div class="app-brand justify-content-center mb-4 text-center">
                     <a href="#" class="app-brand-link d-inline-block">
-                        <img src="{{ asset('assets/logo.png') }}" alt="Logo" class="img-fluid" style="width: 80px;">
+                        <img src="{{ asset('appicon.png') }}" alt="Logo" class="img-fluid" style="width: 80px;">
                     </a>
                 </div>
 
@@ -495,6 +502,7 @@
                 opacity: 0;
                 max-height: 0;
             }
+
             to {
                 opacity: 1;
                 max-height: 200px;
@@ -540,7 +548,7 @@
                 const fixCollapse = document.getElementById('fixCollapse');
                 const updateButton = document.querySelector('[data-bs-target="#updatesCollapse"]');
                 const fixButton = document.querySelector('[data-bs-target="#fixCollapse"]');
-                
+
                 if (!isMobile) {
                     // On desktop: show both sections by default
                     if (updateCollapse && !updateCollapse.classList.contains('show')) {
@@ -569,7 +577,8 @@
             document.querySelectorAll('[data-bs-toggle="collapse"]').forEach(button => {
                 button.addEventListener('click', function() {
                     setTimeout(() => {
-                        const target = document.querySelector(this.getAttribute('data-bs-target'));
+                        const target = document.querySelector(this.getAttribute(
+                            'data-bs-target'));
                         if (target.classList.contains('show')) {
                             this.classList.remove('collapsed');
                             this.setAttribute('aria-expanded', 'true');

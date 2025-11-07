@@ -17,22 +17,22 @@
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h5 class="mb-0">Daftar User</h5>
                 <div>
-                    @if(auth()->user()->hasPermission('users.logs'))
+                    @if(auth()->user()->hasPermission('management.users.logs'))
                         <a href="{{ route('users.logs') }}" class="btn btn-info me-2">
                             <i class="bx bx-history me-1"></i> Activity Logs
                         </a>
                     @endif
-                    @if(auth()->user()->hasPermission('users.delete'))
+                    @if(auth()->user()->hasPermission('management.users.delete'))
                         <a href="{{ route('users.trash') }}" class="btn btn-secondary me-2">
                             <i class="bx bx-trash me-1"></i> Tempat Sampah
                         </a>
                     @endif
-                    @if(auth()->user()->hasPermission('roles.view'))
-                        <a href="{{ route('roles.index') }}" class="btn btn-warning me-2">
+                    @if(auth()->user()->hasPermission('management.roles.view'))
+                        <a href="{{ route('roles.index') }}" class="btn btn-warning me-2 d-none">
                             <i class="bx bx-shield me-1"></i> Kelola Role
                         </a>
                     @endif
-                    @if(auth()->user()->hasPermission('users.create'))
+                    @if(auth()->user()->hasPermission('management.users.create'))
                         <a href="{{ route('users.create') }}" class="btn btn-primary">
                             <i class="bx bx-plus me-1"></i> Tambah User
                         </a>
@@ -45,14 +45,11 @@
                     <table id="users-table" class="table table-striped">
                         <thead>
                             <tr>
-                                <th>ID</th>
+                                <th>No</th>
                                 <th>Nama</th>
                                 <th>Username</th>
                                 <th>Email</th>
-                                <th>Dibuat</th>
-                                <th>Dibuat Oleh</th>
-                                <th>Diperbarui</th>
-                                <th>Diperbarui Oleh</th>
+                                <th>Role</th>
                                 <th>Aksi</th>
                             </tr>
                         </thead>
@@ -72,8 +69,10 @@
                 serverSide: true,
                 ajax: '{{ route('users.data') }}',
                 columns: [{
-                        data: 'id',
-                        name: 'id'
+                        data: 'DT_RowIndex',
+                        name: 'DT_RowIndex',
+                        orderable: false,
+                        searchable: false
                     },
                     {
                         data: 'name',
@@ -88,26 +87,10 @@
                         name: 'email'
                     },
                     {
-                        data: 'created_at',
-                        name: 'created_at',
-                        render: function(data, type, row) {
-                            return moment(data).format('DD MMM YYYY HH:mm');
-                        }
-                    },
-                    {
-                        data: 'created_by_name',
-                        name: 'created_by_name'
-                    },
-                    {
-                        data: 'updated_at',
-                        name: 'updated_at',
-                        render: function(data, type, row) {
-                            return moment(data).format('DD MMM YYYY HH:mm');
-                        }
-                    },
-                    {
-                        data: 'updated_by_name',
-                        name: 'updated_by_name'
+                        data: 'roles',
+                        name: 'roles',
+                        orderable: false,
+                        searchable: false
                     },
                     {
                         data: 'action',
