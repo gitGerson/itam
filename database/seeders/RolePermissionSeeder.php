@@ -33,8 +33,6 @@ class RolePermissionSeeder extends Seeder
         // Create permissions following menu hierarchy structure
         $this->command->info('Creating permissions...');
         $permissions = [
-            // === DASHBOARD ===
-            ['name' => 'dashboard.view', 'display_name' => 'Dashboard', 'description' => 'Can access dashboard', 'module' => 'dashboard', 'parent' => null, 'sort_order' => 1],
 
             // === MANAGEMENT (Header) ===
             ['name' => 'management.access', 'display_name' => 'Management', 'description' => 'Can access Management section', 'module' => 'management', 'parent' => null, 'sort_order' => 2],

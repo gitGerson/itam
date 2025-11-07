@@ -72,7 +72,6 @@ class UserController extends Controller
                 'password' => Hash::make(str()->random(32)), // Random password since we use LDAP auth
                 'domain' => $ldapUser->getDn(),
                 'guid' => $ldapUser->entryuuid[0] ?? null,
-                'pin' => Hash::make($request->pin),
             ]);
 
             UserLog::log(
@@ -84,13 +83,11 @@ class UserController extends Controller
                     'username' => $request->username,
                     'ldap_dn' => $ldapUser->getDn(),
                     'ldap_guid' => $ldapUser->entryuuid[0] ?? null,
-                    'pin_set' => true
                 ]
             );
 
             return redirect()->route('users.index')
                 ->with('success', "User berhasil ditemukan di LDAP dan disinkronisasi ke database. User: {$user->name} ({$user->username})");
-
         } catch (\Exception $e) {
             Log::error('LDAP User Sync Error: ' . $e->getMessage(), [
                 'username' => $request->username,
@@ -135,20 +132,6 @@ class UserController extends Controller
      */
     public function update(Request $request, User $user)
     {
-        $request->validate([
-            'pin' => 'nullable|string|max:6',
-        ]);
-
-        $updateData = [
-            'pin' => $request->pin,
-        ];
-
-        if ($request->filled('pin')) {
-            $updateData['pin'] = Hash::make($request->pin);
-        }
-        $user->update($updateData);
-
-
         return redirect()->route('users.index')->with('success', 'User berhasil diperbarui');
     }
 
