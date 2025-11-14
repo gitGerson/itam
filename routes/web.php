@@ -6,6 +6,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserRoleController;
 use App\Http\Controllers\MobileController;
+use App\Http\Controllers\ImageController;
 
 Route::get('/', function () {
     // return to login
@@ -85,6 +86,35 @@ Route::middleware(['auth'])->group(function () {
         Route::put('/users/{user}/roles', [UserRoleController::class, 'update'])->name('users.roles.update');
         Route::post('/users/{user}/roles/assign', [UserRoleController::class, 'assignRole'])->name('users.roles.assign');
         Route::delete('/users/{user}/roles/remove', [UserRoleController::class, 'removeRole'])->name('users.roles.remove');
+    });
+
+    // Image management routes with permissions
+    Route::middleware(['permission:images.create'])->group(function () {
+        Route::get('/images/create', [ImageController::class, 'create'])->name('images.create');
+        Route::post('/images', [ImageController::class, 'store'])->name('images.store');
+    });
+
+    Route::middleware(['permission:images.view'])->group(function () {
+        Route::get('/images', [ImageController::class, 'index'])->name('images.index');
+        Route::get('/images/data', [ImageController::class, 'getData'])->name('images.data');
+        Route::get('/images/{image}', [ImageController::class, 'show'])->name('images.show');
+    });
+
+    Route::middleware(['permission:images.edit'])->group(function () {
+        Route::get('/images/{image}/edit', [ImageController::class, 'edit'])->name('images.edit');
+        Route::put('/images/{image}', [ImageController::class, 'update'])->name('images.update');
+        Route::patch('/images/{image}', [ImageController::class, 'update']);
+    });
+
+    Route::middleware(['permission:images.delete'])->group(function () {
+        Route::get('/images/trash', [ImageController::class, 'trash'])->name('images.trash');
+        Route::get('/images/trash/data', [ImageController::class, 'getTrashData'])->name('images.trash-data');
+        Route::delete('/images/{image}', [ImageController::class, 'destroy'])->name('images.destroy');
+        Route::delete('/images/{id}/force-delete', [ImageController::class, 'forceDelete'])->name('images.force-delete');
+    });
+
+    Route::middleware(['permission:images.restore'])->group(function () {
+        Route::post('/images/{id}/restore', [ImageController::class, 'restore'])->name('images.restore');
     });
 
     // Mobile routes

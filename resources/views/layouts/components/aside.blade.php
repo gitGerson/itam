@@ -34,6 +34,16 @@
              </a>
          </li>
 
+         <!-- Images -->
+         @if (auth()->user()->hasPermission('images.view'))
+             <li class="menu-item {{ request()->routeIs('images.*') ? 'active' : '' }}">
+                 <a href="{{ route('images.index') }}" class="menu-link">
+                     <i class="menu-icon tf-icons bx bx-image"></i>
+                     <div class="text-truncate" data-i18n="Images">Image Gallery</div>
+                 </a>
+             </li>
+         @endif
+
          <!-- Management -->
          <li class="menu-header small text-uppercase">
              <span class="menu-header-text">Management</span>
