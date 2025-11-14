@@ -42,7 +42,6 @@
                         <thead>
                             <tr>
                                 <th>No</th>
-                                <th>Thumbnail</th>
                                 <th>Title</th>
                                 <th>File Name</th>
                                 <th>Type</th>
@@ -69,12 +68,6 @@
                 columns: [{
                         data: 'DT_RowIndex',
                         name: 'DT_RowIndex',
-                        orderable: false,
-                        searchable: false
-                    },
-                    {
-                        data: 'thumbnail',
-                        name: 'thumbnail',
                         orderable: false,
                         searchable: false
                     },

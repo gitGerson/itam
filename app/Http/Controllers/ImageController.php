@@ -268,12 +268,6 @@ class ImageController extends Controller
             ->addColumn('formatted_date', function ($image) {
                 return $image->created_at->format('d M Y H:i');
             })
-            ->addColumn('thumbnail', function ($image) {
-                if ($image->url) {
-                    return '<img src="' . $image->url . '" alt="' . $image->title . '" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;">';
-                }
-                return '<span class="badge bg-secondary">No Image</span>';
-            })
             ->addColumn('action', function ($image) {
                 $actions = '<div class="dropdown">
                     <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
@@ -315,7 +309,7 @@ class ImageController extends Controller
 
                 return $actions;
             })
-            ->rawColumns(['action', 'thumbnail'])
+            ->rawColumns(['action'])
             ->make(true);
     }
 
