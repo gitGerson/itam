@@ -128,14 +128,20 @@
   --bs-menu-color: #e6e8eb;
   --bs-menu-hover-bg: #3b4855;
   --bs-menu-hover-color: #fff;
-  --bs-menu-sub-active-bg: #3f4c58;
-  --bs-menu-active-bg: #3f4c58;
+  --bs-menu-sub-active-bg: var(--bs-primary);
+  --bs-menu-sub-active-color: var(--bs-primary-contrast);
+  --bs-menu-active-bg: var(--bs-primary);
+  --bs-menu-active-color: var(--bs-primary-contrast);
   --bs-menu-active-toggle-bg: #34414d;
   --bs-menu-divider-color: #4e5965;
   --bs-card-bg: var(--bs-paper-bg);
   --bs-dropdown-bg: var(--bs-paper-bg);
   --bs-card-border-color: #4e5965;
   --bs-border-color: #4e5965;
+}
+
+:root[data-bs-theme='dark'] .menu-vertical .menu-inner > .menu-item.active > .menu-link .menu-icon {
+  color: var(--bs-primary-contrast);
 }
 
 .theme-toggle {
