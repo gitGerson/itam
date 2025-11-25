@@ -44,6 +44,33 @@
              </li>
          @endif
 
+         <!-- Master Data -->
+         @if (auth()->user()->hasPermission('master.categories.view') || auth()->user()->hasPermission('master.products.view'))
+             <li class="menu-header small text-uppercase">
+                 <span class="menu-header-text">Master Data</span>
+             </li>
+         @endif
+
+         <!-- Categories -->
+         @if (auth()->user()->hasPermission('master.categories.view'))
+             <li class="menu-item {{ request()->routeIs('categories.*') ? 'active' : '' }}">
+                 <a href="{{ route('categories.index') }}" class="menu-link">
+                     <i class="menu-icon tf-icons bx bx-category"></i>
+                     <div class="text-truncate" data-i18n="Categories">Kategori</div>
+                 </a>
+             </li>
+         @endif
+
+         <!-- Products -->
+         @if (auth()->user()->hasPermission('master.products.view'))
+             <li class="menu-item {{ request()->routeIs('products.*') ? 'active' : '' }}">
+                 <a href="{{ route('products.index') }}" class="menu-link">
+                     <i class="menu-icon tf-icons bx bx-package"></i>
+                     <div class="text-truncate" data-i18n="Products">Produk</div>
+                 </a>
+             </li>
+         @endif
+
          <!-- Management -->
          <li class="menu-header small text-uppercase">
              <span class="menu-header-text">Management</span>

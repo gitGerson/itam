@@ -1,13 +1,29 @@
 <!doctype html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 
-<html lang="en" class="layout-menu-fixed layout-compact" data-assets-path="../assets/"
+<html lang="en" class="layout-menu-fixed layout-compact" data-bs-theme="light" data-assets-path="../assets/"
     data-template="vertical-menu-template-free">
 
 <head>
     <meta charset="utf-8" />
     <meta name="viewport"
         content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
+
+    {{-- Dark mode --}}
+    <script>
+        (function() {
+            try {
+                const storedTheme = localStorage.getItem('sneat-theme');
+                const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+                const theme = storedTheme || (prefersDark ? 'dark' : 'light');
+                const root = document.documentElement;
+                root.setAttribute('data-bs-theme', theme);
+                root.classList.toggle('theme-dark', theme === 'dark');
+            } catch (err) {
+                document.documentElement.setAttribute('data-bs-theme', 'light');
+            }
+        })();
+    </script>
 
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -158,7 +174,7 @@
             .sidebar-toggle-desktop {
                 display: none !important;
             }
-            
+
             /* Ensure sidebar toggle doesn't affect mobile layout */
             .sidebar-hidden .layout-page {
                 padding-inline-start: var(--bs-menu-width) !important;
@@ -168,6 +184,7 @@
 
         /* Desktop specific behavior */
         @media (min-width: 1200px) {
+
             /* Override default sidebar behavior only on desktop */
             .sidebar-hidden.layout-menu-fixed .layout-page,
             .sidebar-hidden.layout-menu-fixed-offcanvas .layout-page {
@@ -285,7 +302,7 @@
             .search-dropdown {
                 width: 280px !important;
             }
-            
+
             .search-dropdown .dropdown-header small span {
                 display: none !important;
             }
@@ -369,31 +386,31 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            const htmlEl = document.documentElement;
-            const themeToggleBtn = document.getElementById("theme-toggle");
+            // const htmlEl = document.documentElement;
+            // const themeToggleBtn = document.getElementById("theme-toggle");
 
-            // Load saved theme from localStorage
-            const savedTheme = localStorage.getItem("theme");
-            if (savedTheme && themeToggleBtn) {
-                htmlEl.setAttribute("data-bs-theme", savedTheme);
-                themeToggleBtn.textContent = savedTheme === "dark" ? "☀️ Light Mode" : "🌙 Dark Mode";
-            }
+            // // Load saved theme from localStorage
+            // const savedTheme = localStorage.getItem("theme");
+            // if (savedTheme && themeToggleBtn) {
+            //     htmlEl.setAttribute("data-bs-theme", savedTheme);
+            //     themeToggleBtn.textContent = savedTheme === "dark" ? "☀️ Light Mode" : "🌙 Dark Mode";
+            // }
 
-            if (themeToggleBtn) {
-                themeToggleBtn.addEventListener("click", function() {
-                    const currentTheme = htmlEl.getAttribute("data-bs-theme") || "light";
-                    const newTheme = currentTheme === "light" ? "dark" : "light";
-                    htmlEl.setAttribute("data-bs-theme", newTheme);
-                    localStorage.setItem("theme", newTheme);
+            // if (themeToggleBtn) {
+            //     themeToggleBtn.addEventListener("click", function() {
+            //         const currentTheme = htmlEl.getAttribute("data-bs-theme") || "light";
+            //         const newTheme = currentTheme === "light" ? "dark" : "light";
+            //         htmlEl.setAttribute("data-bs-theme", newTheme);
+            //         localStorage.setItem("theme", newTheme);
 
-                    themeToggleBtn.textContent = newTheme === "dark" ? "☀️ Light Mode" : "🌙 Dark Mode";
-                });
-            }
+            //         themeToggleBtn.textContent = newTheme === "dark" ? "☀️ Light Mode" : "🌙 Dark Mode";
+            //     });
+            // }
 
             // Sidebar Toggle Functionality
             const sidebarToggleBtn = document.getElementById("sidebar-toggle-btn");
             const layoutContainer = document.querySelector(".layout-container");
-            
+
             if (sidebarToggleBtn && layoutContainer) {
                 // Load saved sidebar state from localStorage
                 const savedSidebarState = localStorage.getItem("sidebarHidden");
@@ -417,9 +434,9 @@
 
                 sidebarToggleBtn.addEventListener("click", function(e) {
                     e.preventDefault();
-                    
+
                     const isCurrentlyHidden = layoutContainer.classList.contains("sidebar-hidden");
-                    
+
                     if (isCurrentlyHidden) {
                         // Show sidebar
                         layoutContainer.classList.remove("sidebar-hidden");
@@ -450,18 +467,17 @@
 
             if (menuSearch && searchResults) {
                 // Define menu items for search
-                const menuItems = [
-                    {
+                const menuItems = [{
                         title: 'Dashboard',
                         description: 'Main dashboard overview',
-                        url: '{{ route("home") }}',
+                        url: '{{ route('home') }}',
                         icon: 'bx-home-smile',
                         keywords: ['dashboard', 'home', 'main', 'overview']
                     },
                     {
                         title: 'Users',
                         description: 'User management and administration',
-                        url: '{{ route("users.index") }}',
+                        url: '{{ route('users.index') }}',
                         icon: 'bx-user',
                         keywords: ['users', 'user', 'people', 'accounts', 'management'],
                         permission: 'users.view'
@@ -469,7 +485,7 @@
                     {
                         title: 'Create User',
                         description: 'Add new user to the system',
-                        url: '{{ route("users.create") }}',
+                        url: '{{ route('users.create') }}',
                         icon: 'bx-user-plus',
                         keywords: ['create', 'add', 'new', 'user', 'register'],
                         permission: 'users.create'
@@ -477,7 +493,7 @@
                     {
                         title: 'User Activity Logs',
                         description: 'View all user activity logs',
-                        url: '{{ route("users.logs") }}',
+                        url: '{{ route('users.logs') }}',
                         icon: 'bx-history',
                         keywords: ['logs', 'activity', 'history', 'audit', 'tracking'],
                         permission: 'users.logs'
@@ -485,35 +501,34 @@
                     {
                         title: 'User Trash',
                         description: 'Deleted users (can be restored)',
-                        url: '{{ route("users.trash") }}',
+                        url: '{{ route('users.trash') }}',
                         icon: 'bx-trash',
                         keywords: ['trash', 'deleted', 'removed', 'restore'],
                         permission: 'users.delete'
                     },
-                    @if(auth()->user()->hasPermission('roles.view'))
-                    {
-                        title: 'Roles',
-                        description: 'Role and permission management',
-                        url: '{{ route("roles.index") }}',
-                        icon: 'bx-shield',
-                        keywords: ['roles', 'permissions', 'rbac', 'access', 'security'],
-                        permission: 'roles.view'
-                    },
+                    @if (auth()->user()->hasPermission('roles.view'))
+                        {
+                            title: 'Roles',
+                            description: 'Role and permission management',
+                            url: '{{ route('roles.index') }}',
+                            icon: 'bx-shield',
+                            keywords: ['roles', 'permissions', 'rbac', 'access', 'security'],
+                            permission: 'roles.view'
+                        },
                     @endif
-                    @if(auth()->user()->hasPermission('roles.create'))
-                    {
-                        title: 'Create Role',
-                        description: 'Create new role with permissions',
-                        url: '{{ route("roles.create") }}',
-                        icon: 'bx-shield-plus',
-                        keywords: ['create', 'add', 'new', 'role', 'permission'],
-                        permission: 'roles.create'
-                    },
-                    @endif
-                    {
+                    @if (auth()->user()->hasPermission('roles.create'))
+                        {
+                            title: 'Create Role',
+                            description: 'Create new role with permissions',
+                            url: '{{ route('roles.create') }}',
+                            icon: 'bx-shield-plus',
+                            keywords: ['create', 'add', 'new', 'role', 'permission'],
+                            permission: 'roles.create'
+                        },
+                    @endif {
                         title: 'Mobile',
                         description: 'Mobile application features',
-                        url: '{{ route("mobile.index") }}',
+                        url: '{{ route('mobile.index') }}',
                         icon: 'bx-mobile',
                         keywords: ['mobile', 'app', 'phone', 'device']
                     }
@@ -533,7 +548,7 @@
                 function performSearch(query) {
                     const results = menuItems.filter(item => {
                         const searchTerms = query.toLowerCase().split(' ');
-                        return searchTerms.every(term => 
+                        return searchTerms.every(term =>
                             item.keywords.some(keyword => keyword.includes(term)) ||
                             item.title.toLowerCase().includes(term) ||
                             item.description.toLowerCase().includes(term)
@@ -545,14 +560,14 @@
 
                 function renderResults(results) {
                     searchResultsContent.innerHTML = '';
-                    
+
                     if (results.length === 0) {
                         noResults.classList.remove('d-none');
                         return;
                     }
 
                     noResults.classList.add('d-none');
-                    
+
                     results.forEach((item, index) => {
                         const resultItem = document.createElement('a');
                         resultItem.href = item.url;
@@ -566,7 +581,7 @@
                                 <div class="result-description">${item.description}</div>
                             </div>
                         `;
-                        
+
                         resultItem.addEventListener('click', () => {
                             hideSearchResults();
                             menuSearch.value = '';
@@ -579,7 +594,7 @@
                 // Search input event listeners
                 menuSearch.addEventListener('input', (e) => {
                     const query = e.target.value.trim();
-                    
+
                     if (query.length >= 2) {
                         performSearch(query);
                         showSearchResults();
@@ -598,7 +613,7 @@
                 // Keyboard navigation
                 menuSearch.addEventListener('keydown', (e) => {
                     const items = searchResultsContent.querySelectorAll('.search-result-item');
-                    
+
                     if (e.key === 'ArrowDown') {
                         e.preventDefault();
                         currentFocusIndex = Math.min(currentFocusIndex + 1, items.length - 1);
@@ -641,7 +656,6 @@
             }
         });
     </script>
-
 
     @stack('scripts')
 </body>

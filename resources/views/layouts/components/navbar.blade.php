@@ -8,7 +8,8 @@
 
      <!-- Desktop Sidebar Toggle -->
      <div class="sidebar-toggle-desktop navbar-nav align-items-xl-center me-4 me-xl-0 d-none d-xl-block">
-         <a class="nav-item nav-link px-0 me-xl-6" href="javascript:void(0)" id="sidebar-toggle-btn" title="Toggle Sidebar">
+         <a class="nav-item nav-link px-0 me-xl-6" href="javascript:void(0)" id="sidebar-toggle-btn"
+             title="Toggle Sidebar">
              <i class="icon-base bx bx-menu icon-md"></i>
          </a>
      </div>
@@ -18,11 +19,13 @@
          <div class="navbar-nav align-items-center me-auto">
              <div class="nav-item d-flex align-items-center position-relative">
                  <span class="w-px-22 h-px-22"><i class="icon-base bx bx-search icon-md"></i></span>
-                 <input type="text" id="menu-search" class="form-control border-0 shadow-none ps-1 ps-sm-2 d-md-block d-none"
+                 <input type="text" id="menu-search"
+                     class="form-control border-0 shadow-none ps-1 ps-sm-2 d-md-block d-none"
                      placeholder="Search menu... (Ctrl+K)" aria-label="Search menu..." autocomplete="off" />
-                 
+
                  <!-- Search Results Dropdown -->
-                 <div id="search-results" class="dropdown-menu search-dropdown d-none" style="width: 320px; max-height: 400px; overflow-y: auto;">
+                 <div id="search-results" class="dropdown-menu search-dropdown d-none"
+                     style="width: 320px; max-height: 400px; overflow-y: auto;">
                      <div class="dropdown-header d-flex justify-content-between align-items-center">
                          <small class="text-muted fw-semibold">Search Results</small>
                          <small class="text-muted">
@@ -53,9 +56,11 @@
          <!-- /Search -->
 
          <ul class="navbar-nav flex-row align-items-center ms-md-auto">
-             <button id="theme-toggle" class="btn btn-sm btn-outline-secondary m-3 d-none">
-                 🌙 Dark Mode
-             </button>
+             <li class="nav-item me-3">
+                 <button type="button" class="btn theme-toggle" id="theme-toggle" aria-label="Toggle dark mode">
+                     <i class="theme-toggle-icon bx bx-moon"></i>
+                 </button>
+             </li>
 
              <!-- User -->
              <li class="nav-item navbar-dropdown dropdown-user dropdown">
@@ -79,12 +84,11 @@
                                  <div class="flex-grow-1">
                                      <h6 class="mb-0">{{ Auth::user()->name }}</h6>
                                      <small class="text-body-secondary">
-                                        @forelse (Auth::user()->roles as $role)
-                                            <span class="badge bg-label-primary">{{ $role->display_name }}</span>
-                                            <br>
-                                        @empty
-                                            
-                                        @endforelse
+                                         @forelse (Auth::user()->roles as $role)
+                                             <span class="badge bg-label-primary">{{ $role->display_name }}</span>
+                                             <br>
+                                         @empty
+                                         @endforelse
                                      </small>
                                  </div>
                              </div>
