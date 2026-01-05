@@ -21,7 +21,7 @@
                  <span class="w-px-22 h-px-22"><i class="icon-base bx bx-search icon-md"></i></span>
                  <input type="text" id="menu-search"
                      class="form-control border-0 shadow-none ps-1 ps-sm-2 d-md-block d-none"
-                     placeholder="Search menu... (Ctrl+K)" aria-label="Search menu..." autocomplete="off" />
+                     placeholder="Search menu..." aria-label="Search menu..." autocomplete="off" autofocus />
 
                  <!-- Search Results Dropdown -->
                  <div id="search-results" class="dropdown-menu search-dropdown d-none"

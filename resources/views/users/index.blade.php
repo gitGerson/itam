@@ -12,6 +12,12 @@
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         @endif
+        @if(session('error'))
+            <div class="alert alert-danger alert-dismissible" role="alert">
+                {{ session('error') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
 
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center">
@@ -33,9 +39,9 @@
                         </a>
                     @endif
                     @if(auth()->user()->hasPermission('management.users.create'))
-                        <a href="{{ route('users.create') }}" class="btn btn-primary">
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addUserModal">
                             <i class="bx bx-plus me-1"></i> Tambah User
-                        </a>
+                        </button>
                     @endif
                 </div>
             </div>
@@ -58,6 +64,40 @@
             </div>
         </div>
     </div>
+
+    @if(auth()->user()->hasPermission('management.users.create'))
+        <div class="modal fade" id="addUserModal" tabindex="-1" aria-labelledby="addUserModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <form action="{{ route('users.store') }}" method="POST">
+                        @csrf
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="addUserModalLabel">Tambah User (LDAP)</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label for="username" class="form-label">Username LDAP</label>
+                                <input type="text" class="form-control @error('username') is-invalid @enderror"
+                                       id="username" name="username" value="{{ old('username') }}" required
+                                       placeholder="Masukkan username untuk query LDAP">
+                                @error('username')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                                <div class="form-text">Username akan digunakan untuk mengambil data dari LDAP</div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bx bx-save me-1"></i> Simpan
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    @endif
 @endsection
 
 
@@ -126,4 +166,15 @@
             });
         });
     </script>
+    @if(session('error') || $errors->any())
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                var modalEl = document.getElementById('addUserModal');
+                if (modalEl) {
+                    var modal = new bootstrap.Modal(modalEl);
+                    modal.show();
+                }
+            });
+        </script>
+    @endif
 @endpush

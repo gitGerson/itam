@@ -88,7 +88,7 @@
 
          <!-- Roles (RBAC) -->
          @if (auth()->user()->hasPermission('management.roles.view'))
-             <li class="menu-item {{ request()->routeIs('roles.*') ? 'active' : '' }} d-none">
+             <li class="menu-item {{ request()->routeIs('roles.*') ? 'active' : '' }}">
                  <a href="{{ route('roles.index') }}" class="menu-link">
                      <i class="menu-icon tf-icons bx bx-shield"></i>
                      <div class="text-truncate" data-i18n="Roles">Role Templates</div>
