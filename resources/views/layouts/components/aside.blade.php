@@ -45,11 +45,11 @@
          @endif
 
          <!-- Master Data -->
-         @if (auth()->user()->hasPermission('master.categories.view') || auth()->user()->hasPermission('master.products.view'))
-             <li class="menu-header small text-uppercase">
-                 <span class="menu-header-text">Master Data</span>
-             </li>
-         @endif
+        @if (auth()->user()->hasPermission('master.categories.view') || auth()->user()->hasPermission('master.products.view') || auth()->user()->hasPermission('master.employees.view'))
+            <li class="menu-header small text-uppercase">
+                <span class="menu-header-text">Master Data</span>
+            </li>
+        @endif
 
          <!-- Categories -->
          @if (auth()->user()->hasPermission('master.categories.view'))
@@ -62,14 +62,24 @@
          @endif
 
          <!-- Products -->
-         @if (auth()->user()->hasPermission('master.products.view'))
-             <li class="menu-item {{ request()->routeIs('products.*') ? 'active' : '' }}">
-                 <a href="{{ route('products.index') }}" class="menu-link">
-                     <i class="menu-icon tf-icons bx bx-package"></i>
-                     <div class="text-truncate" data-i18n="Products">Produk</div>
-                 </a>
-             </li>
-         @endif
+        @if (auth()->user()->hasPermission('master.products.view'))
+            <li class="menu-item {{ request()->routeIs('products.*') ? 'active' : '' }}">
+                <a href="{{ route('products.index') }}" class="menu-link">
+                    <i class="menu-icon tf-icons bx bx-package"></i>
+                    <div class="text-truncate" data-i18n="Products">Produk</div>
+                </a>
+            </li>
+        @endif
+
+        <!-- Employees -->
+        @if (auth()->user()->hasPermission('master.employees.view'))
+            <li class="menu-item {{ request()->routeIs('employees.*') ? 'active' : '' }}">
+                <a href="{{ route('employees.index') }}" class="menu-link">
+                    <i class="menu-icon tf-icons bx bx-id-card"></i>
+                    <div class="text-truncate" data-i18n="Employees">Master Employee</div>
+                </a>
+            </li>
+        @endif
 
          <!-- Management -->
          <li class="menu-header small text-uppercase">

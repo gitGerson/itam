@@ -506,6 +506,14 @@
                         keywords: ['trash', 'deleted', 'removed', 'restore'],
                         permission: 'users.delete'
                     },
+                    {
+                        title: 'Master Employee',
+                        description: 'Employee master data and sync',
+                        url: '{{ route('employees.index') }}',
+                        icon: 'bx-id-card',
+                        keywords: ['employee', 'master', 'jpayroll', 'sync', 'people'],
+                        permission: 'master.employees.view'
+                    },
                     @if (auth()->user()->hasPermission('roles.view'))
                         {
                             title: 'Roles',

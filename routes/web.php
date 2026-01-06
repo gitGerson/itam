@@ -9,6 +9,7 @@ use App\Http\Controllers\MobileController;
 use App\Http\Controllers\ImageController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\EmployeeController;
 
 Route::get('/', function () {
     // return to login
@@ -184,6 +185,16 @@ Route::middleware(['auth'])->group(function () {
 
     Route::middleware(['permission:master.products.restore'])->group(function () {
         Route::post('/products/{id}/restore', [ProductController::class, 'restore'])->name('products.restore');
+    });
+
+    // Employee management routes with permissions
+    Route::middleware(['permission:master.employees.view'])->group(function () {
+        Route::get('/employees', [EmployeeController::class, 'index'])->name('employees.index');
+        Route::get('/employees/data', [EmployeeController::class, 'getData'])->name('employees.data');
+    });
+
+    Route::middleware(['permission:master.employees.sync'])->group(function () {
+        Route::post('/employees/sync-jpayroll', [EmployeeController::class, 'syncJPayroll'])->name('employees.sync-jpayroll');
     });
 
     // Mobile routes
