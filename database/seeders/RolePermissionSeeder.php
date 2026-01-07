@@ -81,9 +81,13 @@ class RolePermissionSeeder extends Seeder
             ['name' => 'master.products.restore', 'display_name' => 'Products - Restore', 'description' => 'Can restore deleted products', 'module' => 'master', 'parent' => 'master.access', 'sort_order' => 11],
             ['name' => 'master.products.force_delete', 'display_name' => 'Products - Force Delete', 'description' => 'Can permanently delete products', 'module' => 'master', 'parent' => 'master.access', 'sort_order' => 12],
 
+            // Master > Products ESB
+            ['name' => 'master.products_esb.view', 'display_name' => 'Products ESB - View', 'description' => 'Can view ESB products', 'module' => 'master', 'parent' => 'master.access', 'sort_order' => 13],
+            ['name' => 'master.products_esb.sync', 'display_name' => 'Products ESB - Sync', 'description' => 'Can sync products from ESB', 'module' => 'master', 'parent' => 'master.access', 'sort_order' => 14],
+
             // Master > Employees
-            ['name' => 'master.employees.view', 'display_name' => 'Employees - View', 'description' => 'Can view employees', 'module' => 'master', 'parent' => 'master.access', 'sort_order' => 13],
-            ['name' => 'master.employees.sync', 'display_name' => 'Employees - Sync', 'description' => 'Can sync employees from JPayroll', 'module' => 'master', 'parent' => 'master.access', 'sort_order' => 14],
+            ['name' => 'master.employees.view', 'display_name' => 'Employees - View', 'description' => 'Can view employees', 'module' => 'master', 'parent' => 'master.access', 'sort_order' => 15],
+            ['name' => 'master.employees.sync', 'display_name' => 'Employees - Sync', 'description' => 'Can sync employees from JPayroll', 'module' => 'master', 'parent' => 'master.access', 'sort_order' => 16],
 
         ];
 
@@ -133,6 +137,8 @@ class RolePermissionSeeder extends Seeder
                     'master.products.edit',
                     'master.products.delete',
                     'master.products.restore',
+                    'master.products_esb.view',
+                    'master.products_esb.sync',
                     'master.employees.view',
                     'master.employees.sync',
                 ]
@@ -162,6 +168,7 @@ class RolePermissionSeeder extends Seeder
                     'master.access',
                     'master.categories.view',
                     'master.products.view',
+                    'master.products_esb.view',
                     'master.employees.view',
                 ]
             ]

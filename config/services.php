@@ -35,4 +35,9 @@ return [
         ],
     ],
 
+    'product_esb' => [
+        'url' => env('PRODUCT_ESB_URL'),
+        'token' => env('PRODUCT_ESB_TOKEN'),
+    ],
+
 ];

@@ -45,7 +45,7 @@
          @endif
 
          <!-- Master Data -->
-        @if (auth()->user()->hasPermission('master.categories.view') || auth()->user()->hasPermission('master.products.view') || auth()->user()->hasPermission('master.employees.view'))
+        @if (auth()->user()->hasPermission('master.categories.view') || auth()->user()->hasPermission('master.products.view') || auth()->user()->hasPermission('master.products_esb.view') || auth()->user()->hasPermission('master.employees.view'))
             <li class="menu-header small text-uppercase">
                 <span class="menu-header-text">Master Data</span>
             </li>
@@ -67,6 +67,16 @@
                 <a href="{{ route('products.index') }}" class="menu-link">
                     <i class="menu-icon tf-icons bx bx-package"></i>
                     <div class="text-truncate" data-i18n="Products">Produk</div>
+                </a>
+            </li>
+        @endif
+
+        <!-- Products ESB -->
+        @if (auth()->user()->hasPermission('master.products_esb.view'))
+            <li class="menu-item {{ request()->routeIs('products-esb.*') ? 'active' : '' }}">
+                <a href="{{ route('products-esb.index') }}" class="menu-link">
+                    <i class="menu-icon tf-icons bx bx-cloud-download"></i>
+                    <div class="text-truncate" data-i18n="ProductsEsb">Sync Product ESB</div>
                 </a>
             </li>
         @endif

@@ -9,6 +9,7 @@ use App\Http\Controllers\MobileController;
 use App\Http\Controllers\ImageController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ProductEsbController;
 use App\Http\Controllers\EmployeeController;
 
 Route::get('/', function () {
@@ -185,6 +186,17 @@ Route::middleware(['auth'])->group(function () {
 
     Route::middleware(['permission:master.products.restore'])->group(function () {
         Route::post('/products/{id}/restore', [ProductController::class, 'restore'])->name('products.restore');
+    });
+
+    // Product ESB sync routes with permissions
+    Route::middleware(['permission:master.products_esb.view'])->group(function () {
+        Route::get('/products-esb', [ProductEsbController::class, 'index'])->name('products-esb.index');
+        Route::get('/products-esb/data', [ProductEsbController::class, 'getData'])->name('products-esb.data');
+    });
+
+    Route::middleware(['permission:master.products_esb.sync'])->group(function () {
+        Route::post('/products-esb/sync-page', [ProductEsbController::class, 'syncSinglePage'])->name('products-esb.sync-page');
+        Route::post('/products-esb/sync-all', [ProductEsbController::class, 'syncAll'])->name('products-esb.sync-all');
     });
 
     // Employee management routes with permissions

@@ -514,6 +514,16 @@
                         keywords: ['employee', 'master', 'jpayroll', 'sync', 'people'],
                         permission: 'master.employees.view'
                     },
+                    @if (auth()->user()->hasPermission('master.products_esb.view'))
+                        {
+                            title: 'Sync Product ESB',
+                            description: 'Sync products from ESB',
+                            url: '{{ route('products-esb.index') }}',
+                            icon: 'bx-cloud-download',
+                            keywords: ['product', 'esb', 'sync', 'master'],
+                            permission: 'master.products_esb.view'
+                        },
+                    @endif
                     @if (auth()->user()->hasPermission('roles.view'))
                         {
                             title: 'Roles',
