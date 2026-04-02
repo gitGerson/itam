@@ -24,7 +24,7 @@
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h5 class="mb-0">Manajemen Role</h5>
                 <div>
-                    @if(auth()->user()->hasPermission('roles.create'))
+                    @if(auth()->user()->hasPermission('management.roles.create'))
                         <a href="{{ route('roles.create') }}" class="btn btn-primary">
                             <i class="bx bx-plus me-1"></i> Tambah Role
                         </a>
