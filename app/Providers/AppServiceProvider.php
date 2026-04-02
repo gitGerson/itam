@@ -2,8 +2,10 @@
 
 namespace App\Providers;
 
+use App\Services\MenuService;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\View;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -26,5 +28,12 @@ class AppServiceProvider extends ServiceProvider
                 'laravel-exceptions-renderer'
             );
         }
+
+        View::composer('layouts.sneat', function ($view): void {
+            $view->with(
+                'searchMenuItems',
+                app(MenuService::class)->itemsForContext('search', auth()->user())
+            );
+        });
     }
 }
