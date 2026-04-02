@@ -7,6 +7,7 @@ export default defineConfig({
             input: [
                 'resources/sass/app.scss',
                 'resources/js/app.js',
+                'resources/js/modules/date-range-picker.js',
             ],
             refresh: true,
         }),
