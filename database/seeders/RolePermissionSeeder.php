@@ -5,9 +5,11 @@ namespace Database\Seeders;
 use App\Models\Permission;
 use App\Models\Role;
 use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
+use InvalidArgumentException;
 
 class RolePermissionSeeder extends Seeder
 {
@@ -16,207 +18,193 @@ class RolePermissionSeeder extends Seeder
      */
     public function run(): void
     {
-        // Clear existing data
-        $this->command->info('Clearing existing roles, permissions, and user assignments...');
+        $permissionDefinitions = $this->permissionDefinitions();
+        $roleTemplates = $this->roleTemplates($permissionDefinitions);
 
-        // Disable foreign key checks temporarily
-        \DB::statement('SET FOREIGN_KEY_CHECKS=0');
+        $this->command->info('Syncing permissions, role templates, and stagingpurpose superadmin user...');
 
-        \DB::table('user_role')->delete();
-        \DB::table('role_permission')->delete();
-        Role::truncate();
-        Permission::truncate();
+        DB::transaction(function () use ($permissionDefinitions, $roleTemplates): void {
+            $this->seedPermissions($permissionDefinitions);
+            $this->pruneRemovedPermissions($permissionDefinitions);
+            $this->seedRoleTemplates($roleTemplates);
+            $this->seedSuperAdminUser();
+        });
 
-        // Re-enable foreign key checks
-        \DB::statement('SET FOREIGN_KEY_CHECKS=1');
-
-        // Create permissions following menu hierarchy structure
-        $this->command->info('Creating permissions...');
-        $permissions = [
-
-            // === MANAGEMENT (Header) ===
-            ['name' => 'management.access', 'display_name' => 'Management', 'description' => 'Can access Management section', 'module' => 'management', 'parent' => null, 'sort_order' => 2],
-
-            // Management > Users
-            ['name' => 'management.users.view', 'display_name' => 'Users - View', 'description' => 'Can view users', 'module' => 'management', 'parent' => 'management.access', 'sort_order' => 1],
-            ['name' => 'management.users.create', 'display_name' => 'Users - Create', 'description' => 'Can create users', 'module' => 'management', 'parent' => 'management.access', 'sort_order' => 2],
-            ['name' => 'management.users.edit', 'display_name' => 'Users - Edit', 'description' => 'Can edit users', 'module' => 'management', 'parent' => 'management.access', 'sort_order' => 3],
-            ['name' => 'management.users.delete', 'display_name' => 'Users - Delete', 'description' => 'Can delete users', 'module' => 'management', 'parent' => 'management.access', 'sort_order' => 4],
-            ['name' => 'management.users.restore', 'display_name' => 'Users - Restore', 'description' => 'Can restore deleted users', 'module' => 'management', 'parent' => 'management.access', 'sort_order' => 5],
-            ['name' => 'management.users.force_delete', 'display_name' => 'Users - Force Delete', 'description' => 'Can permanently delete users', 'module' => 'management', 'parent' => 'management.access', 'sort_order' => 6],
-            ['name' => 'management.users.logs', 'display_name' => 'Users - View Logs', 'description' => 'Can view user activity logs', 'module' => 'management', 'parent' => 'management.access', 'sort_order' => 7],
-            ['name' => 'management.users.permissions', 'display_name' => 'Users - Manage Permissions', 'description' => 'Can manage user permissions directly', 'module' => 'management', 'parent' => 'management.access', 'sort_order' => 8],
-
-            // Management > Roles (Templates)
-            ['name' => 'management.roles.view', 'display_name' => 'Role Templates - View', 'description' => 'Can view role templates', 'module' => 'management', 'parent' => 'management.access', 'sort_order' => 9],
-            ['name' => 'management.roles.create', 'display_name' => 'Role Templates - Create', 'description' => 'Can create role templates', 'module' => 'management', 'parent' => 'management.access', 'sort_order' => 10],
-            ['name' => 'management.roles.edit', 'display_name' => 'Role Templates - Edit', 'description' => 'Can edit role templates', 'module' => 'management', 'parent' => 'management.access', 'sort_order' => 11],
-            ['name' => 'management.roles.delete', 'display_name' => 'Role Templates - Delete', 'description' => 'Can delete role templates', 'module' => 'management', 'parent' => 'management.access', 'sort_order' => 12],
-
-            // === IMAGES ===
-            ['name' => 'images.access', 'display_name' => 'Images', 'description' => 'Can access Images section', 'module' => 'images', 'parent' => null, 'sort_order' => 3],
-            ['name' => 'images.view', 'display_name' => 'Images - View', 'description' => 'Can view images', 'module' => 'images', 'parent' => 'images.access', 'sort_order' => 1],
-            ['name' => 'images.create', 'display_name' => 'Images - Upload', 'description' => 'Can upload images', 'module' => 'images', 'parent' => 'images.access', 'sort_order' => 2],
-            ['name' => 'images.edit', 'display_name' => 'Images - Edit', 'description' => 'Can edit images', 'module' => 'images', 'parent' => 'images.access', 'sort_order' => 3],
-            ['name' => 'images.delete', 'display_name' => 'Images - Delete', 'description' => 'Can delete images', 'module' => 'images', 'parent' => 'images.access', 'sort_order' => 4],
-            ['name' => 'images.restore', 'display_name' => 'Images - Restore', 'description' => 'Can restore deleted images', 'module' => 'images', 'parent' => 'images.access', 'sort_order' => 5],
-            ['name' => 'images.force_delete', 'display_name' => 'Images - Force Delete', 'description' => 'Can permanently delete images', 'module' => 'images', 'parent' => 'images.access', 'sort_order' => 6],
-
-            // === MASTER DATA (Header) ===
-            ['name' => 'master.access', 'display_name' => 'Master Data', 'description' => 'Can access Master Data section', 'module' => 'master', 'parent' => null, 'sort_order' => 4],
-
-            // Master > Categories
-            ['name' => 'master.categories.view', 'display_name' => 'Categories - View', 'description' => 'Can view categories', 'module' => 'master', 'parent' => 'master.access', 'sort_order' => 1],
-            ['name' => 'master.categories.create', 'display_name' => 'Categories - Create', 'description' => 'Can create categories', 'module' => 'master', 'parent' => 'master.access', 'sort_order' => 2],
-            ['name' => 'master.categories.edit', 'display_name' => 'Categories - Edit', 'description' => 'Can edit categories', 'module' => 'master', 'parent' => 'master.access', 'sort_order' => 3],
-            ['name' => 'master.categories.delete', 'display_name' => 'Categories - Delete', 'description' => 'Can delete categories', 'module' => 'master', 'parent' => 'master.access', 'sort_order' => 4],
-            ['name' => 'master.categories.restore', 'display_name' => 'Categories - Restore', 'description' => 'Can restore deleted categories', 'module' => 'master', 'parent' => 'master.access', 'sort_order' => 5],
-            ['name' => 'master.categories.force_delete', 'display_name' => 'Categories - Force Delete', 'description' => 'Can permanently delete categories', 'module' => 'master', 'parent' => 'master.access', 'sort_order' => 6],
-
-            // Master > Products
-            ['name' => 'master.products.view', 'display_name' => 'Products - View', 'description' => 'Can view products', 'module' => 'master', 'parent' => 'master.access', 'sort_order' => 7],
-            ['name' => 'master.products.create', 'display_name' => 'Products - Create', 'description' => 'Can create products', 'module' => 'master', 'parent' => 'master.access', 'sort_order' => 8],
-            ['name' => 'master.products.edit', 'display_name' => 'Products - Edit', 'description' => 'Can edit products', 'module' => 'master', 'parent' => 'master.access', 'sort_order' => 9],
-            ['name' => 'master.products.delete', 'display_name' => 'Products - Delete', 'description' => 'Can delete products', 'module' => 'master', 'parent' => 'master.access', 'sort_order' => 10],
-            ['name' => 'master.products.restore', 'display_name' => 'Products - Restore', 'description' => 'Can restore deleted products', 'module' => 'master', 'parent' => 'master.access', 'sort_order' => 11],
-            ['name' => 'master.products.force_delete', 'display_name' => 'Products - Force Delete', 'description' => 'Can permanently delete products', 'module' => 'master', 'parent' => 'master.access', 'sort_order' => 12],
-
-            // Master > Products ESB
-            ['name' => 'master.products_esb.view', 'display_name' => 'Products ESB - View', 'description' => 'Can view ESB products', 'module' => 'master', 'parent' => 'master.access', 'sort_order' => 13],
-            ['name' => 'master.products_esb.sync', 'display_name' => 'Products ESB - Sync', 'description' => 'Can sync products from ESB', 'module' => 'master', 'parent' => 'master.access', 'sort_order' => 14],
-
-            // Master > Employees
-            ['name' => 'master.employees.view', 'display_name' => 'Employees - View', 'description' => 'Can view employees', 'module' => 'master', 'parent' => 'master.access', 'sort_order' => 15],
-            ['name' => 'master.employees.sync', 'display_name' => 'Employees - Sync', 'description' => 'Can sync employees from JPayroll', 'module' => 'master', 'parent' => 'master.access', 'sort_order' => 16],
-
-        ];
-
-        foreach ($permissions as $permission) {
-            Permission::create($permission);
-        }
-
-        // Create role templates for user creation
-        $this->command->info('Creating role templates...');
-        $roles = [
-            [
-                'name' => 'super_admin_template',
-                'display_name' => 'Super Administrator Template',
-                'description' => 'Template with full system access - all permissions',
-                'permissions' => Permission::all()->pluck('name')->toArray()
-            ],
-            [
-                'name' => 'admin_template',
-                'display_name' => 'Administrator Template',
-                'description' => 'Template with management access and most features',
-                'permissions' => [
-                    'dashboard.view',
-                    'management.access',
-                    'management.users.view',
-                    'management.users.create',
-                    'management.users.edit',
-                    'management.users.delete',
-                    'management.users.restore',
-                    'management.users.logs',
-                    'management.roles.view',
-                    'management.roles.create',
-                    'management.roles.edit',
-                    'images.access',
-                    'images.view',
-                    'images.create',
-                    'images.edit',
-                    'images.delete',
-                    'images.restore',
-                    'master.access',
-                    'master.categories.view',
-                    'master.categories.create',
-                    'master.categories.edit',
-                    'master.categories.delete',
-                    'master.categories.restore',
-                    'master.products.view',
-                    'master.products.create',
-                    'master.products.edit',
-                    'master.products.delete',
-                    'master.products.restore',
-                    'master.products_esb.view',
-                    'master.products_esb.sync',
-                    'master.employees.view',
-                    'master.employees.sync',
-                ]
-            ],
-            [
-                'name' => 'user_manager_template',
-                'display_name' => 'User Manager Template',
-                'description' => 'Template for user management focus',
-                'permissions' => [
-                    'dashboard.view',
-                    'management.access',
-                    'management.users.view',
-                    'management.users.create',
-                    'management.users.edit',
-                    'management.users.logs',
-                    'management.roles.view',
-                ]
-            ],
-            [
-                'name' => 'viewer_template',
-                'display_name' => 'Viewer Template',
-                'description' => 'Template for read-only access',
-                'permissions' => [
-                    'dashboard.view',
-                    'management.access',
-                    'management.users.view',
-                    'master.access',
-                    'master.categories.view',
-                    'master.products.view',
-                    'master.products_esb.view',
-                    'master.employees.view',
-                ]
-            ]
-        ];
-
-        foreach ($roles as $roleData) {
-            $role = Role::create([
-                'name' => $roleData['name'],
-                'display_name' => $roleData['display_name'],
-                'description' => $roleData['description']
-            ]);
-
-            // Assign permissions to role
-            foreach ($roleData['permissions'] as $permissionName) {
-                $permission = Permission::where('name', $permissionName)->first();
-                if ($permission && !$role->hasPermission($permission)) {
-                    $role->assignPermission($permission);
-                }
-            }
-        }
-
-        // Create fresh stagingpurpose superadmin user
-        $this->command->info('Creating fresh stagingpurpose superadmin user...');
-
-        // Delete existing stagingpurpose user if exists
-        User::where('username', 'stagingpurpose')->forceDelete();
-
-        // Create new stagingpurpose user
-        $superAdminUser = User::create([
-            'name' => 'STAGING PURPOSE',
-            'username' => 'stagingpurpose',
-            'email' => 'staging@tongtji.com',
-            'password' => Hash::make('P@ssw0rd1938'),
-            'email_verified_at' => now(),
-            'created_by' => null, // No creator for initial superadmin
-            'updated_by' => null,
-        ]);
-
-        // Assign super_admin_template role to stagingpurpose user
-        $superAdminRole = Role::where('name', 'super_admin_template')->first();
-        if ($superAdminRole) {
-            $superAdminUser->assignRole($superAdminRole);
-        }
-
-        $this->command->info('Fresh roles, permissions, and stagingpurpose superadmin created successfully!');
+        $this->command->info('Roles, permissions, and stagingpurpose superadmin synced successfully.');
         $this->command->info('Superadmin credentials:');
         $this->command->info('Username: stagingpurpose');
         $this->command->info('Password: P@ssw0rd1938');
         $this->command->info('PIN: 123456');
+    }
+
+    /**
+     * @return array<int, array<string, mixed>>
+     */
+    protected function permissionDefinitions(): array
+    {
+        $modules = config('permission.permissions', []);
+        $permissions = [];
+
+        foreach ($modules as $module => $definition) {
+            $items = $definition['items'] ?? [];
+
+            foreach ($items as $item) {
+                $permissions[] = array_merge(
+                    [
+                        'module' => $module,
+                        'parent' => null,
+                    ],
+                    $item
+                );
+            }
+        }
+
+        $names = array_column($permissions, 'name');
+        $duplicates = array_keys(array_filter(array_count_values($names), static fn (int $count): bool => $count > 1));
+
+        if ($duplicates !== []) {
+            throw new InvalidArgumentException('Duplicate permission names found in config/permission.php: '.implode(', ', $duplicates));
+        }
+
+        return $permissions;
+    }
+
+    /**
+     * @param  array<int, array<string, mixed>>  $permissions
+     * @return array<int, array<string, mixed>>
+     */
+    protected function roleTemplates(array $permissions): array
+    {
+        $availablePermissions = array_column($permissions, 'name');
+        $templates = config('permission.role_templates', []);
+        $templateNames = array_column($templates, 'name');
+        $duplicateTemplates = array_keys(array_filter(array_count_values($templateNames), static fn (int $count): bool => $count > 1));
+
+        if ($duplicateTemplates !== []) {
+            throw new InvalidArgumentException('Duplicate role template names found in config/permission.php: '.implode(', ', $duplicateTemplates));
+        }
+
+        foreach ($templates as &$template) {
+            $templatePermissions = $template['permissions'] ?? [];
+
+            if ($templatePermissions === ['*']) {
+                $template['permissions'] = $availablePermissions;
+                continue;
+            }
+
+            $unknownPermissions = array_values(array_diff($templatePermissions, $availablePermissions));
+
+            if ($unknownPermissions !== []) {
+                throw new InvalidArgumentException(
+                    sprintf(
+                        'Role template [%s] references undefined permissions: %s',
+                        $template['name'] ?? 'unknown',
+                        implode(', ', $unknownPermissions)
+                    )
+                );
+            }
+        }
+        unset($template);
+
+        return $templates;
+    }
+
+    /**
+     * @param  array<int, array<string, mixed>>  $permissions
+     */
+    protected function seedPermissions(array $permissions): void
+    {
+        $this->command->info('Syncing permissions...');
+
+        foreach ($permissions as $permission) {
+            Permission::updateOrCreate(
+                ['name' => $permission['name']],
+                Arr::except($permission, ['name'])
+            );
+        }
+    }
+
+    /**
+     * @param  array<int, array<string, mixed>>  $permissions
+     */
+    protected function pruneRemovedPermissions(array $permissions): void
+    {
+        $configuredPermissionNames = array_column($permissions, 'name');
+        $permissionsToPrune = Permission::query()
+            ->whereNotIn('name', $configuredPermissionNames)
+            ->pluck('name');
+
+        if ($permissionsToPrune->isEmpty()) {
+            return;
+        }
+
+        $this->command->info('Pruning removed permissions: '.$permissionsToPrune->implode(', '));
+
+        Permission::query()
+            ->whereIn('name', $permissionsToPrune->all())
+            ->delete();
+    }
+
+    /**
+     * @param  array<int, array<string, mixed>>  $templates
+     */
+    protected function seedRoleTemplates(array $templates): void
+    {
+        $this->command->info('Syncing role templates...');
+
+        $permissionsByName = Permission::query()->get()->keyBy('name');
+
+        foreach ($templates as $template) {
+            $role = Role::updateOrCreate(
+                ['name' => $template['name']],
+                Arr::only($template, ['display_name', 'description'])
+            );
+
+            $permissionIds = collect($template['permissions'])
+                ->map(fn (string $permissionName) => $permissionsByName->get($permissionName)?->id)
+                ->filter()
+                ->values()
+                ->all();
+
+            $role->permissions()->sync($permissionIds);
+        }
+    }
+
+    protected function seedSuperAdminUser(): void
+    {
+        $this->command->info('Syncing stagingpurpose superadmin user...');
+
+        $superAdmin = config('permission.super_admin_user', []);
+        $superAdminUser = User::withTrashed()->firstWhere('username', $superAdmin['username']);
+
+        if ($superAdminUser) {
+            if ($superAdminUser->trashed()) {
+                $superAdminUser->restore();
+            }
+
+            $superAdminUser->fill([
+                'name' => $superAdmin['name'],
+                'email' => $superAdmin['email'],
+                'password' => Hash::make($superAdmin['password']),
+                'email_verified_at' => now(),
+            ]);
+            $superAdminUser->save();
+        } else {
+            $superAdminUser = User::create([
+                'name' => $superAdmin['name'],
+                'username' => $superAdmin['username'],
+                'email' => $superAdmin['email'],
+                'password' => Hash::make($superAdmin['password']),
+                'email_verified_at' => now(),
+                'created_by' => null,
+                'updated_by' => null,
+            ]);
+        }
+
+        $superAdminRole = Role::where('name', $superAdmin['role'])->first();
+
+        if ($superAdminRole) {
+            $superAdminUser->roles()->syncWithoutDetaching([$superAdminRole->id]);
+        }
     }
 }
