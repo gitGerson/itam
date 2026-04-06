@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\Auditable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -11,7 +12,7 @@ use Illuminate\Validation\Rule;
 
 class Product extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, Auditable;
 
     protected $fillable = [
         'category_id',
@@ -114,22 +115,6 @@ class Product extends Model
         static::creating(function ($model) {
             if (empty($model->slug)) {
                 $model->slug = Str::slug($model->name);
-            }
-            if (auth()->check()) {
-                $model->created_by = auth()->id();
-            }
-        });
-
-        static::updating(function ($model) {
-            if (auth()->check()) {
-                $model->updated_by = auth()->id();
-            }
-        });
-
-        static::deleting(function ($model) {
-            if (auth()->check()) {
-                $model->deleted_by = auth()->id();
-                $model->save();
             }
         });
     }

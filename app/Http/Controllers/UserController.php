@@ -83,7 +83,8 @@ class UserController extends Controller
                     'username' => $request->username,
                     'ldap_dn' => $ldapUser->getDn(),
                     'ldap_guid' => $ldapUser->entryuuid[0] ?? null,
-                ]
+                ],
+                $user
             );
 
             return redirect()->route('users.index')
@@ -110,6 +111,9 @@ class UserController extends Controller
         UserLog::log(
             'VIEW_USER',
             "Viewed user: {$user->name} ({$user->username})",
+            $user,
+            null,
+            null,
             $user
         );
 
@@ -140,16 +144,7 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
-        $userName = $user->name;
-        $userUsername = $user->username;
-
         $user->delete();
-
-        UserLog::log(
-            'DELETE_USER',
-            "Soft deleted user: {$userName} ({$userUsername})",
-            $user
-        );
 
         return redirect()->route('users.index')->with('success', 'User berhasil dihapus');
     }
@@ -163,12 +158,6 @@ class UserController extends Controller
         $user->deleted_by = null;
         $user->restore();
 
-        UserLog::log(
-            'RESTORE_USER',
-            "Restored user: {$user->name} ({$user->username})",
-            $user
-        );
-
         return redirect()->route('users.trash')->with('success', 'User berhasil dipulihkan');
     }
 
@@ -178,15 +167,6 @@ class UserController extends Controller
     public function forceDelete($id)
     {
         $user = User::withTrashed()->findOrFail($id);
-        $userName = $user->name;
-        $userUsername = $user->username;
-
-        UserLog::log(
-            'FORCE_DELETE_USER',
-            "Permanently deleted user: {$userName} ({$userUsername})",
-            $user
-        );
-
         $user->forceDelete();
 
         return redirect()->route('users.trash')->with('success', 'User berhasil dihapus permanen');
@@ -344,6 +324,11 @@ class UserController extends Controller
                     'RESTORE_USER' => 'info',
                     'FORCE_DELETE_USER' => 'dark',
                     'VIEW_USER' => 'secondary',
+                    'MODEL_CREATED' => 'success',
+                    'MODEL_UPDATED' => 'warning',
+                    'MODEL_DELETED' => 'danger',
+                    'MODEL_RESTORED' => 'info',
+                    'MODEL_FORCE_DELETED' => 'dark',
                 ];
                 $badgeClass = $badges[$log->action] ?? 'primary';
                 return '<span class="badge bg-' . $badgeClass . '">' . str_replace('_', ' ', $log->action) . '</span>';
@@ -385,6 +370,11 @@ class UserController extends Controller
                     'RESTORE_USER' => 'info',
                     'FORCE_DELETE_USER' => 'dark',
                     'VIEW_USER' => 'secondary',
+                    'MODEL_CREATED' => 'success',
+                    'MODEL_UPDATED' => 'warning',
+                    'MODEL_DELETED' => 'danger',
+                    'MODEL_RESTORED' => 'info',
+                    'MODEL_FORCE_DELETED' => 'dark',
                 ];
                 $badgeClass = $badges[$log->action] ?? 'primary';
                 return '<span class="badge bg-' . $badgeClass . '">' . str_replace('_', ' ', $log->action) . '</span>';
@@ -443,12 +433,14 @@ class UserController extends Controller
             'UPDATE_USER_PERMISSIONS',
             "Updated permissions for user: {$user->name} ({$user->username})",
             $user,
-            $user,
             [
                 'previous_permissions' => $currentPermissions,
+            ],
+            [
                 'new_permissions' => $newPermissions,
                 'permissions_count' => count($newPermissions)
-            ]
+            ],
+            $user
         );
 
         return redirect()->route('users.edit', $user)
@@ -482,13 +474,18 @@ class UserController extends Controller
             'APPLY_ROLE_TEMPLATE',
             "Applied role template '{$roleTemplate->display_name}' to user: {$user->name} ({$user->username})",
             $user,
-            $user,
             [
                 'template_name' => $roleTemplate->display_name,
                 'template_id' => $roleTemplate->id,
                 'previous_permissions' => $currentPermissions,
                 'new_permissions' => $newPermissions
-            ]
+            ],
+            [
+                'template_name' => $roleTemplate->display_name,
+                'template_id' => $roleTemplate->id,
+                'new_permissions' => $newPermissions,
+            ],
+            $user
         );
 
         return redirect()->route('users.edit', $user)

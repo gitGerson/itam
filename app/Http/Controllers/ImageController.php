@@ -62,18 +62,6 @@ class ImageController extends Controller
                 'file_size' => $file->getSize(),
             ]);
 
-            UserLog::log(
-                'CREATE_IMAGE',
-                "Created image: {$image->title}",
-                null,
-                null,
-                [
-                    'image_id' => $image->id,
-                    'file_name' => $fileName,
-                    'file_size' => $file->getSize(),
-                ]
-            );
-
             return redirect()->route('images.index')
                 ->with('success', 'Image uploaded successfully');
         } catch (\Exception $e) {
@@ -95,7 +83,8 @@ class ImageController extends Controller
             "Viewed image: {$image->title}",
             null,
             null,
-            ['image_id' => $image->id]
+            ['image_id' => $image->id],
+            $image
         );
 
         return view('images.show', compact('image'));
@@ -121,12 +110,6 @@ class ImageController extends Controller
         ]);
 
         try {
-            $oldData = [
-                'title' => $image->title,
-                'description' => $image->description,
-                'file_name' => $image->file_name,
-            ];
-
             $image->title = $request->title;
             $image->description = $request->description;
 
@@ -150,22 +133,6 @@ class ImageController extends Controller
 
             $image->save();
 
-            UserLog::log(
-                'UPDATE_IMAGE',
-                "Updated image: {$image->title}",
-                null,
-                null,
-                [
-                    'image_id' => $image->id,
-                    'old_data' => $oldData,
-                    'new_data' => [
-                        'title' => $image->title,
-                        'description' => $image->description,
-                        'file_name' => $image->file_name,
-                    ],
-                ]
-            );
-
             return redirect()->route('images.index')
                 ->with('success', 'Image updated successfully');
         } catch (\Exception $e) {
@@ -180,21 +147,7 @@ class ImageController extends Controller
      */
     public function destroy(Image $image)
     {
-        $imageTitle = $image->title;
-        $imageFileName = $image->file_name;
-
         $image->delete();
-
-        UserLog::log(
-            'DELETE_IMAGE',
-            "Soft deleted image: {$imageTitle}",
-            null,
-            null,
-            [
-                'image_id' => $image->id,
-                'file_name' => $imageFileName,
-            ]
-        );
 
         return redirect()->route('images.index')
             ->with('success', 'Image deleted successfully');
@@ -209,14 +162,6 @@ class ImageController extends Controller
         $image->deleted_by = null;
         $image->restore();
 
-        UserLog::log(
-            'RESTORE_IMAGE',
-            "Restored image: {$image->title}",
-            null,
-            null,
-            ['image_id' => $image->id]
-        );
-
         return redirect()->route('images.trash')
             ->with('success', 'Image restored successfully');
     }
@@ -227,22 +172,8 @@ class ImageController extends Controller
     public function forceDelete($id)
     {
         $image = Image::withTrashed()->findOrFail($id);
-        $imageTitle = $image->title;
-        $imageFileName = $image->file_name;
-
         // Delete from MinIO
         Storage::disk('s3')->delete($image->file_path);
-
-        UserLog::log(
-            'FORCE_DELETE_IMAGE',
-            "Permanently deleted image: {$imageTitle}",
-            null,
-            null,
-            [
-                'image_id' => $image->id,
-                'file_name' => $imageFileName,
-            ]
-        );
 
         $image->forceDelete();
 

@@ -2,13 +2,14 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\Auditable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Storage;
 
 class Image extends Model
 {
-    use SoftDeletes;
+    use SoftDeletes, Auditable;
 
     /**
      * The attributes that are mass assignable.
@@ -80,30 +81,4 @@ class Image extends Model
         }
     }
 
-    /**
-     * Boot method to handle audit trail.
-     */
-    protected static function boot()
-    {
-        parent::boot();
-
-        static::creating(function ($model) {
-            if (auth()->check()) {
-                $model->created_by = auth()->id();
-            }
-        });
-
-        static::updating(function ($model) {
-            if (auth()->check()) {
-                $model->updated_by = auth()->id();
-            }
-        });
-
-        static::deleting(function ($model) {
-            if (auth()->check()) {
-                $model->deleted_by = auth()->id();
-                $model->save();
-            }
-        });
-    }
 }

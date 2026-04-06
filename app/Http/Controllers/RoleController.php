@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Role;
 use App\Models\Permission;
-use App\Models\UserLog;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
@@ -42,14 +41,6 @@ class RoleController extends Controller
             $role->permissions()->sync($request->permissions);
         }
 
-        UserLog::log(
-            'CREATE_ROLE',
-            "Created role: {$role->display_name} ({$role->name})",
-            null,
-            null,
-            $request->only(['name', 'display_name', 'description'])
-        );
-
         return redirect()->route('roles.index')->with('success', 'Role berhasil ditambahkan');
     }
 
@@ -77,9 +68,6 @@ class RoleController extends Controller
             'permissions.*' => 'exists:permissions,id'
         ]);
 
-        $oldValues = $role->only(['name', 'display_name', 'description']);
-        $oldPermissions = $role->permissions->pluck('name')->toArray();
-
         $role->update([
             'name' => $request->name,
             'display_name' => $request->display_name,
@@ -87,15 +75,6 @@ class RoleController extends Controller
         ]);
 
         $role->permissions()->sync($request->permissions ?? []);
-        $newPermissions = $role->fresh()->permissions->pluck('name')->toArray();
-
-        UserLog::log(
-            'UPDATE_ROLE',
-            "Updated role: {$role->display_name} ({$role->name})",
-            null,
-            array_merge($oldValues, ['permissions' => $oldPermissions]),
-            array_merge($request->only(['name', 'display_name', 'description']), ['permissions' => $newPermissions])
-        );
 
         return redirect()->route('roles.index')->with('success', 'Role berhasil diperbarui');
     }
@@ -106,16 +85,6 @@ class RoleController extends Controller
         if ($role->users()->count() > 0) {
             return redirect()->route('roles.index')->with('error', 'Role tidak dapat dihapus karena masih digunakan oleh user');
         }
-
-        $roleName = $role->display_name;
-        $roleCode = $role->name;
-        
-        UserLog::log(
-            'DELETE_ROLE',
-            "Deleted role: {$roleName} ({$roleCode})",
-            null,
-            $role->only(['name', 'display_name', 'description'])
-        );
 
         $role->delete();
 
