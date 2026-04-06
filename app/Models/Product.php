@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 
 class Product extends Model
 {
@@ -30,6 +31,46 @@ class Product extends Model
         'is_active' => 'boolean',
         'price' => 'decimal:2',
     ];
+
+    /**
+     * @return array<string, array<int, \Illuminate\Contracts\Validation\ValidationRule|string>>
+     */
+    public static function validationRules(?self $product = null): array
+    {
+        return [
+            'category_id' => ['required', 'exists:categories,id'],
+            'name' => ['required', 'string', 'max:255'],
+            'slug' => ['nullable', 'string', 'max:255', Rule::unique('products', 'slug')->ignore($product?->id)],
+            'sku' => ['nullable', 'string', 'max:100', Rule::unique('products', 'sku')->ignore($product?->id)],
+            'description' => ['nullable', 'string'],
+            'price' => ['required', 'numeric', 'min:0'],
+            'stock' => ['nullable', 'integer', 'min:0'],
+            'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,webp', 'max:2048'],
+            'is_active' => ['boolean'],
+        ];
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public static function validationMessages(?self $product = null): array
+    {
+        return [
+            'category_id.required' => 'Kategori wajib dipilih.',
+            'category_id.exists' => 'Kategori yang dipilih tidak valid.',
+            'name.required' => 'Nama produk wajib diisi.',
+            'slug.unique' => 'Slug produk sudah digunakan.',
+            'sku.unique' => 'SKU produk sudah digunakan.',
+            'price.required' => 'Harga produk wajib diisi.',
+            'price.numeric' => 'Harga produk harus berupa angka.',
+            'price.min' => 'Harga produk tidak boleh kurang dari 0.',
+            'stock.integer' => 'Stok produk harus berupa bilangan bulat.',
+            'stock.min' => 'Stok produk tidak boleh kurang dari 0.',
+            'image.image' => 'File gambar produk harus berupa gambar.',
+            'image.mimes' => 'Format gambar produk harus jpg, jpeg, png, gif, atau webp.',
+            'image.max' => 'Ukuran gambar produk maksimal 2MB.',
+        ];
+    }
 
     /**
      * Get the category that owns the product.

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ProductStoreRequest;
+use App\Http\Requests\ProductUpdateRequest;
 use App\Models\Product;
 use App\Models\Category;
 use Illuminate\Http\Request;
@@ -39,25 +41,13 @@ class ProductController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(ProductStoreRequest $request)
     {
-        $request->validate([
-            'category_id' => 'required|exists:categories,id',
-            'name' => 'required|string|max:255',
-            'slug' => 'nullable|string|max:255|unique:products',
-            'sku' => 'nullable|string|max:100|unique:products',
-            'description' => 'nullable|string',
-            'price' => 'required|numeric|min:0',
-            'stock' => 'nullable|integer|min:0',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
-            'is_active' => 'boolean',
-        ]);
-
         try {
-            $data = $request->only(['category_id', 'name', 'slug', 'sku', 'description', 'price', 'stock', 'is_active']);
+            $data = $request->validated();
 
             if (empty($data['slug'])) {
-                $data['slug'] = Str::slug($request->name);
+                $data['slug'] = Str::slug($request->string('name'));
             }
 
             if ($request->hasFile('image')) {
@@ -103,25 +93,13 @@ class ProductController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Product $product)
+    public function update(ProductUpdateRequest $request, Product $product)
     {
-        $request->validate([
-            'category_id' => 'required|exists:categories,id',
-            'name' => 'required|string|max:255',
-            'slug' => 'nullable|string|max:255|unique:products,slug,' . $product->id,
-            'sku' => 'nullable|string|max:100|unique:products,sku,' . $product->id,
-            'description' => 'nullable|string',
-            'price' => 'required|numeric|min:0',
-            'stock' => 'nullable|integer|min:0',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
-            'is_active' => 'boolean',
-        ]);
-
         try {
-            $data = $request->only(['category_id', 'name', 'slug', 'sku', 'description', 'price', 'stock', 'is_active']);
+            $data = $request->validated();
 
             if (empty($data['slug'])) {
-                $data['slug'] = Str::slug($request->name);
+                $data['slug'] = Str::slug($request->string('name'));
             }
 
             if ($request->hasFile('image')) {
