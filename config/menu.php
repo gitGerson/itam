@@ -4,26 +4,31 @@ return [
     'sections' => [
         'general' => [
             'label' => 'General',
+            'sidebar_label' => null,
             'order' => 10,
             'contexts' => ['desktop', 'search'],
         ],
         'demo' => [
             'label' => 'Demo',
+            'sidebar_label' => null,
             'order' => 15,
             'contexts' => ['desktop', 'search'],
         ],
         'library' => [
             'label' => 'Library',
+            'sidebar_label' => null,
             'order' => 20,
             'contexts' => ['desktop', 'search'],
         ],
         'master-data' => [
             'label' => 'Master Data',
+            'sidebar_label' => 'Master Data',
             'order' => 30,
             'contexts' => ['desktop', 'search'],
         ],
         'management' => [
             'label' => 'Management',
+            'sidebar_label' => 'Management',
             'order' => 40,
             'contexts' => ['desktop', 'search'],
         ],
@@ -71,7 +76,7 @@ return [
             'active_patterns' => ['form-demo.*'],
             'permission' => null,
             'section' => 'demo',
-            'contexts' => ['search'],
+            'contexts' => ['desktop', 'search'],
             'search' => [
                 'description' => 'Live examples for reusable Blade form components',
                 'keywords' => ['form', 'demo', 'components', 'input', 'select', 'date', 'editor'],

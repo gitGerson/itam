@@ -30,9 +30,16 @@ class AppServiceProvider extends ServiceProvider
         }
 
         View::composer('layouts.sneat', function ($view): void {
+            $menuService = app(MenuService::class);
+
             $view->with(
                 'searchMenuItems',
-                app(MenuService::class)->itemsForContext('search', auth()->user())
+                $menuService->itemsForContext('search', auth()->user())
+            );
+
+            $view->with(
+                'sidebarMenuSections',
+                $menuService->sectionsForContext('desktop', auth()->user())
             );
         });
     }
