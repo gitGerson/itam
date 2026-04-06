@@ -11,6 +11,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductEsbController;
 use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\FormDemoController;
 
 Route::get('/', function () {
     // return to login
@@ -211,4 +212,7 @@ Route::middleware(['auth'])->group(function () {
 
     // Mobile routes
     Route::get('/mobile', [MobileController::class, 'index'])->name('mobile.index');
+
+    // Form demo routes
+    Route::get('/form-demo', [FormDemoController::class, 'index'])->name('form-demo.index');
 });

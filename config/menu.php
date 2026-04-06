@@ -7,6 +7,11 @@ return [
             'order' => 10,
             'contexts' => ['desktop', 'search'],
         ],
+        'demo' => [
+            'label' => 'Demo',
+            'order' => 15,
+            'contexts' => ['desktop', 'search'],
+        ],
         'library' => [
             'label' => 'Library',
             'order' => 20,
@@ -54,6 +59,22 @@ return [
             'search' => [
                 'description' => 'Mobile application features',
                 'keywords' => ['mobile', 'app', 'phone', 'device'],
+            ],
+            'enabled' => true,
+        ],
+        [
+            'key' => 'form-demo-index',
+            'label' => 'Form Demo',
+            'icon' => 'bx-detail',
+            'route' => 'form-demo.index',
+            'route_params' => [],
+            'active_patterns' => ['form-demo.*'],
+            'permission' => null,
+            'section' => 'demo',
+            'contexts' => ['search'],
+            'search' => [
+                'description' => 'Live examples for reusable Blade form components',
+                'keywords' => ['form', 'demo', 'components', 'input', 'select', 'date', 'editor'],
             ],
             'enabled' => true,
         ],
