@@ -5,6 +5,13 @@
 @endsection
 
 @section('content')
+    @php
+        $existingImagePath = public_path('assets/logo.png');
+        $existingImageUrl = asset('assets/logo.png');
+        $existingImageSize = is_file($existingImagePath) ? filesize($existingImagePath) : null;
+        $existingImageMime = is_file($existingImagePath) ? (mime_content_type($existingImagePath) ?: 'image/png') : 'image/png';
+    @endphp
+
     <div class="container-xxl flex-grow-1 container-p-y">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <div>
@@ -13,7 +20,24 @@
             </div>
         </div>
 
-        <form action="javascript:void(0)" method="POST" enctype="multipart/form-data">
+        @if (session('success'))
+            <div class="alert alert-success" role="alert">
+                {{ session('success') }}
+            </div>
+        @endif
+
+        @if (session('demo_result'))
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Normalized Payload</h5>
+                </div>
+                <div class="card-body">
+                    <pre class="mb-0 small">{{ json_encode(session('demo_result'), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) }}</pre>
+                </div>
+            </div>
+        @endif
+
+        <form action="{{ route('form-demo.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
 
             <div class="row">
@@ -131,8 +155,8 @@
                             <x-form.rich-editor
                                 name="body"
                                 label="Rich Editor"
-                                value="<p>This rich editor component currently degrades gracefully to a styled textarea until a full editor module is wired in.</p>"
-                                help="Rich-editor-shaped component with a future enhancement hook."
+                                value="<h2>Rich editor demo</h2><p>This editor now uses the TipTap-based reusable component. Try headings, alignment, links, lists, code block, and image insertion.</p>"
+                                help="TipTap-based rich editor reusable component."
                             />
                         </div>
                     </div>
@@ -145,15 +169,45 @@
                         </div>
                         <div class="card-body">
                             <x-form.file
-                                name="attachment"
+                                name="attachment_native"
                                 label="Attachment"
-                                help="Reusable file input with optional current file preview."
-                                preview="https://example.com/files/demo-brief.pdf"
+                                help="Native file input mode."
+                                accept="image/*,.pdf"
                             />
 
-                            <div class="alert alert-info mb-0" role="alert">
-                                This module is intended as a live visual reference. It is not connected to a save action.
-                            </div>
+                            <x-form.file
+                                name="attachment_filepond"
+                                label="Attachment FilePond"
+                                mode="filepond"
+                                accept="image/*,.pdf"
+                                :acceptedFileTypes="['image/png', 'image/jpeg', 'application/pdf']"
+                                maxFileSize="5MB"
+                                help="FilePond mode now uses the generic upload endpoints by default."
+                            />
+
+                            <x-form.file
+                                name="attachment_filepond_existing"
+                                label="Attachment FilePond With Existing Image"
+                                mode="filepond"
+                                accept="image/*"
+                                :acceptedFileTypes="['image/png', 'image/jpeg', 'image/webp']"
+                                :existingFiles="[[
+                                    'source' => $existingImageUrl,
+                                    'options' => [
+                                        'type' => 'local',
+                                        'file' => [
+                                            'name' => 'logo.png',
+                                            'size' => $existingImageSize,
+                                            'type' => $existingImageMime,
+                                        ],
+                                    ],
+                                ]]"
+                                help="Example with a preloaded stored image."
+                            />
+
+                            <button type="submit" class="btn btn-primary">
+                                Submit Demo
+                            </button>
                         </div>
                     </div>
                 </div>

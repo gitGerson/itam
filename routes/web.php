@@ -12,6 +12,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductEsbController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\FormDemoController;
+use App\Http\Controllers\FileUploadController;
 
 Route::get('/', function () {
     // return to login
@@ -213,6 +214,12 @@ Route::middleware(['auth'])->group(function () {
     // Mobile routes
     Route::get('/mobile', [MobileController::class, 'index'])->name('mobile.index');
 
+    // Generic FilePond routes
+    Route::post('/uploads/process', [FileUploadController::class, 'process'])->name('uploads.process');
+    Route::delete('/uploads/revert', [FileUploadController::class, 'revert'])->name('uploads.revert');
+    Route::get('/uploads/load', [FileUploadController::class, 'load'])->name('uploads.load');
+
     // Form demo routes
     Route::get('/form-demo', [FormDemoController::class, 'index'])->name('form-demo.index');
+    Route::post('/form-demo', [FormDemoController::class, 'store'])->name('form-demo.store');
 });
