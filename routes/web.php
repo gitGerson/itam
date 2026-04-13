@@ -7,6 +7,7 @@ use App\Http\Controllers\FormDemoController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ManufacturerController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\StatusLabelController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserRoleController;
@@ -174,6 +175,28 @@ Route::middleware(['auth'])->group(function () {
 
     Route::middleware(['permission:inventory.suppliers.delete'])->group(function () {
         Route::delete('/suppliers/{supplier}', [SupplierController::class, 'destroy'])->name('suppliers.destroy');
+    });
+
+    // Status label management routes with permissions
+    Route::middleware(['permission:inventory.status_labels.create'])->group(function () {
+        Route::get('/status-labels/create', [StatusLabelController::class, 'create'])->name('status-labels.create');
+        Route::post('/status-labels', [StatusLabelController::class, 'store'])->name('status-labels.store');
+    });
+
+    Route::middleware(['permission:inventory.status_labels.view'])->group(function () {
+        Route::get('/status-labels', [StatusLabelController::class, 'index'])->name('status-labels.index');
+        Route::get('/status-labels/data', [StatusLabelController::class, 'getData'])->name('status-labels.data');
+        Route::get('/status-labels/{statusLabel}', [StatusLabelController::class, 'show'])->name('status-labels.show');
+    });
+
+    Route::middleware(['permission:inventory.status_labels.edit'])->group(function () {
+        Route::get('/status-labels/{statusLabel}/edit', [StatusLabelController::class, 'edit'])->name('status-labels.edit');
+        Route::put('/status-labels/{statusLabel}', [StatusLabelController::class, 'update'])->name('status-labels.update');
+        Route::patch('/status-labels/{statusLabel}', [StatusLabelController::class, 'update']);
+    });
+
+    Route::middleware(['permission:inventory.status_labels.delete'])->group(function () {
+        Route::delete('/status-labels/{statusLabel}', [StatusLabelController::class, 'destroy'])->name('status-labels.destroy');
     });
 
     // User role assignment routes
