@@ -111,6 +111,51 @@ return [
                 ],
             ],
         ],
+        'inventory' => [
+            'sort_order' => 2,
+            'items' => [
+                [
+                    'name' => 'inventory.access',
+                    'display_name' => 'Inventory',
+                    'description' => 'Can access Inventory section',
+                    'module' => 'inventory',
+                    'parent' => null,
+                    'sort_order' => 1,
+                ],
+                [
+                    'name' => 'inventory.companies.view',
+                    'display_name' => 'Companies - View',
+                    'description' => 'Can view companies',
+                    'module' => 'inventory',
+                    'parent' => 'inventory.access',
+                    'sort_order' => 2,
+                ],
+                [
+                    'name' => 'inventory.companies.create',
+                    'display_name' => 'Companies - Create',
+                    'description' => 'Can create companies',
+                    'module' => 'inventory',
+                    'parent' => 'inventory.access',
+                    'sort_order' => 3,
+                ],
+                [
+                    'name' => 'inventory.companies.edit',
+                    'display_name' => 'Companies - Edit',
+                    'description' => 'Can edit companies',
+                    'module' => 'inventory',
+                    'parent' => 'inventory.access',
+                    'sort_order' => 4,
+                ],
+                [
+                    'name' => 'inventory.companies.delete',
+                    'display_name' => 'Companies - Delete',
+                    'description' => 'Can delete companies',
+                    'module' => 'inventory',
+                    'parent' => 'inventory.access',
+                    'sort_order' => 5,
+                ],
+            ],
+        ],
     ],
     'role_templates' => [
         [
@@ -134,6 +179,11 @@ return [
                 'management.roles.view',
                 'management.roles.create',
                 'management.roles.edit',
+                'inventory.access',
+                'inventory.companies.view',
+                'inventory.companies.create',
+                'inventory.companies.edit',
+                'inventory.companies.delete',
             ],
         ],
         [
@@ -147,6 +197,8 @@ return [
                 'management.users.edit',
                 'management.users.logs',
                 'management.roles.view',
+                'inventory.access',
+                'inventory.companies.view',
             ],
         ],
         [
@@ -156,6 +208,8 @@ return [
             'permissions' => [
                 'management.access',
                 'management.users.view',
+                'inventory.access',
+                'inventory.companies.view',
             ],
         ],
     ],

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\FileUploadController;
 use App\Http\Controllers\FormDemoController;
 use App\Http\Controllers\HomeController;
@@ -82,6 +83,28 @@ Route::middleware(['auth'])->group(function () {
 
     Route::middleware(['permission:management.roles.delete'])->group(function () {
         Route::delete('/roles/{role}', [RoleController::class, 'destroy'])->name('roles.destroy');
+    });
+
+    // Company management routes with permissions
+    Route::middleware(['permission:inventory.companies.create'])->group(function () {
+        Route::get('/companies/create', [CompanyController::class, 'create'])->name('companies.create');
+        Route::post('/companies', [CompanyController::class, 'store'])->name('companies.store');
+    });
+
+    Route::middleware(['permission:inventory.companies.view'])->group(function () {
+        Route::get('/companies', [CompanyController::class, 'index'])->name('companies.index');
+        Route::get('/companies/data', [CompanyController::class, 'getData'])->name('companies.data');
+        Route::get('/companies/{company}', [CompanyController::class, 'show'])->name('companies.show');
+    });
+
+    Route::middleware(['permission:inventory.companies.edit'])->group(function () {
+        Route::get('/companies/{company}/edit', [CompanyController::class, 'edit'])->name('companies.edit');
+        Route::put('/companies/{company}', [CompanyController::class, 'update'])->name('companies.update');
+        Route::patch('/companies/{company}', [CompanyController::class, 'update']);
+    });
+
+    Route::middleware(['permission:inventory.companies.delete'])->group(function () {
+        Route::delete('/companies/{company}', [CompanyController::class, 'destroy'])->name('companies.destroy');
     });
 
     // User role assignment routes

@@ -78,10 +78,10 @@ Controller responsibilities should not include:
 - formatting-heavy table transformation logic
 
 If a controller starts becoming large, move logic into:
-- Form Requests
-- service classes
-- query builders
-- policies
+- Form Requests for authorization and request-specific validation concerns
+- service classes for business logic and multi-model mutations
+- query builders for reusable query composition
+- policies for authorization rules
 
 ## Request Rules
 
@@ -89,18 +89,40 @@ Every writable CRUD module should have:
 - one store request
 - one update request
 
-Store request is for:
-- required fields
-- create-only uniqueness
+Form Request should act as a thin adapter layer.
 
-Update request is for:
-- same validation contract
-- unique rules that ignore the current record
+Form Request responsibilities:
+- authorize the request
+- delegate reusable rules to the model
+- delegate reusable messages to the model
+- handle request-specific validation only when the validation pattern is truly limited to one case or one feature
+- expose `$request->validated()` to controllers
+
+Recommended pattern:
+- `{Module}::validationRules(?{Module} $record = null): array`
+- `{Module}::validationMessages(?{Module} $record = null): array`
+
+Store request should usually call:
+- `{Module}::validationRules()`
+- `{Module}::validationMessages()`
+
+Update request should usually:
+- extend the store request when the contract is mostly identical
+- pass the current route model into:
+  - `{Module}::validationRules($this->route('{module}'))`
+  - `{Module}::validationMessages($this->route('{module}'))`
+
+Placement rule:
+- if a validation pattern is generic and reused across store/update or across more than one feature, define it in the model
+- if a validation pattern happens only in one specific case, one endpoint, or one feature flow, it may stay in the Form Request
+- once the same validation pattern appears in more than one place, move it to the model so the validation contract stays centralized
 
 Rules:
 - use array syntax
 - use `$request->validated()`
-- do not validate inline in controllers unless the case is trivial and one-off
+- do not duplicate reusable validation rules across requests
+- do not validate full CRUD payloads inline in controllers
+- allow small inline validation only for lightweight operational endpoints such as reorder/filter utilities when it is truly local and not reusable
 
 ## Model Rules
 
@@ -112,11 +134,20 @@ Every model should define:
 Models may include:
 - accessors for stable derived values
 - scopes for reusable filters
+- generic validation definitions reused by multiple requests or features
+- reusable validation messages
+- validation variants that accept the current record for update scenarios
 
 Models should not include:
 - HTML generation
 - redirect logic
-- request validation concerns
+- controller response concerns
+- request-specific validation flow that is only relevant to one case
+
+Validation placement principle:
+- reusable validation belongs in the model
+- one-off validation may stay in the request
+- if a one-off rule starts being reused, promote it into the model
 
 ## Route Rules
 
@@ -181,10 +212,40 @@ Do not duplicate:
 
 when a shared component already exists.
 
+### Modal CRUD Rule
+
+If a module form has **no more than 6 primary input fields**, prefer a **modal CRUD pattern** for create and edit.
+
+Use modal CRUD when:
+- the form is short
+- the fields are straightforward
+- the workflow is simple
+- the user benefits from staying on the listing page
+
+Typical pattern:
+- index page contains the table
+- create action opens a modal
+- edit action opens a modal
+- validation failure should reopen the correct modal
+
+Do not force modal CRUD when:
+- the form is long
+- the form contains advanced sections or tabs
+- the form includes workflow-heavy logic
+- the form contains complex dependent inputs
+- the form needs a large preview/editing workspace
+
+Default rule:
+- **6 fields or fewer** -> prefer modal create/edit
+- **more than 6 fields** -> prefer dedicated create/edit pages unless there is a strong reason not to
+
+Show/detail pages may still remain full pages even when create/edit use modals.
+
 ## Form Rules
 
 Forms should be built around:
-- Form Request validation
+- Form Request as the validation entry point
+- model-centered reusable validation
 - named routes
 - reusable field components
 
@@ -198,6 +259,12 @@ Use shared components for:
 - date input
 
 When a field pattern repeats in more than one module, make it reusable.
+
+For modal CRUD modules:
+- keep one shared form partial for create/edit
+- keep modal-specific differences minimal
+- do not duplicate the full form markup between create and edit modals
+- make validation redirects reopen the correct modal state
 
 ## Migration Rules
 
@@ -348,7 +415,8 @@ When building a new CRUD module, follow this checklist:
 
 The structure to follow is:
 - thin controller
-- Form Request validation
+- Form Request as adapter/entry point
+- reusable validation centralized in the model
 - explicit model
 - named routes
 - capability-based permissions

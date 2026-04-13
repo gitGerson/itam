@@ -20,6 +20,12 @@ return [
             'order' => 20,
             'contexts' => ['desktop', 'search'],
         ],
+        'inventory' => [
+            'label' => 'Inventory',
+            'sidebar_label' => 'Inventory',
+            'order' => 30,
+            'contexts' => ['desktop', 'search'],
+        ],
     ],
 
     'items' => [
@@ -148,6 +154,38 @@ return [
             'search' => [
                 'description' => 'Create new role with permissions',
                 'keywords' => ['create', 'add', 'new', 'role', 'permission'],
+            ],
+            'enabled' => true,
+        ],
+        [
+            'key' => 'companies-index',
+            'label' => 'Companies',
+            'icon' => 'bx-buildings',
+            'route' => 'companies.index',
+            'route_params' => [],
+            'active_patterns' => ['companies.*'],
+            'permission' => 'inventory.companies.view',
+            'section' => 'inventory',
+            'contexts' => ['desktop', 'search'],
+            'search' => [
+                'description' => 'Company master data for inventory ownership',
+                'keywords' => ['companies', 'company', 'vendor owner', 'organization', 'inventory'],
+            ],
+            'enabled' => true,
+        ],
+        [
+            'key' => 'companies-create',
+            'label' => 'Create Company',
+            'icon' => 'bx-building-house',
+            'route' => 'companies.create',
+            'route_params' => [],
+            'active_patterns' => ['companies.create'],
+            'permission' => 'inventory.companies.create',
+            'section' => 'inventory',
+            'contexts' => ['search'],
+            'search' => [
+                'description' => 'Add a new company record',
+                'keywords' => ['create', 'add', 'new', 'company'],
             ],
             'enabled' => true,
         ],
