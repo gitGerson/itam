@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\FileUploadController;
 use App\Http\Controllers\FormDemoController;
@@ -105,6 +106,28 @@ Route::middleware(['auth'])->group(function () {
 
     Route::middleware(['permission:inventory.companies.delete'])->group(function () {
         Route::delete('/companies/{company}', [CompanyController::class, 'destroy'])->name('companies.destroy');
+    });
+
+    // Category management routes with permissions
+    Route::middleware(['permission:inventory.categories.create'])->group(function () {
+        Route::get('/categories/create', [CategoryController::class, 'create'])->name('categories.create');
+        Route::post('/categories', [CategoryController::class, 'store'])->name('categories.store');
+    });
+
+    Route::middleware(['permission:inventory.categories.view'])->group(function () {
+        Route::get('/categories', [CategoryController::class, 'index'])->name('categories.index');
+        Route::get('/categories/data', [CategoryController::class, 'getData'])->name('categories.data');
+        Route::get('/categories/{category}', [CategoryController::class, 'show'])->name('categories.show');
+    });
+
+    Route::middleware(['permission:inventory.categories.edit'])->group(function () {
+        Route::get('/categories/{category}/edit', [CategoryController::class, 'edit'])->name('categories.edit');
+        Route::put('/categories/{category}', [CategoryController::class, 'update'])->name('categories.update');
+        Route::patch('/categories/{category}', [CategoryController::class, 'update']);
+    });
+
+    Route::middleware(['permission:inventory.categories.delete'])->group(function () {
+        Route::delete('/categories/{category}', [CategoryController::class, 'destroy'])->name('categories.destroy');
     });
 
     // User role assignment routes

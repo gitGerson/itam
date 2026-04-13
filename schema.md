@@ -50,9 +50,8 @@ That means:
 | `categories` | Category master | `created_by` | `models`, `accessories`, `consumables`, `licenses`; `created_by` likely points to existing `users` |
 | `manufacturers` | Manufacturer master | `created_by` | `models`, `accessories`, `components`, `consumables`, `licenses`; `created_by` likely points to existing `users` |
 | `suppliers` | Supplier/vendor master | `created_by` | `assets`, `asset_maintenances`, `accessories`, `components`, `consumables`, `licenses`; `created_by` likely points to existing `users` |
-| `depreciations` | Depreciation rules | `created_by` | `models`, `licenses`; `created_by` likely points to existing `users` |
 | `status_labels` | Asset status master | `created_by` | `assets`; `created_by` likely points to existing `users` |
-| `models` | Asset model master | `manufacturer_id`, `category_id`, `depreciation_id`, `fieldset_id`, `created_by` | `manufacturers`, `categories`, `depreciations`, `custom_fieldsets`, `assets`, existing `users` |
+| `models` | Asset model master | `manufacturer_id`, `category_id`, `fieldset_id`, `created_by` | `manufacturers`, `categories`, `custom_fieldsets`, `assets`, existing `users` |
 
 > Laravel note: the table name `models` is valid, but the application class should not be named `App\Models\Model`. Use an explicit domain class name such as `AssetModel`.
 
@@ -82,7 +81,7 @@ That means:
 | `accessories` | Accessory stock master | `category_id`, `location_id`, `company_id`, `manufacturer_id`, `supplier_id`, `created_by` | `categories`, `locations`, `companies`, `manufacturers`, `suppliers`, existing `users` |
 | `components` | Component stock master | `category_id`, `location_id`, `company_id`, `manufacturer_id`, `supplier_id`, `created_by` | `categories`, `locations`, `companies`, `manufacturers`, `suppliers`, existing `users` |
 | `consumables` | Consumable stock master | `category_id`, `location_id`, `company_id`, `manufacturer_id`, `supplier_id`, `created_by` | `categories`, `locations`, `companies`, `manufacturers`, `suppliers`, existing `users` |
-| `licenses` | License/software master | `depreciation_id`, `supplier_id`, `company_id`, `manufacturer_id`, `category_id`, `created_by` | `depreciations`, `suppliers`, `companies`, `manufacturers`, `categories`, existing `users` |
+| `licenses` | License/software master | `supplier_id`, `company_id`, `manufacturer_id`, `category_id`, `created_by` | `suppliers`, `companies`, `manufacturers`, `categories`, existing `users` |
 
 ### Important note on `assets`
 `assets` is the main operational table and currently mixes:
@@ -172,7 +171,6 @@ That makes it the most central table and also the hardest one to refactor safely
 | `assets` | `users` | `assets.assigned_to = users.id` when `assigned_type = users` |
 | `models` | `manufacturers` | `models.manufacturer_id = manufacturers.id` |
 | `models` | `categories` | `models.category_id = categories.id` |
-| `models` | `depreciations` | `models.depreciation_id = depreciations.id` |
 | `models` | `custom_fieldsets` | `models.fieldset_id = custom_fieldsets.id` |
 | `locations` | `locations` | `locations.parent_id = locations.id` |
 | `locations` | `users` | `locations.manager_id = users.id` (existing app table) |
@@ -234,61 +232,60 @@ Because `users`, auth, and RBAC already exist in the application layer, this seq
 ### Phase A - foundational masters
 
 1. `create_companies_table`
-2. `create_depreciations_table`
-3. `create_categories_table`
-4. `create_manufacturers_table`
-5. `create_suppliers_table`
-6. `create_status_labels_table`
-7. `create_custom_fields_table`
-8. `create_custom_fieldsets_table`
-9. `create_kits_table`
+2. `create_categories_table`
+3. `create_manufacturers_table`
+4. `create_suppliers_table`
+5. `create_status_labels_table`
+6. `create_custom_fields_table`
+7. `create_custom_fieldsets_table`
+8. `create_kits_table`
 
 ### Phase B - organizational structure
 
-10. `create_locations_table`
-11. `create_departments_table`
-12. `create_settings_table`
+9. `create_locations_table`
+10. `create_departments_table`
+11. `create_settings_table`
 
 ### Phase C - model and metadata layer
 
-13. `create_models_table`
-14. `create_custom_field_custom_fieldset_table`
-15. `create_models_custom_fields_table`
+12. `create_models_table`
+13. `create_custom_field_custom_fieldset_table`
+14. `create_models_custom_fields_table`
 
 ### Phase D - core inventory entities
 
-16. `create_assets_table`
-17. `create_accessories_table`
-18. `create_components_table`
-19. `create_consumables_table`
-20. `create_licenses_table`
+15. `create_assets_table`
+16. `create_accessories_table`
+17. `create_components_table`
+18. `create_consumables_table`
+19. `create_licenses_table`
 
 ### Phase E - bundle/pivot inventory tables
 
-21. `create_kits_accessories_table`
-22. `create_kits_consumables_table`
-23. `create_kits_licenses_table`
-24. `create_kits_models_table`
-25. `create_components_assets_table`
-26. `create_license_seats_table`
+20. `create_kits_accessories_table`
+21. `create_kits_consumables_table`
+22. `create_kits_licenses_table`
+23. `create_kits_models_table`
+24. `create_components_assets_table`
+25. `create_license_seats_table`
 
 ### Phase F - checkout, distribution, and maintenance flows
 
-27. `create_accessories_checkout_table`
-28. `create_consumables_users_table`
-29. `create_asset_maintenances_table`
-30. `create_asset_uploads_table`
-31. `create_checkout_acceptances_table`
-32. `create_checkout_requests_table`
-33. `create_requested_assets_table`
-34. `create_requests_table`
+26. `create_accessories_checkout_table`
+27. `create_consumables_users_table`
+28. `create_asset_maintenances_table`
+29. `create_asset_uploads_table`
+30. `create_checkout_acceptances_table`
+31. `create_checkout_requests_table`
+32. `create_requested_assets_table`
+33. `create_requests_table`
 
 ### Phase G - logs, reporting, and imports
 
-35. `create_action_logs_table`
-36. `create_asset_logs_table`
-37. `create_imports_table`
-38. `create_report_templates_table`
+34. `create_action_logs_table`
+35. `create_asset_logs_table`
+36. `create_imports_table`
+37. `create_report_templates_table`
 
 > Note: `migrations` is not listed because Laravel handles it automatically. Auth and RBAC tables are also intentionally excluded because they already exist and are not part of the inventory rebuild target.
 
@@ -306,7 +303,6 @@ The table creation order above is not exactly the same as the **constraint** ord
 - `departments.location_id -> locations.id`
 - `models.manufacturer_id -> manufacturers.id`
 - `models.category_id -> categories.id`
-- `models.depreciation_id -> depreciations.id`
 - `models.fieldset_id -> custom_fieldsets.id`
 - `models_custom_fields.asset_model_id -> models.id`
 - `models_custom_fields.custom_field_id -> custom_fields.id`
@@ -333,7 +329,6 @@ The table creation order above is not exactly the same as the **constraint** ord
 - `consumables.company_id -> companies.id`
 - `consumables.manufacturer_id -> manufacturers.id`
 - `consumables.supplier_id -> suppliers.id`
-- `licenses.depreciation_id -> depreciations.id`
 - `licenses.supplier_id -> suppliers.id`
 - `licenses.company_id -> companies.id`
 - `licenses.manufacturer_id -> manufacturers.id`
