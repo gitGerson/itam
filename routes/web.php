@@ -5,6 +5,7 @@ use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\FileUploadController;
 use App\Http\Controllers\FormDemoController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\ManufacturerController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserRoleController;
@@ -128,6 +129,28 @@ Route::middleware(['auth'])->group(function () {
 
     Route::middleware(['permission:inventory.categories.delete'])->group(function () {
         Route::delete('/categories/{category}', [CategoryController::class, 'destroy'])->name('categories.destroy');
+    });
+
+    // Manufacturer management routes with permissions
+    Route::middleware(['permission:inventory.manufacturers.create'])->group(function () {
+        Route::get('/manufacturers/create', [ManufacturerController::class, 'create'])->name('manufacturers.create');
+        Route::post('/manufacturers', [ManufacturerController::class, 'store'])->name('manufacturers.store');
+    });
+
+    Route::middleware(['permission:inventory.manufacturers.view'])->group(function () {
+        Route::get('/manufacturers', [ManufacturerController::class, 'index'])->name('manufacturers.index');
+        Route::get('/manufacturers/data', [ManufacturerController::class, 'getData'])->name('manufacturers.data');
+        Route::get('/manufacturers/{manufacturer}', [ManufacturerController::class, 'show'])->name('manufacturers.show');
+    });
+
+    Route::middleware(['permission:inventory.manufacturers.edit'])->group(function () {
+        Route::get('/manufacturers/{manufacturer}/edit', [ManufacturerController::class, 'edit'])->name('manufacturers.edit');
+        Route::put('/manufacturers/{manufacturer}', [ManufacturerController::class, 'update'])->name('manufacturers.update');
+        Route::patch('/manufacturers/{manufacturer}', [ManufacturerController::class, 'update']);
+    });
+
+    Route::middleware(['permission:inventory.manufacturers.delete'])->group(function () {
+        Route::delete('/manufacturers/{manufacturer}', [ManufacturerController::class, 'destroy'])->name('manufacturers.destroy');
     });
 
     // User role assignment routes
