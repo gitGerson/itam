@@ -7,6 +7,7 @@ use App\Http\Controllers\FormDemoController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ManufacturerController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserRoleController;
 use Illuminate\Support\Facades\Auth;
@@ -151,6 +152,28 @@ Route::middleware(['auth'])->group(function () {
 
     Route::middleware(['permission:inventory.manufacturers.delete'])->group(function () {
         Route::delete('/manufacturers/{manufacturer}', [ManufacturerController::class, 'destroy'])->name('manufacturers.destroy');
+    });
+
+    // Supplier management routes with permissions
+    Route::middleware(['permission:inventory.suppliers.create'])->group(function () {
+        Route::get('/suppliers/create', [SupplierController::class, 'create'])->name('suppliers.create');
+        Route::post('/suppliers', [SupplierController::class, 'store'])->name('suppliers.store');
+    });
+
+    Route::middleware(['permission:inventory.suppliers.view'])->group(function () {
+        Route::get('/suppliers', [SupplierController::class, 'index'])->name('suppliers.index');
+        Route::get('/suppliers/data', [SupplierController::class, 'getData'])->name('suppliers.data');
+        Route::get('/suppliers/{supplier}', [SupplierController::class, 'show'])->name('suppliers.show');
+    });
+
+    Route::middleware(['permission:inventory.suppliers.edit'])->group(function () {
+        Route::get('/suppliers/{supplier}/edit', [SupplierController::class, 'edit'])->name('suppliers.edit');
+        Route::put('/suppliers/{supplier}', [SupplierController::class, 'update'])->name('suppliers.update');
+        Route::patch('/suppliers/{supplier}', [SupplierController::class, 'update']);
+    });
+
+    Route::middleware(['permission:inventory.suppliers.delete'])->group(function () {
+        Route::delete('/suppliers/{supplier}', [SupplierController::class, 'destroy'])->name('suppliers.destroy');
     });
 
     // User role assignment routes
