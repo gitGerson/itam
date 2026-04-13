@@ -146,18 +146,6 @@ That makes it the most central table and also the hardest one to refactor safely
 
 ---
 
-## 1.7 Kits and bundles
-
-| Table | Purpose | Important columns | Likely references |
-|---|---|---|---|
-| `kits` | Bundle/kit master | `created_by` | `kits_accessories`, `kits_consumables`, `kits_licenses`, `kits_models`, existing `users` |
-| `kits_accessories` | Pivot: kit <-> accessory | `kit_id`, `accessory_id`, `created_by` | `kits`, `accessories`, existing `users` |
-| `kits_consumables` | Pivot: kit <-> consumable | `kit_id`, `consumable_id`, `created_by` | `kits`, `consumables`, existing `users` |
-| `kits_licenses` | Pivot: kit <-> license | `kit_id`, `license_id`, `created_by` | `kits`, `licenses`, existing `users` |
-| `kits_models` | Pivot: kit <-> model | `kit_id`, `model_id`, `created_by` | `kits`, `models`, existing `users` |
-
----
-
 # 2. Most important inferred joins
 
 | From | To | Join |
@@ -238,7 +226,6 @@ Because `users`, auth, and RBAC already exist in the application layer, this seq
 5. `create_status_labels_table`
 6. `create_custom_fields_table`
 7. `create_custom_fieldsets_table`
-8. `create_kits_table`
 
 ### Phase B - organizational structure
 
@@ -260,32 +247,28 @@ Because `users`, auth, and RBAC already exist in the application layer, this seq
 18. `create_consumables_table`
 19. `create_licenses_table`
 
-### Phase E - bundle/pivot inventory tables
+### Phase E - pivot inventory tables
 
-20. `create_kits_accessories_table`
-21. `create_kits_consumables_table`
-22. `create_kits_licenses_table`
-23. `create_kits_models_table`
-24. `create_components_assets_table`
-25. `create_license_seats_table`
+20. `create_components_assets_table`
+21. `create_license_seats_table`
 
 ### Phase F - checkout, distribution, and maintenance flows
 
-26. `create_accessories_checkout_table`
-27. `create_consumables_users_table`
-28. `create_asset_maintenances_table`
-29. `create_asset_uploads_table`
-30. `create_checkout_acceptances_table`
-31. `create_checkout_requests_table`
-32. `create_requested_assets_table`
-33. `create_requests_table`
+22. `create_accessories_checkout_table`
+23. `create_consumables_users_table`
+24. `create_asset_maintenances_table`
+25. `create_asset_uploads_table`
+26. `create_checkout_acceptances_table`
+27. `create_checkout_requests_table`
+28. `create_requested_assets_table`
+29. `create_requests_table`
 
 ### Phase G - logs, reporting, and imports
 
-34. `create_action_logs_table`
-35. `create_asset_logs_table`
-36. `create_imports_table`
-37. `create_report_templates_table`
+30. `create_action_logs_table`
+31. `create_asset_logs_table`
+32. `create_imports_table`
+33. `create_report_templates_table`
 
 > Note: `migrations` is not listed because Laravel handles it automatically. Auth and RBAC tables are also intentionally excluded because they already exist and are not part of the inventory rebuild target.
 
@@ -342,14 +325,6 @@ The table creation order above is not exactly the same as the **constraint** ord
 - `asset_uploads.asset_id -> assets.id`
 - `requested_assets.asset_id -> assets.id`
 - `requests.asset_id -> assets.id`
-- `kits_accessories.kit_id -> kits.id`
-- `kits_accessories.accessory_id -> accessories.id`
-- `kits_consumables.kit_id -> kits.id`
-- `kits_consumables.consumable_id -> consumables.id`
-- `kits_licenses.kit_id -> kits.id`
-- `kits_licenses.license_id -> licenses.id`
-- `kits_models.kit_id -> kits.id`
-- `kits_models.model_id -> models.id`
 
 ## 5.2 Add late foreign keys in a dedicated patch migration
 
@@ -385,7 +360,7 @@ Reason: they are generic polymorphic references, not single-target relations.
 
 Foreign keys alone are not enough. The inventory rebuild should also define uniqueness rules explicitly:
 
-- use composite primary keys or composite unique indexes for pure pivots such as `custom_field_custom_fieldset`, `components_assets`, `kits_accessories`, `kits_consumables`, `kits_licenses`, and `kits_models`
+- use composite primary keys or composite unique indexes for pure pivots such as `custom_field_custom_fieldset` and `components_assets`
 - if `models_custom_fields` stores only one default value per model-field pair, enforce uniqueness on (`asset_model_id`, `custom_field_id`)
 - decide whether movement tables such as `accessories_checkout`, `consumables_users`, and `license_seats` are historical logs or current-state pivots before adding uniqueness
 - decide explicit uniqueness for business identifiers such as `assets.asset_tag`, and possibly `assets.serial` if the business treats serial numbers as globally unique
