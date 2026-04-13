@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Concerns\Auditable;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -15,11 +16,11 @@ use LdapRecord\Laravel\Auth\LdapAuthenticatable;
 
 class User extends Authenticatable implements LdapAuthenticatable
 {
+    /** @use HasFactory<UserFactory> */
+    use Auditable, HasFactory, Notifiable, SoftDeletes;
+
     use AuthenticatesWithLdap, HasLdapUser;
     use HasApiTokens;
-
-    /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, SoftDeletes, Auditable;
 
     /**
      * The attributes that are mass assignable.
@@ -103,8 +104,8 @@ class User extends Authenticatable implements LdapAuthenticatable
     public function roles()
     {
         return $this->belongsToMany(Role::class, 'user_role')
-                    ->withPivot(['assigned_by', 'assigned_at'])
-                    ->withTimestamps();
+            ->withPivot(['assigned_by', 'assigned_at'])
+            ->withTimestamps();
     }
 
     public function hasRole($role)
@@ -139,8 +140,8 @@ class User extends Authenticatable implements LdapAuthenticatable
 
         if ($role) {
             $exists = $this->roles()->where('roles.id', $role->id)->exists();
-            
-            if (!$exists) {
+
+            if (! $exists) {
                 $this->roles()->attach($role->id, [
                     'assigned_by' => auth()->id(),
                     'assigned_at' => now(),
@@ -164,5 +165,15 @@ class User extends Authenticatable implements LdapAuthenticatable
         }
 
         return $this;
+    }
+
+    public function dynamicPermissionRoleName(): string
+    {
+        return 'user_'.$this->id.'_permissions';
+    }
+
+    public function dynamicPermissionRole(): ?Role
+    {
+        return Role::where('name', $this->dynamicPermissionRoleName())->first();
     }
 }

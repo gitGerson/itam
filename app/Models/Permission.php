@@ -14,12 +14,15 @@ class Permission extends Model
         'display_name',
         'description',
         'module',
+        'parent',
+        'sort_order',
         'is_active',
         'created_by',
         'updated_by',
     ];
 
     protected $casts = [
+        'sort_order' => 'integer',
         'is_active' => 'boolean',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
@@ -28,8 +31,8 @@ class Permission extends Model
     public function roles()
     {
         return $this->belongsToMany(Role::class, 'role_permission')
-                    ->withPivot('created_by')
-                    ->withTimestamps();
+            ->withPivot('created_by')
+            ->withTimestamps();
     }
 
     public function creator()

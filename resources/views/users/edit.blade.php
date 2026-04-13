@@ -47,6 +47,21 @@
                                 </button>
                             </form>
                         </div>
+
+                        <div class="mt-4">
+                            <h6 class="mb-2">Current Roles</h6>
+                            @if($user->roles->isNotEmpty())
+                                <div class="d-flex flex-wrap gap-2">
+                                    @foreach($user->roles as $role)
+                                        <span class="badge {{ str_ends_with($role->name, '_template') ? 'bg-label-primary' : 'bg-label-warning' }}">
+                                            {{ $role->display_name }}
+                                        </span>
+                                    @endforeach
+                                </div>
+                            @else
+                                <p class="mb-0 text-muted">No role assigned.</p>
+                            @endif
+                        </div>
                     </div>
                 </div>
 
