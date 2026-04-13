@@ -3,6 +3,7 @@
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\CustomFieldController;
+use App\Http\Controllers\CustomFieldsetController;
 use App\Http\Controllers\FileUploadController;
 use App\Http\Controllers\FormDemoController;
 use App\Http\Controllers\HomeController;
@@ -220,6 +221,28 @@ Route::middleware(['auth'])->group(function () {
 
     Route::middleware(['permission:inventory.custom_fields.delete'])->group(function () {
         Route::delete('/custom-fields/{custom_field}', [CustomFieldController::class, 'destroy'])->name('custom-fields.destroy');
+    });
+
+    // Custom fieldset management routes with permissions
+    Route::middleware(['permission:inventory.custom_fieldsets.create'])->group(function () {
+        Route::get('/custom-fieldsets/create', [CustomFieldsetController::class, 'create'])->name('custom-fieldsets.create');
+        Route::post('/custom-fieldsets', [CustomFieldsetController::class, 'store'])->name('custom-fieldsets.store');
+    });
+
+    Route::middleware(['permission:inventory.custom_fieldsets.view'])->group(function () {
+        Route::get('/custom-fieldsets', [CustomFieldsetController::class, 'index'])->name('custom-fieldsets.index');
+        Route::get('/custom-fieldsets/data', [CustomFieldsetController::class, 'getData'])->name('custom-fieldsets.data');
+        Route::get('/custom-fieldsets/{custom_fieldset}', [CustomFieldsetController::class, 'show'])->name('custom-fieldsets.show');
+    });
+
+    Route::middleware(['permission:inventory.custom_fieldsets.edit'])->group(function () {
+        Route::get('/custom-fieldsets/{custom_fieldset}/edit', [CustomFieldsetController::class, 'edit'])->name('custom-fieldsets.edit');
+        Route::put('/custom-fieldsets/{custom_fieldset}', [CustomFieldsetController::class, 'update'])->name('custom-fieldsets.update');
+        Route::patch('/custom-fieldsets/{custom_fieldset}', [CustomFieldsetController::class, 'update']);
+    });
+
+    Route::middleware(['permission:inventory.custom_fieldsets.delete'])->group(function () {
+        Route::delete('/custom-fieldsets/{custom_fieldset}', [CustomFieldsetController::class, 'destroy'])->name('custom-fieldsets.destroy');
     });
 
     // User role assignment routes

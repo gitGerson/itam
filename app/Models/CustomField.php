@@ -6,6 +6,7 @@ use App\Models\Concerns\Auditable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Validation\Rule;
 
@@ -112,6 +113,16 @@ class CustomField extends Model
         }
 
         return array_filter(array_map('trim', explode("\n", $this->field_values)));
+    }
+
+    public function fieldsets(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            CustomFieldset::class,
+            'custom_field_custom_fieldset',
+            'custom_field_id',
+            'custom_fieldset_id'
+        )->withPivot('order');
     }
 
     public function creator(): BelongsTo
