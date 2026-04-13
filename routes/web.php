@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CompanyController;
+use App\Http\Controllers\CustomFieldController;
 use App\Http\Controllers\FileUploadController;
 use App\Http\Controllers\FormDemoController;
 use App\Http\Controllers\HomeController;
@@ -197,6 +198,28 @@ Route::middleware(['auth'])->group(function () {
 
     Route::middleware(['permission:inventory.status_labels.delete'])->group(function () {
         Route::delete('/status-labels/{statusLabel}', [StatusLabelController::class, 'destroy'])->name('status-labels.destroy');
+    });
+
+    // Custom field management routes with permissions
+    Route::middleware(['permission:inventory.custom_fields.create'])->group(function () {
+        Route::get('/custom-fields/create', [CustomFieldController::class, 'create'])->name('custom-fields.create');
+        Route::post('/custom-fields', [CustomFieldController::class, 'store'])->name('custom-fields.store');
+    });
+
+    Route::middleware(['permission:inventory.custom_fields.view'])->group(function () {
+        Route::get('/custom-fields', [CustomFieldController::class, 'index'])->name('custom-fields.index');
+        Route::get('/custom-fields/data', [CustomFieldController::class, 'getData'])->name('custom-fields.data');
+        Route::get('/custom-fields/{custom_field}', [CustomFieldController::class, 'show'])->name('custom-fields.show');
+    });
+
+    Route::middleware(['permission:inventory.custom_fields.edit'])->group(function () {
+        Route::get('/custom-fields/{custom_field}/edit', [CustomFieldController::class, 'edit'])->name('custom-fields.edit');
+        Route::put('/custom-fields/{custom_field}', [CustomFieldController::class, 'update'])->name('custom-fields.update');
+        Route::patch('/custom-fields/{custom_field}', [CustomFieldController::class, 'update']);
+    });
+
+    Route::middleware(['permission:inventory.custom_fields.delete'])->group(function () {
+        Route::delete('/custom-fields/{custom_field}', [CustomFieldController::class, 'destroy'])->name('custom-fields.destroy');
     });
 
     // User role assignment routes

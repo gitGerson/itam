@@ -8,7 +8,8 @@
       "Bash(rm:*)",
       "Bash(mkdir:*)",
       "Bash(sed:*)",
-      "Bash(composer show:*)"
+      "Bash(composer show:*)",
+      "Bash(vendor/bin/pint --dirty --format agent)"
     ],
     "deny": [],
     "ask": []
