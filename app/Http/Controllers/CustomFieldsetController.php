@@ -97,19 +97,19 @@ class CustomFieldsetController extends Controller
                     </button>
                     <div class="dropdown-menu">';
 
-                if (auth()->user()->hasPermission('inventory.custom_fieldsets.view')) {
+                if (auth()->user()->hasPermission('settings.custom_fieldsets.view')) {
                     $actions .= '<a class="dropdown-item" href="'.route('custom-fieldsets.show', $fs).'">
                         <i class="bx bx-show me-1"></i> Lihat
                     </a>';
                 }
 
-                if (auth()->user()->hasPermission('inventory.custom_fieldsets.edit')) {
+                if (auth()->user()->hasPermission('settings.custom_fieldsets.edit')) {
                     $actions .= '<a class="dropdown-item" href="'.route('custom-fieldsets.edit', $fs).'">
                         <i class="bx bx-edit-alt me-1"></i> Edit
                     </a>';
                 }
 
-                if (auth()->user()->hasPermission('inventory.custom_fieldsets.delete')) {
+                if (auth()->user()->hasPermission('settings.custom_fieldsets.delete')) {
                     $actions .= '<form action="'.route('custom-fieldsets.destroy', $fs).'" method="POST" style="display: inline;">
                         '.csrf_field().'
                         '.method_field('DELETE').'

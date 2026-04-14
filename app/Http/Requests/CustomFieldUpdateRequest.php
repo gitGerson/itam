@@ -9,7 +9,7 @@ class CustomFieldUpdateRequest extends CustomFieldStoreRequest
 {
     public function authorize(): bool
     {
-        return auth()->check() && auth()->user()->hasPermission('inventory.custom_fields.edit');
+        return auth()->check() && auth()->user()->hasPermission('settings.custom_fields.edit');
     }
 
     /**

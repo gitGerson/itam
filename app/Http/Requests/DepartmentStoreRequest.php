@@ -10,7 +10,7 @@ class DepartmentStoreRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return auth()->check() && auth()->user()->hasPermission('inventory.departments.create');
+        return auth()->check() && auth()->user()->hasPermission('settings.departments.create');
     }
 
     /**

@@ -14,7 +14,7 @@
                             <h5 class="mb-1">Detail Custom Fieldset</h5>
                         </div>
                         <div class="d-flex gap-2">
-                            @if(auth()->user()->hasPermission('inventory.custom_fieldsets.edit'))
+                            @if(auth()->user()->hasPermission('settings.custom_fieldsets.edit'))
                                 <a href="{{ route('custom-fieldsets.edit', $customFieldset) }}" class="btn btn-primary">
                                     <i class="bx bx-edit-alt me-1"></i> Edit
                                 </a>
@@ -89,7 +89,7 @@
                                                         <tr>
                                                             <td class="text-muted">{{ $index + 1 }}</td>
                                                             <td class="fw-semibold">
-                                                                @if(auth()->user()->hasPermission('inventory.custom_fields.view'))
+                                                                @if(auth()->user()->hasPermission('settings.custom_fields.view'))
                                                                     <a href="{{ route('custom-fields.show', $field) }}">{{ $field->name }}</a>
                                                                 @else
                                                                     {{ $field->name }}

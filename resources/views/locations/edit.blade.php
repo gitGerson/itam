@@ -13,7 +13,7 @@
                     <p class="mb-0 text-muted">{{ $location->name }}</p>
                 </div>
                 <div class="d-flex gap-2">
-                    @if(auth()->user()->hasPermission('inventory.locations.view'))
+                    @if(auth()->user()->hasPermission('settings.locations.view'))
                         <a href="{{ route('locations.show', $location) }}" class="btn btn-outline-secondary">
                             <i class="bx bx-show me-1"></i> Lihat
                         </a>

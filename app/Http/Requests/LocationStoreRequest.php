@@ -10,7 +10,7 @@ class LocationStoreRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return auth()->check() && auth()->user()->hasPermission('inventory.locations.create');
+        return auth()->check() && auth()->user()->hasPermission('settings.locations.create');
     }
 
     /**

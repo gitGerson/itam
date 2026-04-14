@@ -204,90 +204,90 @@ Route::middleware(['auth'])->group(function () {
     });
 
     // Custom field management routes with permissions
-    Route::middleware(['permission:inventory.custom_fields.create'])->group(function () {
+    Route::middleware(['permission:settings.custom_fields.create'])->group(function () {
         Route::get('/custom-fields/create', [CustomFieldController::class, 'create'])->name('custom-fields.create');
         Route::post('/custom-fields', [CustomFieldController::class, 'store'])->name('custom-fields.store');
     });
 
-    Route::middleware(['permission:inventory.custom_fields.view'])->group(function () {
+    Route::middleware(['permission:settings.custom_fields.view'])->group(function () {
         Route::get('/custom-fields', [CustomFieldController::class, 'index'])->name('custom-fields.index');
         Route::get('/custom-fields/data', [CustomFieldController::class, 'getData'])->name('custom-fields.data');
         Route::get('/custom-fields/{custom_field}', [CustomFieldController::class, 'show'])->name('custom-fields.show');
     });
 
-    Route::middleware(['permission:inventory.custom_fields.edit'])->group(function () {
+    Route::middleware(['permission:settings.custom_fields.edit'])->group(function () {
         Route::get('/custom-fields/{custom_field}/edit', [CustomFieldController::class, 'edit'])->name('custom-fields.edit');
         Route::put('/custom-fields/{custom_field}', [CustomFieldController::class, 'update'])->name('custom-fields.update');
         Route::patch('/custom-fields/{custom_field}', [CustomFieldController::class, 'update']);
     });
 
-    Route::middleware(['permission:inventory.custom_fields.delete'])->group(function () {
+    Route::middleware(['permission:settings.custom_fields.delete'])->group(function () {
         Route::delete('/custom-fields/{custom_field}', [CustomFieldController::class, 'destroy'])->name('custom-fields.destroy');
     });
 
     // Custom fieldset management routes with permissions
-    Route::middleware(['permission:inventory.custom_fieldsets.create'])->group(function () {
+    Route::middleware(['permission:settings.custom_fieldsets.create'])->group(function () {
         Route::get('/custom-fieldsets/create', [CustomFieldsetController::class, 'create'])->name('custom-fieldsets.create');
         Route::post('/custom-fieldsets', [CustomFieldsetController::class, 'store'])->name('custom-fieldsets.store');
     });
 
-    Route::middleware(['permission:inventory.custom_fieldsets.view'])->group(function () {
+    Route::middleware(['permission:settings.custom_fieldsets.view'])->group(function () {
         Route::get('/custom-fieldsets', [CustomFieldsetController::class, 'index'])->name('custom-fieldsets.index');
         Route::get('/custom-fieldsets/data', [CustomFieldsetController::class, 'getData'])->name('custom-fieldsets.data');
         Route::get('/custom-fieldsets/{custom_fieldset}', [CustomFieldsetController::class, 'show'])->name('custom-fieldsets.show');
     });
 
-    Route::middleware(['permission:inventory.custom_fieldsets.edit'])->group(function () {
+    Route::middleware(['permission:settings.custom_fieldsets.edit'])->group(function () {
         Route::get('/custom-fieldsets/{custom_fieldset}/edit', [CustomFieldsetController::class, 'edit'])->name('custom-fieldsets.edit');
         Route::put('/custom-fieldsets/{custom_fieldset}', [CustomFieldsetController::class, 'update'])->name('custom-fieldsets.update');
         Route::patch('/custom-fieldsets/{custom_fieldset}', [CustomFieldsetController::class, 'update']);
     });
 
-    Route::middleware(['permission:inventory.custom_fieldsets.delete'])->group(function () {
+    Route::middleware(['permission:settings.custom_fieldsets.delete'])->group(function () {
         Route::delete('/custom-fieldsets/{custom_fieldset}', [CustomFieldsetController::class, 'destroy'])->name('custom-fieldsets.destroy');
     });
 
     // Location management routes with permissions
-    Route::middleware(['permission:inventory.locations.create'])->group(function () {
+    Route::middleware(['permission:settings.locations.create'])->group(function () {
         Route::get('/locations/create', [LocationController::class, 'create'])->name('locations.create');
         Route::post('/locations', [LocationController::class, 'store'])->name('locations.store');
     });
 
-    Route::middleware(['permission:inventory.locations.view'])->group(function () {
+    Route::middleware(['permission:settings.locations.view'])->group(function () {
         Route::get('/locations', [LocationController::class, 'index'])->name('locations.index');
         Route::get('/locations/data', [LocationController::class, 'getData'])->name('locations.data');
         Route::get('/locations/{location}', [LocationController::class, 'show'])->name('locations.show');
     });
 
-    Route::middleware(['permission:inventory.locations.edit'])->group(function () {
+    Route::middleware(['permission:settings.locations.edit'])->group(function () {
         Route::get('/locations/{location}/edit', [LocationController::class, 'edit'])->name('locations.edit');
         Route::put('/locations/{location}', [LocationController::class, 'update'])->name('locations.update');
         Route::patch('/locations/{location}', [LocationController::class, 'update']);
     });
 
-    Route::middleware(['permission:inventory.locations.delete'])->group(function () {
+    Route::middleware(['permission:settings.locations.delete'])->group(function () {
         Route::delete('/locations/{location}', [LocationController::class, 'destroy'])->name('locations.destroy');
     });
 
     // Department management routes with permissions
-    Route::middleware(['permission:inventory.departments.create'])->group(function () {
+    Route::middleware(['permission:settings.departments.create'])->group(function () {
         Route::get('/departments/create', [DepartmentController::class, 'create'])->name('departments.create');
         Route::post('/departments', [DepartmentController::class, 'store'])->name('departments.store');
     });
 
-    Route::middleware(['permission:inventory.departments.view'])->group(function () {
+    Route::middleware(['permission:settings.departments.view'])->group(function () {
         Route::get('/departments', [DepartmentController::class, 'index'])->name('departments.index');
         Route::get('/departments/data', [DepartmentController::class, 'getData'])->name('departments.data');
         Route::get('/departments/{department}', [DepartmentController::class, 'show'])->name('departments.show');
     });
 
-    Route::middleware(['permission:inventory.departments.edit'])->group(function () {
+    Route::middleware(['permission:settings.departments.edit'])->group(function () {
         Route::get('/departments/{department}/edit', [DepartmentController::class, 'edit'])->name('departments.edit');
         Route::put('/departments/{department}', [DepartmentController::class, 'update'])->name('departments.update');
         Route::patch('/departments/{department}', [DepartmentController::class, 'update']);
     });
 
-    Route::middleware(['permission:inventory.departments.delete'])->group(function () {
+    Route::middleware(['permission:settings.departments.delete'])->group(function () {
         Route::delete('/departments/{department}', [DepartmentController::class, 'destroy'])->name('departments.destroy');
     });
 

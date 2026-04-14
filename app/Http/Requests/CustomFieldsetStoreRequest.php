@@ -10,7 +10,7 @@ class CustomFieldsetStoreRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return auth()->check() && auth()->user()->hasPermission('inventory.custom_fieldsets.create');
+        return auth()->check() && auth()->user()->hasPermission('settings.custom_fieldsets.create');
     }
 
     /**

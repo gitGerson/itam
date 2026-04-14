@@ -12,7 +12,7 @@
                     <h5 class="mb-1">Detail Lokasi</h5>
                 </div>
                 <div class="d-flex gap-2">
-                    @if(auth()->user()->hasPermission('inventory.locations.edit'))
+                    @if(auth()->user()->hasPermission('settings.locations.edit'))
                         <a href="{{ route('locations.edit', $location) }}" class="btn btn-primary">
                             <i class="bx bx-edit-alt me-1"></i> Edit
                         </a>
@@ -59,7 +59,7 @@
                                     <div class="text-muted small text-uppercase fw-semibold mb-1">Lokasi Induk</div>
                                     <div class="fw-semibold">
                                         @if($location->parent)
-                                            @if(auth()->user()->hasPermission('inventory.locations.view'))
+                                            @if(auth()->user()->hasPermission('settings.locations.view'))
                                                 <a href="{{ route('locations.show', $location->parent) }}">{{ $location->parent->name }}</a>
                                             @else
                                                 {{ $location->parent->name }}
@@ -116,7 +116,7 @@
                                     @foreach($location->children as $child)
                                         <li class="py-1 border-bottom d-flex align-items-center gap-2">
                                             <i class="bx bx-subdirectory-right text-muted"></i>
-                                            @if(auth()->user()->hasPermission('inventory.locations.view'))
+                                            @if(auth()->user()->hasPermission('settings.locations.view'))
                                                 <a href="{{ route('locations.show', $child) }}" class="fw-semibold small">{{ $child->name }}</a>
                                             @else
                                                 <span class="fw-semibold small">{{ $child->name }}</span>

@@ -104,19 +104,19 @@ class CustomFieldController extends Controller
                     </button>
                     <div class="dropdown-menu">';
 
-                if (auth()->user()->hasPermission('inventory.custom_fields.view')) {
+                if (auth()->user()->hasPermission('settings.custom_fields.view')) {
                     $actions .= '<a class="dropdown-item" href="'.route('custom-fields.show', $cf).'">
                         <i class="bx bx-show me-1"></i> Lihat
                     </a>';
                 }
 
-                if (auth()->user()->hasPermission('inventory.custom_fields.edit')) {
+                if (auth()->user()->hasPermission('settings.custom_fields.edit')) {
                     $actions .= '<a class="dropdown-item" href="'.route('custom-fields.edit', $cf).'">
                         <i class="bx bx-edit-alt me-1"></i> Edit
                     </a>';
                 }
 
-                if (auth()->user()->hasPermission('inventory.custom_fields.delete')) {
+                if (auth()->user()->hasPermission('settings.custom_fields.delete')) {
                     $actions .= '<form action="'.route('custom-fields.destroy', $cf).'" method="POST" style="display: inline;">
                         '.csrf_field().'
                         '.method_field('DELETE').'

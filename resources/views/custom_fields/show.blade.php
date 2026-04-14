@@ -14,7 +14,7 @@
                             <h5 class="mb-1">Detail Custom Field</h5>
                         </div>
                         <div class="d-flex gap-2">
-                            @if(auth()->user()->hasPermission('inventory.custom_fields.edit'))
+                            @if(auth()->user()->hasPermission('settings.custom_fields.edit'))
                                 <a href="{{ route('custom-fields.edit', $customField) }}" class="btn btn-primary">
                                     <i class="bx bx-edit-alt me-1"></i> Edit
                                 </a>

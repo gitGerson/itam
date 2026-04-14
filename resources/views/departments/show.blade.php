@@ -12,7 +12,7 @@
                     <h5 class="mb-1">Detail Departemen</h5>
                 </div>
                 <div class="d-flex gap-2">
-                    @if(auth()->user()->hasPermission('inventory.departments.edit'))
+                    @if(auth()->user()->hasPermission('settings.departments.edit'))
                         <a href="{{ route('departments.edit', $department) }}" class="btn btn-primary">
                             <i class="bx bx-edit-alt me-1"></i> Edit
                         </a>
@@ -41,7 +41,7 @@
                                     <div class="text-muted small text-uppercase fw-semibold mb-1">Lokasi</div>
                                     <div class="fw-semibold">
                                         @if($department->location)
-                                            @if(auth()->user()->hasPermission('inventory.locations.view'))
+                                            @if(auth()->user()->hasPermission('settings.locations.view'))
                                                 <a href="{{ route('locations.show', $department->location) }}">{{ $department->location->name }}</a>
                                             @else
                                                 {{ $department->location->name }}

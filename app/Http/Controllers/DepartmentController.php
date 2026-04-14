@@ -88,19 +88,19 @@ class DepartmentController extends Controller
                     </button>
                     <div class="dropdown-menu">';
 
-                if (auth()->user()->hasPermission('inventory.departments.view')) {
+                if (auth()->user()->hasPermission('settings.departments.view')) {
                     $actions .= '<a class="dropdown-item" href="'.route('departments.show', $d).'">
                         <i class="bx bx-show me-1"></i> Lihat
                     </a>';
                 }
 
-                if (auth()->user()->hasPermission('inventory.departments.edit')) {
+                if (auth()->user()->hasPermission('settings.departments.edit')) {
                     $actions .= '<a class="dropdown-item" href="'.route('departments.edit', $d).'">
                         <i class="bx bx-edit-alt me-1"></i> Edit
                     </a>';
                 }
 
-                if (auth()->user()->hasPermission('inventory.departments.delete')) {
+                if (auth()->user()->hasPermission('settings.departments.delete')) {
                     $actions .= '<form action="'.route('departments.destroy', $d).'" method="POST" style="display: inline;">
                         '.csrf_field().'
                         '.method_field('DELETE').'

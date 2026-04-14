@@ -15,7 +15,7 @@
                             <p class="mb-0 text-muted">{{ $customField->name }}</p>
                         </div>
                         <div class="d-flex gap-2">
-                            @if(auth()->user()->hasPermission('inventory.custom_fields.view'))
+                            @if(auth()->user()->hasPermission('settings.custom_fields.view'))
                                 <a href="{{ route('custom-fields.show', $customField) }}" class="btn btn-outline-secondary">
                                     <i class="bx bx-show me-1"></i> Lihat
                                 </a>

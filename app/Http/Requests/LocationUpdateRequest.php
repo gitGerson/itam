@@ -9,7 +9,7 @@ class LocationUpdateRequest extends LocationStoreRequest
 {
     public function authorize(): bool
     {
-        return auth()->check() && auth()->user()->hasPermission('inventory.locations.edit');
+        return auth()->check() && auth()->user()->hasPermission('settings.locations.edit');
     }
 
     /**

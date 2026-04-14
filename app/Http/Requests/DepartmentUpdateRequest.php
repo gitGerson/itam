@@ -9,7 +9,7 @@ class DepartmentUpdateRequest extends DepartmentStoreRequest
 {
     public function authorize(): bool
     {
-        return auth()->check() && auth()->user()->hasPermission('inventory.departments.edit');
+        return auth()->check() && auth()->user()->hasPermission('settings.departments.edit');
     }
 
     /**

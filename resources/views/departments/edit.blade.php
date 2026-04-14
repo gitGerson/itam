@@ -13,7 +13,7 @@
                     <p class="mb-0 text-muted">{{ $department->name }}</p>
                 </div>
                 <div class="d-flex gap-2">
-                    @if(auth()->user()->hasPermission('inventory.departments.view'))
+                    @if(auth()->user()->hasPermission('settings.departments.view'))
                         <a href="{{ route('departments.show', $department) }}" class="btn btn-outline-secondary">
                             <i class="bx bx-show me-1"></i> Lihat
                         </a>

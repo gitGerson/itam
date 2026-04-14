@@ -115,19 +115,19 @@ class LocationController extends Controller
                     </button>
                     <div class="dropdown-menu">';
 
-                if (auth()->user()->hasPermission('inventory.locations.view')) {
+                if (auth()->user()->hasPermission('settings.locations.view')) {
                     $actions .= '<a class="dropdown-item" href="'.route('locations.show', $location).'">
                         <i class="bx bx-show me-1"></i> Lihat
                     </a>';
                 }
 
-                if (auth()->user()->hasPermission('inventory.locations.edit')) {
+                if (auth()->user()->hasPermission('settings.locations.edit')) {
                     $actions .= '<a class="dropdown-item" href="'.route('locations.edit', $location).'">
                         <i class="bx bx-edit-alt me-1"></i> Edit
                     </a>';
                 }
 
-                if (auth()->user()->hasPermission('inventory.locations.delete')) {
+                if (auth()->user()->hasPermission('settings.locations.delete')) {
                     $actions .= '<form action="'.route('locations.destroy', $location).'" method="POST" style="display: inline;">
                         '.csrf_field().'
                         '.method_field('DELETE').'
