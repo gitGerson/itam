@@ -4,6 +4,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\CustomFieldController;
 use App\Http\Controllers\CustomFieldsetController;
+use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\FileUploadController;
 use App\Http\Controllers\FormDemoController;
 use App\Http\Controllers\HomeController;
@@ -266,6 +267,28 @@ Route::middleware(['auth'])->group(function () {
 
     Route::middleware(['permission:inventory.locations.delete'])->group(function () {
         Route::delete('/locations/{location}', [LocationController::class, 'destroy'])->name('locations.destroy');
+    });
+
+    // Department management routes with permissions
+    Route::middleware(['permission:inventory.departments.create'])->group(function () {
+        Route::get('/departments/create', [DepartmentController::class, 'create'])->name('departments.create');
+        Route::post('/departments', [DepartmentController::class, 'store'])->name('departments.store');
+    });
+
+    Route::middleware(['permission:inventory.departments.view'])->group(function () {
+        Route::get('/departments', [DepartmentController::class, 'index'])->name('departments.index');
+        Route::get('/departments/data', [DepartmentController::class, 'getData'])->name('departments.data');
+        Route::get('/departments/{department}', [DepartmentController::class, 'show'])->name('departments.show');
+    });
+
+    Route::middleware(['permission:inventory.departments.edit'])->group(function () {
+        Route::get('/departments/{department}/edit', [DepartmentController::class, 'edit'])->name('departments.edit');
+        Route::put('/departments/{department}', [DepartmentController::class, 'update'])->name('departments.update');
+        Route::patch('/departments/{department}', [DepartmentController::class, 'update']);
+    });
+
+    Route::middleware(['permission:inventory.departments.delete'])->group(function () {
+        Route::delete('/departments/{department}', [DepartmentController::class, 'destroy'])->name('departments.destroy');
     });
 
     // User role assignment routes
