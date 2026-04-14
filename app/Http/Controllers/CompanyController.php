@@ -91,10 +91,11 @@ class CompanyController extends Controller
     public function getData(): JsonResponse
     {
         $companies = Company::query()
-            ->select(['id', 'name', 'email', 'phone', 'fax', 'image', 'created_at']);
+            ->with('creator:id,name')
+            ->select(['id', 'name', 'email', 'phone', 'fax', 'image', 'notes', 'created_by', 'created_at', 'updated_at']);
 
         return datatables()->of($companies)
-            ->addColumn('logo', function (Company $company): string {
+            ->addColumn('image_preview', function (Company $company): string {
                 if (! $company->imageUrl()) {
                     return '<div class="d-flex align-items-center justify-content-center rounded border bg-label-secondary text-muted" style="width: 44px; height: 44px;">
                         <i class="bx bx-image-alt"></i>
@@ -102,6 +103,14 @@ class CompanyController extends Controller
                 }
 
                 return '<img src="'.e($company->imageUrl()).'" alt="'.e($company->name).'" class="rounded border bg-white" style="width: 44px; height: 44px; object-fit: cover;">';
+            })
+            ->addColumn('creator_name', fn (Company $company): string => e($company->creator?->name ?? '-'))
+            ->editColumn('notes', function (Company $company): string {
+                if (! $company->notes) {
+                    return '-';
+                }
+
+                return e(\Illuminate\Support\Str::limit($company->notes, 80));
             })
             ->addColumn('action', function (Company $company): string {
                 $actions = '<div class="dropdown">
@@ -147,7 +156,8 @@ class CompanyController extends Controller
                 return $actions.'</div></div>';
             })
             ->editColumn('created_at', fn (Company $company): ?string => $company->created_at?->toIso8601String())
-            ->rawColumns(['logo', 'action'])
+            ->editColumn('updated_at', fn (Company $company): ?string => $company->updated_at?->toIso8601String())
+            ->rawColumns(['image_preview', 'action'])
             ->make(true);
     }
 }
