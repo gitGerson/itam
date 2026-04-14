@@ -3,10 +3,14 @@
 namespace App\Models;
 
 use App\Models\Concerns\Auditable;
+use App\Services\FilePondUploadService;
+use Closure;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 
 class Department extends Model
@@ -24,6 +28,7 @@ class Department extends Model
         'location_id',
         'manager_id',
         'notes',
+        'image',
         'created_by',
         'updated_by',
         'deleted_by',
@@ -42,16 +47,41 @@ class Department extends Model
     }
 
     /**
-     * @return array<string, array<int, string|Rule|\Closure>>
+     * @return array<string, array<int, string|Rule|Closure>>
      */
     public static function validationRules(?self $department = null): array
     {
+        $filePondUploads = app(FilePondUploadService::class);
+
         return [
             'name' => ['required', 'string', 'max:191'],
             'company_id' => ['nullable', 'integer', 'exists:companies,id'],
             'location_id' => ['nullable', 'integer', 'exists:locations,id'],
             'manager_id' => ['nullable', 'integer', 'exists:users,id'],
             'notes' => ['nullable', 'string'],
+            'image' => [
+                'nullable',
+                function (string $attribute, mixed $value, Closure $fail) use ($department, $filePondUploads): void {
+                    if ($value === null || $value === '') {
+                        return;
+                    }
+
+                    if ($value instanceof UploadedFile) {
+                        validator(
+                            ['upload' => $value],
+                            ['upload' => ['file', 'mimes:jpg,jpeg,png,gif,webp', 'max:5120']]
+                        )->validate();
+
+                        return;
+                    }
+
+                    if (is_string($value) && $department !== null && ($value === $department->image || $value === $department->imageUrl())) {
+                        return;
+                    }
+
+                    ($filePondUploads->tempPathValidationRule())($attribute, $value, $fail);
+                },
+            ],
         ];
     }
 
@@ -66,6 +96,15 @@ class Department extends Model
             'location_id.exists' => 'Lokasi tidak valid.',
             'manager_id.exists' => 'Manager tidak valid.',
         ];
+    }
+
+    public function imageUrl(): ?string
+    {
+        if (! $this->image) {
+            return null;
+        }
+
+        return Storage::disk('s3')->url($this->image);
     }
 
     public function company(): BelongsTo

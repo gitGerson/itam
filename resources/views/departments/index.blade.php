@@ -35,11 +35,13 @@
                         <thead>
                             <tr>
                                 <th>ID</th>
+                                <th>Perusahaan</th>
                                 <th>Nama Departemen</th>
-                                <th>Company</th>
-                                <th>Lokasi</th>
+                                <th>Gambar</th>
                                 <th>Manager</th>
-                                <th>Dibuat</th>
+                                <th>Pengguna</th>
+                                <th>Lokasi</th>
+                                <th>Catatan</th>
                                 <th>Aksi</th>
                             </tr>
                         </thead>
@@ -59,16 +61,17 @@
                 ajax: '{{ route('departments.data') }}',
                 columns: [
                     { data: 'id', name: 'id' },
+                    { data: 'company_name', name: 'company.name', orderable: false },
                     { data: 'name', name: 'name' },
-                    { data: 'company_name', name: 'company.name' },
-                    { data: 'location_name', name: 'location.name' },
-                    { data: 'manager_name', name: 'manager.name', orderable: false },
+                    { data: 'image_preview', name: 'image', orderable: false, searchable: false },
+                    { data: 'manager_name', name: 'manager_id', orderable: false },
+                    { data: 'creator_name', name: 'created_by', orderable: false, searchable: false },
+                    { data: 'location_name', name: 'location.name', orderable: false },
                     {
-                        data: 'created_at',
-                        name: 'created_at',
-                        render: function(data) {
-                            return data ? moment(data).format('DD MMM YYYY HH:mm') : '-';
-                        }
+                        data: 'notes',
+                        name: 'notes',
+                        orderable: false,
+                        render: function(data) { return data || '-'; }
                     },
                     { data: 'action', name: 'action', orderable: false, searchable: false }
                 ],

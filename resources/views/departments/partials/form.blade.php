@@ -1,6 +1,6 @@
 <div class="row g-4">
     {{-- Kiri: Info utama --}}
-    <div class="col-md-7">
+    <div class="col-md-8">
         <x-form.text
             name="name"
             label="Nama Departemen"
@@ -42,16 +42,26 @@
             :value="$department->manager_id ?? null"
             placeholder="Pilih manager"
         />
-    </div>
 
-    {{-- Kanan: Catatan --}}
-    <div class="col-md-5">
         <x-form.textarea
             name="notes"
             label="Catatan"
             :value="$department->notes ?? null"
-            rows="7"
+            rows="4"
             placeholder="Deskripsi atau catatan internal tentang departemen ini"
+        />
+    </div>
+
+    {{-- Kanan: Gambar --}}
+    <div class="col-md-4">
+        <x-form.file
+            name="image"
+            label="Gambar"
+            mode="filepond"
+            accept="image/*"
+            :acceptedFileTypes="['image/png', 'image/jpeg', 'image/gif', 'image/webp']"
+            maxFileSize="5MB"
+            :existingFiles="isset($department) && $department->image ? [$department->image] : []"
         />
     </div>
 </div>

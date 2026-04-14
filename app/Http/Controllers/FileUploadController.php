@@ -8,9 +8,7 @@ use Illuminate\Http\Response;
 
 class FileUploadController extends Controller
 {
-    public function __construct(protected FilePondUploadService $filePondUploads)
-    {
-    }
+    public function __construct(protected FilePondUploadService $filePondUploads) {}
 
     public function process(Request $request): Response
     {
