@@ -24,14 +24,11 @@
                 </div>
             </div>
             <div class="card-body">
-                <form action="{{ route('locations.update', $location) }}" method="POST" enctype="multipart/form-data">
+                <form action="{{ route('locations.update', $location) }}" method="POST">
                     @csrf
                     @method('PUT')
 
-                    @include('locations.partials.form', [
-                        'location' => $location,
-                        'showCurrentImage' => true,
-                    ])
+                    @include('locations.partials.form', ['location' => $location])
 
                     <div class="d-flex justify-content-end gap-2 mt-4">
                         <a href="{{ route('locations.index') }}" class="btn btn-outline-secondary">Batal</a>

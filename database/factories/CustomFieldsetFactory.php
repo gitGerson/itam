@@ -20,6 +20,7 @@ class CustomFieldsetFactory extends Factory
         return [
             'name' => fake()->unique()->words(2, true),
             'notes' => fake()->optional()->sentence(),
+            'repeatable' => fake()->boolean(),
         ];
     }
 }

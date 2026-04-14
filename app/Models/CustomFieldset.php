@@ -22,6 +22,7 @@ class CustomFieldset extends Model
     protected $fillable = [
         'name',
         'notes',
+        'repeatable',
         'created_by',
         'updated_by',
         'deleted_by',
@@ -33,6 +34,7 @@ class CustomFieldset extends Model
     protected function casts(): array
     {
         return [
+            'repeatable' => 'boolean',
             'created_at' => 'datetime',
             'updated_at' => 'datetime',
             'deleted_at' => 'datetime',
@@ -47,6 +49,7 @@ class CustomFieldset extends Model
         return [
             'name' => ['required', 'string', 'max:191', Rule::unique('custom_fieldsets', 'name')->ignore($customFieldset)->whereNull('deleted_at')],
             'notes' => ['nullable', 'string'],
+            'repeatable' => ['sometimes', 'boolean'],
             'custom_fields' => ['nullable', 'array'],
             'custom_fields.*' => ['integer', 'exists:custom_fields,id'],
         ];

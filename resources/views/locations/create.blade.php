@@ -17,13 +17,10 @@
                 </a>
             </div>
             <div class="card-body">
-                <form action="{{ route('locations.store') }}" method="POST" enctype="multipart/form-data">
+                <form action="{{ route('locations.store') }}" method="POST">
                     @csrf
 
-                    @include('locations.partials.form', [
-                        'location' => null,
-                        'showCurrentImage' => false,
-                    ])
+                    @include('locations.partials.form', ['location' => null])
 
                     <div class="d-flex justify-content-end gap-2 mt-4">
                         <a href="{{ route('locations.index') }}" class="btn btn-outline-secondary">Batal</a>

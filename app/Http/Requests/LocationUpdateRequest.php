@@ -17,10 +17,7 @@ class LocationUpdateRequest extends LocationStoreRequest
      */
     public function rules(): array
     {
-        /** @var Location|null $location */
-        $location = $this->route('location');
-
-        return Location::validationRules($location);
+        return Location::validationRules();
     }
 
     /**
@@ -28,9 +25,6 @@ class LocationUpdateRequest extends LocationStoreRequest
      */
     public function messages(): array
     {
-        /** @var Location|null $location */
-        $location = $this->route('location');
-
-        return Location::validationMessages($location);
+        return Location::validationMessages();
     }
 }

@@ -27,6 +27,7 @@ class CustomFieldsetController extends Controller
     public function store(CustomFieldsetStoreRequest $request): RedirectResponse
     {
         $validated = $request->validated();
+        $validated['repeatable'] = $request->boolean('repeatable');
 
         $customFieldset = CustomFieldset::create($validated);
 
@@ -60,6 +61,7 @@ class CustomFieldsetController extends Controller
     public function update(CustomFieldsetUpdateRequest $request, CustomFieldset $customFieldset): RedirectResponse
     {
         $validated = $request->validated();
+        $validated['repeatable'] = $request->boolean('repeatable');
 
         $customFieldset->update($validated);
 
@@ -86,9 +88,12 @@ class CustomFieldsetController extends Controller
     {
         $fieldsets = CustomFieldset::query()
             ->withCount('customFields')
-            ->select(['id', 'name', 'notes', 'created_at']);
+            ->select(['id', 'name', 'notes', 'repeatable', 'created_at']);
 
         return datatables()->of($fieldsets)
+            ->addColumn('repeatable_badge', fn (CustomFieldset $fs): string => $fs->repeatable
+                ? '<span class="badge bg-label-success">Ya</span>'
+                : '<span class="text-muted">-</span>')
             ->addColumn('field_count', fn (CustomFieldset $fs): string => '<span class="badge bg-label-primary">'.$fs->custom_fields_count.' field</span>')
             ->addColumn('action', function (CustomFieldset $fs): string {
                 $actions = '<div class="dropdown">
@@ -122,7 +127,7 @@ class CustomFieldsetController extends Controller
                 return $actions.'</div></div>';
             })
             ->editColumn('created_at', fn (CustomFieldset $fs): ?string => $fs->created_at?->toIso8601String())
-            ->rawColumns(['field_count', 'action'])
+            ->rawColumns(['repeatable_badge', 'field_count', 'action'])
             ->make(true);
     }
 }

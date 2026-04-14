@@ -20,6 +20,13 @@
             rows="5"
             placeholder="Deskripsi atau catatan internal tentang fieldset ini"
         />
+
+        <x-form.switch
+            name="repeatable"
+            label="Repeatable"
+            :value="$customFieldset->repeatable ?? false"
+            help="Aktifkan jika fieldset ini dapat diisi berulang (lebih dari satu kali) pada satu record."
+        />
     </div>
 
     {{-- Kanan: Pilih Custom Fields --}}

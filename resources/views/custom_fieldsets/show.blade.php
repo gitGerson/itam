@@ -40,6 +40,15 @@
                                         <div class="fw-semibold text-break">{{ $customFieldset->notes ?: '-' }}</div>
                                     </div>
 
+                                    <div class="mb-4">
+                                        <div class="text-muted small text-uppercase fw-semibold mb-1">Repeatable</div>
+                                        @if($customFieldset->repeatable)
+                                            <span class="badge bg-label-success">Ya</span>
+                                        @else
+                                            <span class="badge bg-label-secondary">Tidak</span>
+                                        @endif
+                                    </div>
+
                                     <hr class="my-3">
 
                                     <div class="row g-3">

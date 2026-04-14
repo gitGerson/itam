@@ -35,13 +35,11 @@
                         <thead>
                             <tr>
                                 <th>ID</th>
-                                <th>Gambar</th>
-                                <th>Nama Lokasi</th>
-                                <th>Company</th>
-                                <th>Lokasi Induk</th>
-                                <th>Kota</th>
-                                <th>Negara</th>
-                                <th>Dibuat</th>
+                                <th>Perusahaan</th>
+                                <th>Lokasi</th>
+                                <th>Catatan</th>
+                                <th>Dibuat Pada</th>
+                                <th>Dibuat Oleh</th>
                                 <th>Aksi</th>
                             </tr>
                         </thead>
@@ -61,12 +59,13 @@
                 ajax: '{{ route('locations.data') }}',
                 columns: [
                     { data: 'id', name: 'id' },
-                    { data: 'logo', name: 'logo', orderable: false, searchable: false },
+                    { data: 'company_name', name: 'company.name', orderable: false },
                     { data: 'name', name: 'name' },
-                    { data: 'company_name', name: 'company.name' },
-                    { data: 'parent_name', name: 'parent.name', orderable: false },
-                    { data: 'city', name: 'city' },
-                    { data: 'country', name: 'country' },
+                    {
+                        data: 'notes',
+                        name: 'notes',
+                        render: function(data) { return data || '-'; }
+                    },
                     {
                         data: 'created_at',
                         name: 'created_at',
@@ -74,6 +73,7 @@
                             return data ? moment(data).format('DD MMM YYYY HH:mm') : '-';
                         }
                     },
+                    { data: 'creator_name', name: 'created_by', orderable: false, searchable: false },
                     { data: 'action', name: 'action', orderable: false, searchable: false }
                 ],
                 dom: 'lBfrtip',

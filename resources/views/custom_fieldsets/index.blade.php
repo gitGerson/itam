@@ -37,6 +37,7 @@
                                 <th>ID</th>
                                 <th>Nama Fieldset</th>
                                 <th>Catatan</th>
+                                <th>Repeatable</th>
                                 <th>Jumlah Field</th>
                                 <th>Dibuat</th>
                                 <th>Aksi</th>
@@ -65,6 +66,12 @@
                         render: function(data) {
                             return data ? $('<span>').text(data).html() : '<span class="text-muted">-</span>';
                         }
+                    },
+                    {
+                        data: 'repeatable_badge',
+                        name: 'repeatable',
+                        orderable: false,
+                        searchable: false
                     },
                     {
                         data: 'field_count',
