@@ -10,7 +10,7 @@ class ManufacturerStoreRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return auth()->check() && auth()->user()->hasPermission('inventory.manufacturers.create');
+        return auth()->check() && auth()->user()->hasPermission('settings.manufacturers.create');
     }
 
     /**

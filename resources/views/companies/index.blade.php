@@ -23,7 +23,7 @@
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h5 class="mb-0">Daftar Company</h5>
-                @if(auth()->user()->hasPermission('inventory.companies.create'))
+                @if(auth()->user()->hasPermission('settings.companies.create'))
                     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createCompanyModal">
                         <i class="bx bx-plus me-1"></i> Tambah Company
                     </button>
@@ -50,7 +50,7 @@
         </div>
     </div>
 
-    @if(auth()->user()->hasPermission('inventory.companies.create'))
+    @if(auth()->user()->hasPermission('settings.companies.create'))
         <div class="modal fade" id="createCompanyModal" tabindex="-1" aria-labelledby="createCompanyModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-lg modal-dialog-scrollable">
                 <div class="modal-content">
@@ -79,7 +79,7 @@
         </div>
     @endif
 
-    @if(auth()->user()->hasPermission('inventory.companies.edit'))
+    @if(auth()->user()->hasPermission('settings.companies.edit'))
         <div class="modal fade" id="editCompanyModal" tabindex="-1" aria-labelledby="editCompanyModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-lg modal-dialog-scrollable">
                 <div class="modal-content">

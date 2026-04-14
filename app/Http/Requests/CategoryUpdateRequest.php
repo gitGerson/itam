@@ -9,7 +9,7 @@ class CategoryUpdateRequest extends CategoryStoreRequest
 {
     public function authorize(): bool
     {
-        return auth()->check() && auth()->user()->hasPermission('inventory.categories.edit');
+        return auth()->check() && auth()->user()->hasPermission('settings.categories.edit');
     }
 
     /**

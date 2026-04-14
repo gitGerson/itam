@@ -17,7 +17,7 @@ class CompanyModuleTest extends TestCase
 
     public function test_user_with_company_view_permission_can_load_company_data(): void
     {
-        $user = $this->createUserWithPermissions(['inventory.companies.view']);
+        $user = $this->createUserWithPermissions(['settings.companies.view']);
 
         $this->actingAs($user)
             ->get(route('companies.data'))
@@ -30,8 +30,8 @@ class CompanyModuleTest extends TestCase
         Storage::fake('s3');
 
         $user = $this->createUserWithPermissions([
-            'inventory.companies.view',
-            'inventory.companies.create',
+            'settings.companies.view',
+            'settings.companies.create',
         ]);
 
         $response = $this->actingAs($user)->post(route('companies.store'), [
@@ -58,8 +58,8 @@ class CompanyModuleTest extends TestCase
         Storage::fake('s3');
 
         $user = $this->createUserWithPermissions([
-            'inventory.companies.view',
-            'inventory.companies.edit',
+            'settings.companies.view',
+            'settings.companies.edit',
         ]);
 
         $company = Company::factory()->create([

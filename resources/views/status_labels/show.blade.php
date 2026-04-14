@@ -14,7 +14,7 @@
                             <h5 class="mb-1">Detail Status Label</h5>
                         </div>
                         <div class="d-flex gap-2">
-                            @if(auth()->user()->hasPermission('inventory.status_labels.edit'))
+                            @if(auth()->user()->hasPermission('settings.status_labels.edit'))
                                 <a href="{{ route('status-labels.edit', $statusLabel) }}" class="btn btn-primary">
                                     <i class="bx bx-edit-alt me-1"></i> Edit
                                 </a>

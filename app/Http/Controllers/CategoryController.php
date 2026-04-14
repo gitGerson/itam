@@ -120,13 +120,13 @@ class CategoryController extends Controller
                     </button>
                     <div class="dropdown-menu">';
 
-                if (auth()->user()->hasPermission('inventory.categories.view')) {
+                if (auth()->user()->hasPermission('settings.categories.view')) {
                     $actions .= '<a class="dropdown-item" href="'.route('categories.show', $category).'">
                         <i class="bx bx-show me-1"></i> Lihat
                     </a>';
                 }
 
-                if (auth()->user()->hasPermission('inventory.categories.edit')) {
+                if (auth()->user()->hasPermission('settings.categories.edit')) {
                     $categoryPayload = e(json_encode([
                         'id' => $category->id,
                         'name' => $category->name,
@@ -142,7 +142,7 @@ class CategoryController extends Controller
                     </button>';
                 }
 
-                if (auth()->user()->hasPermission('inventory.categories.delete')) {
+                if (auth()->user()->hasPermission('settings.categories.delete')) {
                     $actions .= '<form action="'.route('categories.destroy', $category).'" method="POST" style="display: inline;">
                         '.csrf_field().'
                         '.method_field('DELETE').'

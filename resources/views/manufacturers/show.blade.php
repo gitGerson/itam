@@ -14,7 +14,7 @@
                             <h5 class="mb-1">Detail Manufacturer</h5>
                         </div>
                         <div class="d-flex gap-2">
-                            @if(auth()->user()->hasPermission('inventory.manufacturers.edit'))
+                            @if(auth()->user()->hasPermission('settings.manufacturers.edit'))
                                 <a href="{{ route('manufacturers.edit', $manufacturer) }}" class="btn btn-primary">
                                     <i class="bx bx-edit-alt me-1"></i> Edit
                                 </a>

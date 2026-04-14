@@ -10,7 +10,7 @@ class CategoryStoreRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return auth()->check() && auth()->user()->hasPermission('inventory.categories.create');
+        return auth()->check() && auth()->user()->hasPermission('settings.categories.create');
     }
 
     /**

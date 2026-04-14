@@ -23,7 +23,7 @@
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h5 class="mb-0">Daftar Kategori</h5>
-                @if(auth()->user()->hasPermission('inventory.categories.create'))
+                @if(auth()->user()->hasPermission('settings.categories.create'))
                     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createCategoryModal">
                         <i class="bx bx-plus me-1"></i> Tambah Kategori
                     </button>
@@ -48,7 +48,7 @@
         </div>
     </div>
 
-    @if(auth()->user()->hasPermission('inventory.categories.create'))
+    @if(auth()->user()->hasPermission('settings.categories.create'))
         <div class="modal fade" id="createCategoryModal" tabindex="-1" aria-labelledby="createCategoryModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-lg modal-dialog-scrollable">
                 <div class="modal-content">
@@ -77,7 +77,7 @@
         </div>
     @endif
 
-    @if(auth()->user()->hasPermission('inventory.categories.edit'))
+    @if(auth()->user()->hasPermission('settings.categories.edit'))
         <div class="modal fade" id="editCategoryModal" tabindex="-1" aria-labelledby="editCategoryModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-lg modal-dialog-scrollable">
                 <div class="modal-content">

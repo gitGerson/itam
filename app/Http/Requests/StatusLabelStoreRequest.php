@@ -10,7 +10,7 @@ class StatusLabelStoreRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return auth()->check() && auth()->user()->hasPermission('inventory.status_labels.create');
+        return auth()->check() && auth()->user()->hasPermission('settings.status_labels.create');
     }
 
     /**

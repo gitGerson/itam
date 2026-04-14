@@ -17,7 +17,7 @@ class SupplierModuleTest extends TestCase
 
     public function test_user_with_supplier_view_permission_can_load_supplier_data(): void
     {
-        $user = $this->createUserWithPermissions(['inventory.suppliers.view']);
+        $user = $this->createUserWithPermissions(['settings.suppliers.view']);
 
         $this->actingAs($user)
             ->get(route('suppliers.data'))
@@ -30,8 +30,8 @@ class SupplierModuleTest extends TestCase
         Storage::fake('s3');
 
         $user = $this->createUserWithPermissions([
-            'inventory.suppliers.view',
-            'inventory.suppliers.create',
+            'settings.suppliers.view',
+            'settings.suppliers.create',
         ]);
 
         $response = $this->actingAs($user)->post(route('suppliers.store'), [
@@ -68,8 +68,8 @@ class SupplierModuleTest extends TestCase
         Storage::fake('s3');
 
         $user = $this->createUserWithPermissions([
-            'inventory.suppliers.view',
-            'inventory.suppliers.edit',
+            'settings.suppliers.view',
+            'settings.suppliers.edit',
         ]);
 
         $supplier = Supplier::factory()->create([

@@ -26,11 +26,11 @@ class UserPermissionFlowTest extends TestCase
         $user->assignRole($templateRole);
 
         $permission = Permission::firstOrCreate(
-            ['name' => 'inventory.categories.view'],
+            ['name' => 'settings.categories.view'],
             [
                 'display_name' => 'Categories - View',
                 'description' => 'Can view categories',
-                'module' => 'inventory',
+                'module' => 'settings',
                 'is_active' => true,
             ],
         );

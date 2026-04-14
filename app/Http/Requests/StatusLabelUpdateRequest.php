@@ -9,7 +9,7 @@ class StatusLabelUpdateRequest extends StatusLabelStoreRequest
 {
     public function authorize(): bool
     {
-        return auth()->check() && auth()->user()->hasPermission('inventory.status_labels.edit');
+        return auth()->check() && auth()->user()->hasPermission('settings.status_labels.edit');
     }
 
     /**

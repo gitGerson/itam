@@ -102,19 +102,19 @@ class SupplierController extends Controller
                     </button>
                     <div class="dropdown-menu">';
 
-                if (auth()->user()->hasPermission('inventory.suppliers.view')) {
+                if (auth()->user()->hasPermission('settings.suppliers.view')) {
                     $actions .= '<a class="dropdown-item" href="'.route('suppliers.show', $supplier).'">
                         <i class="bx bx-show me-1"></i> Lihat
                     </a>';
                 }
 
-                if (auth()->user()->hasPermission('inventory.suppliers.edit')) {
+                if (auth()->user()->hasPermission('settings.suppliers.edit')) {
                     $actions .= '<a class="dropdown-item" href="'.route('suppliers.edit', $supplier).'">
                         <i class="bx bx-edit-alt me-1"></i> Edit
                     </a>';
                 }
 
-                if (auth()->user()->hasPermission('inventory.suppliers.delete')) {
+                if (auth()->user()->hasPermission('settings.suppliers.delete')) {
                     $actions .= '<form action="'.route('suppliers.destroy', $supplier).'" method="POST" style="display: inline;">
                         '.csrf_field().'
                         '.method_field('DELETE').'

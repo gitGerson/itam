@@ -94,112 +94,112 @@ Route::middleware(['auth'])->group(function () {
     });
 
     // Company management routes with permissions
-    Route::middleware(['permission:inventory.companies.create'])->group(function () {
+    Route::middleware(['permission:settings.companies.create'])->group(function () {
         Route::get('/companies/create', [CompanyController::class, 'create'])->name('companies.create');
         Route::post('/companies', [CompanyController::class, 'store'])->name('companies.store');
     });
 
-    Route::middleware(['permission:inventory.companies.view'])->group(function () {
+    Route::middleware(['permission:settings.companies.view'])->group(function () {
         Route::get('/companies', [CompanyController::class, 'index'])->name('companies.index');
         Route::get('/companies/data', [CompanyController::class, 'getData'])->name('companies.data');
         Route::get('/companies/{company}', [CompanyController::class, 'show'])->name('companies.show');
     });
 
-    Route::middleware(['permission:inventory.companies.edit'])->group(function () {
+    Route::middleware(['permission:settings.companies.edit'])->group(function () {
         Route::get('/companies/{company}/edit', [CompanyController::class, 'edit'])->name('companies.edit');
         Route::put('/companies/{company}', [CompanyController::class, 'update'])->name('companies.update');
         Route::patch('/companies/{company}', [CompanyController::class, 'update']);
     });
 
-    Route::middleware(['permission:inventory.companies.delete'])->group(function () {
+    Route::middleware(['permission:settings.companies.delete'])->group(function () {
         Route::delete('/companies/{company}', [CompanyController::class, 'destroy'])->name('companies.destroy');
     });
 
     // Category management routes with permissions
-    Route::middleware(['permission:inventory.categories.create'])->group(function () {
+    Route::middleware(['permission:settings.categories.create'])->group(function () {
         Route::get('/categories/create', [CategoryController::class, 'create'])->name('categories.create');
         Route::post('/categories', [CategoryController::class, 'store'])->name('categories.store');
     });
 
-    Route::middleware(['permission:inventory.categories.view'])->group(function () {
+    Route::middleware(['permission:settings.categories.view'])->group(function () {
         Route::get('/categories', [CategoryController::class, 'index'])->name('categories.index');
         Route::get('/categories/data', [CategoryController::class, 'getData'])->name('categories.data');
         Route::get('/categories/{category}', [CategoryController::class, 'show'])->name('categories.show');
     });
 
-    Route::middleware(['permission:inventory.categories.edit'])->group(function () {
+    Route::middleware(['permission:settings.categories.edit'])->group(function () {
         Route::get('/categories/{category}/edit', [CategoryController::class, 'edit'])->name('categories.edit');
         Route::put('/categories/{category}', [CategoryController::class, 'update'])->name('categories.update');
         Route::patch('/categories/{category}', [CategoryController::class, 'update']);
     });
 
-    Route::middleware(['permission:inventory.categories.delete'])->group(function () {
+    Route::middleware(['permission:settings.categories.delete'])->group(function () {
         Route::delete('/categories/{category}', [CategoryController::class, 'destroy'])->name('categories.destroy');
     });
 
     // Manufacturer management routes with permissions
-    Route::middleware(['permission:inventory.manufacturers.create'])->group(function () {
+    Route::middleware(['permission:settings.manufacturers.create'])->group(function () {
         Route::get('/manufacturers/create', [ManufacturerController::class, 'create'])->name('manufacturers.create');
         Route::post('/manufacturers', [ManufacturerController::class, 'store'])->name('manufacturers.store');
     });
 
-    Route::middleware(['permission:inventory.manufacturers.view'])->group(function () {
+    Route::middleware(['permission:settings.manufacturers.view'])->group(function () {
         Route::get('/manufacturers', [ManufacturerController::class, 'index'])->name('manufacturers.index');
         Route::get('/manufacturers/data', [ManufacturerController::class, 'getData'])->name('manufacturers.data');
         Route::get('/manufacturers/{manufacturer}', [ManufacturerController::class, 'show'])->name('manufacturers.show');
     });
 
-    Route::middleware(['permission:inventory.manufacturers.edit'])->group(function () {
+    Route::middleware(['permission:settings.manufacturers.edit'])->group(function () {
         Route::get('/manufacturers/{manufacturer}/edit', [ManufacturerController::class, 'edit'])->name('manufacturers.edit');
         Route::put('/manufacturers/{manufacturer}', [ManufacturerController::class, 'update'])->name('manufacturers.update');
         Route::patch('/manufacturers/{manufacturer}', [ManufacturerController::class, 'update']);
     });
 
-    Route::middleware(['permission:inventory.manufacturers.delete'])->group(function () {
+    Route::middleware(['permission:settings.manufacturers.delete'])->group(function () {
         Route::delete('/manufacturers/{manufacturer}', [ManufacturerController::class, 'destroy'])->name('manufacturers.destroy');
     });
 
     // Supplier management routes with permissions
-    Route::middleware(['permission:inventory.suppliers.create'])->group(function () {
+    Route::middleware(['permission:settings.suppliers.create'])->group(function () {
         Route::get('/suppliers/create', [SupplierController::class, 'create'])->name('suppliers.create');
         Route::post('/suppliers', [SupplierController::class, 'store'])->name('suppliers.store');
     });
 
-    Route::middleware(['permission:inventory.suppliers.view'])->group(function () {
+    Route::middleware(['permission:settings.suppliers.view'])->group(function () {
         Route::get('/suppliers', [SupplierController::class, 'index'])->name('suppliers.index');
         Route::get('/suppliers/data', [SupplierController::class, 'getData'])->name('suppliers.data');
         Route::get('/suppliers/{supplier}', [SupplierController::class, 'show'])->name('suppliers.show');
     });
 
-    Route::middleware(['permission:inventory.suppliers.edit'])->group(function () {
+    Route::middleware(['permission:settings.suppliers.edit'])->group(function () {
         Route::get('/suppliers/{supplier}/edit', [SupplierController::class, 'edit'])->name('suppliers.edit');
         Route::put('/suppliers/{supplier}', [SupplierController::class, 'update'])->name('suppliers.update');
         Route::patch('/suppliers/{supplier}', [SupplierController::class, 'update']);
     });
 
-    Route::middleware(['permission:inventory.suppliers.delete'])->group(function () {
+    Route::middleware(['permission:settings.suppliers.delete'])->group(function () {
         Route::delete('/suppliers/{supplier}', [SupplierController::class, 'destroy'])->name('suppliers.destroy');
     });
 
     // Status label management routes with permissions
-    Route::middleware(['permission:inventory.status_labels.create'])->group(function () {
+    Route::middleware(['permission:settings.status_labels.create'])->group(function () {
         Route::get('/status-labels/create', [StatusLabelController::class, 'create'])->name('status-labels.create');
         Route::post('/status-labels', [StatusLabelController::class, 'store'])->name('status-labels.store');
     });
 
-    Route::middleware(['permission:inventory.status_labels.view'])->group(function () {
+    Route::middleware(['permission:settings.status_labels.view'])->group(function () {
         Route::get('/status-labels', [StatusLabelController::class, 'index'])->name('status-labels.index');
         Route::get('/status-labels/data', [StatusLabelController::class, 'getData'])->name('status-labels.data');
         Route::get('/status-labels/{statusLabel}', [StatusLabelController::class, 'show'])->name('status-labels.show');
     });
 
-    Route::middleware(['permission:inventory.status_labels.edit'])->group(function () {
+    Route::middleware(['permission:settings.status_labels.edit'])->group(function () {
         Route::get('/status-labels/{statusLabel}/edit', [StatusLabelController::class, 'edit'])->name('status-labels.edit');
         Route::put('/status-labels/{statusLabel}', [StatusLabelController::class, 'update'])->name('status-labels.update');
         Route::patch('/status-labels/{statusLabel}', [StatusLabelController::class, 'update']);
     });
 
-    Route::middleware(['permission:inventory.status_labels.delete'])->group(function () {
+    Route::middleware(['permission:settings.status_labels.delete'])->group(function () {
         Route::delete('/status-labels/{statusLabel}', [StatusLabelController::class, 'destroy'])->name('status-labels.destroy');
     });
 

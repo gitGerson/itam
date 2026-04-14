@@ -9,7 +9,7 @@ class UpdateCompanyRequest extends StoreCompanyRequest
 {
     public function authorize(): bool
     {
-        return auth()->check() && auth()->user()->hasPermission('inventory.companies.edit');
+        return auth()->check() && auth()->user()->hasPermission('settings.companies.edit');
     }
 
     /**

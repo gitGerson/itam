@@ -23,7 +23,7 @@
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h5 class="mb-0">Daftar Supplier</h5>
-                @if(auth()->user()->hasPermission('inventory.suppliers.create'))
+                @if(auth()->user()->hasPermission('settings.suppliers.create'))
                     <a href="{{ route('suppliers.create') }}" class="btn btn-primary">
                         <i class="bx bx-plus me-1"></i> Tambah Supplier
                     </a>

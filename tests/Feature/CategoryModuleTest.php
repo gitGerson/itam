@@ -17,7 +17,7 @@ class CategoryModuleTest extends TestCase
 
     public function test_user_with_category_view_permission_can_load_category_data(): void
     {
-        $user = $this->createUserWithPermissions(['inventory.categories.view']);
+        $user = $this->createUserWithPermissions(['settings.categories.view']);
 
         $this->actingAs($user)
             ->get(route('categories.data'))
@@ -30,8 +30,8 @@ class CategoryModuleTest extends TestCase
         Storage::fake('s3');
 
         $user = $this->createUserWithPermissions([
-            'inventory.categories.view',
-            'inventory.categories.create',
+            'settings.categories.view',
+            'settings.categories.create',
         ]);
 
         $response = $this->actingAs($user)->post(route('categories.store'), [
@@ -59,8 +59,8 @@ class CategoryModuleTest extends TestCase
         Storage::fake('s3');
 
         $user = $this->createUserWithPermissions([
-            'inventory.categories.view',
-            'inventory.categories.edit',
+            'settings.categories.view',
+            'settings.categories.edit',
         ]);
 
         $category = Category::factory()->create([

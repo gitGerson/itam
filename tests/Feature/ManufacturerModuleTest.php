@@ -17,7 +17,7 @@ class ManufacturerModuleTest extends TestCase
 
     public function test_user_with_manufacturer_view_permission_can_load_manufacturer_data(): void
     {
-        $user = $this->createUserWithPermissions(['inventory.manufacturers.view']);
+        $user = $this->createUserWithPermissions(['settings.manufacturers.view']);
 
         $this->actingAs($user)
             ->get(route('manufacturers.data'))
@@ -30,8 +30,8 @@ class ManufacturerModuleTest extends TestCase
         Storage::fake('s3');
 
         $user = $this->createUserWithPermissions([
-            'inventory.manufacturers.view',
-            'inventory.manufacturers.create',
+            'settings.manufacturers.view',
+            'settings.manufacturers.create',
         ]);
 
         $response = $this->actingAs($user)->post(route('manufacturers.store'), [
@@ -62,8 +62,8 @@ class ManufacturerModuleTest extends TestCase
         Storage::fake('s3');
 
         $user = $this->createUserWithPermissions([
-            'inventory.manufacturers.view',
-            'inventory.manufacturers.edit',
+            'settings.manufacturers.view',
+            'settings.manufacturers.edit',
         ]);
 
         $manufacturer = Manufacturer::factory()->create([

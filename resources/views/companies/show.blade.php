@@ -14,7 +14,7 @@
                             <h5 class="mb-1">Detail Company</h5>
                         </div>
                         <div class="d-flex gap-2">
-                            @if(auth()->user()->hasPermission('inventory.companies.edit'))
+                            @if(auth()->user()->hasPermission('settings.companies.edit'))
                                 <a href="{{ route('companies.edit', $company) }}" class="btn btn-primary">
                                     <i class="bx bx-edit-alt me-1"></i> Edit
                                 </a>

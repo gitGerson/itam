@@ -10,6 +10,10 @@ Because the dump relies heavily on `*_id` naming conventions and indexes rather 
 ## Scope adjustment for your implementation
 This version intentionally keeps the **current platform layer** as-is and limits the rebuild plan to the **inventory feature**.
 
+For the active implementation plan in this app:
+- `settings` is treated as a navigation/configuration concern, not part of the inventory rebuild sequence
+- `licenses` and license-seat flows are intentionally excluded from the current rebuild plan
+
 Current platform-owned tables in this app:
 - `users` is a **first-party application table** that already exists
 - auth uses Laravel defaults such as `password_reset_tokens`, `sessions`, and Sanctum `personal_access_tokens`
@@ -29,11 +33,9 @@ That means:
 
 | Table | Purpose | Important columns | Likely references |
 |---|---|---|---|
-| `companies` | Company master | `id`, `created_by` | referenced by `assets`, `locations`, `licenses`, `accessories`, `components`, `consumables`, `departments`; `created_by` likely points to existing `users` |
+| `companies` | Company master | `id`, `created_by` | referenced by `assets`, `locations`, `accessories`, `components`, `consumables`, `departments`; `created_by` likely points to existing `users` |
 | `locations` | Branch/site/location master | `company_id`, `parent_id`, `manager_id`, `created_by` | `companies`, self (`locations`), existing `users`, `assets` |
 | `departments` | Department master | `company_id`, `location_id`, `manager_id`, `created_by` | `companies`, `locations`, existing `users` |
-| `settings` | Global application config | `created_by` | existing `users` |
-
 ### Core relationship view
 - `companies` 1 -> * `locations`
 - `companies` 1 -> * `departments`
@@ -47,9 +49,9 @@ That means:
 
 | Table | Purpose | Important columns | Likely references |
 |---|---|---|---|
-| `categories` | Category master | `created_by` | `models`, `accessories`, `consumables`, `licenses`; `created_by` likely points to existing `users` |
-| `manufacturers` | Manufacturer master | `created_by` | `models`, `accessories`, `components`, `consumables`, `licenses`; `created_by` likely points to existing `users` |
-| `suppliers` | Supplier/vendor master | `created_by` | `assets`, `asset_maintenances`, `accessories`, `components`, `consumables`, `licenses`; `created_by` likely points to existing `users` |
+| `categories` | Category master | `created_by` | `models`, `accessories`, `consumables`; `created_by` likely points to existing `users` |
+| `manufacturers` | Manufacturer master | `created_by` | `models`, `accessories`, `components`, `consumables`; `created_by` likely points to existing `users` |
+| `suppliers` | Supplier/vendor master | `created_by` | `assets`, `asset_maintenances`, `accessories`, `components`, `consumables`; `created_by` likely points to existing `users` |
 | `status_labels` | Asset status master | `created_by` | `assets`; `created_by` likely points to existing `users` |
 | `models` | Asset model master | `manufacturer_id`, `category_id`, `fieldset_id`, `created_by` | `manufacturers`, `categories`, `custom_fieldsets`, `assets`, existing `users` |
 
@@ -81,7 +83,6 @@ That means:
 | `accessories` | Accessory stock master | `category_id`, `location_id`, `company_id`, `manufacturer_id`, `supplier_id`, `created_by` | `categories`, `locations`, `companies`, `manufacturers`, `suppliers`, existing `users` |
 | `components` | Component stock master | `category_id`, `location_id`, `company_id`, `manufacturer_id`, `supplier_id`, `created_by` | `categories`, `locations`, `companies`, `manufacturers`, `suppliers`, existing `users` |
 | `consumables` | Consumable stock master | `category_id`, `location_id`, `company_id`, `manufacturer_id`, `supplier_id`, `created_by` | `categories`, `locations`, `companies`, `manufacturers`, `suppliers`, existing `users` |
-| `licenses` | License/software master | `supplier_id`, `company_id`, `manufacturer_id`, `category_id`, `created_by` | `suppliers`, `companies`, `manufacturers`, `categories`, existing `users` |
 
 ### Important note on `assets`
 `assets` is the main operational table and currently mixes:
@@ -138,12 +139,6 @@ That makes it the most central table and also the hardest one to refactor safely
 |---|---|---|---|
 | `consumables_users` | Consumable distribution/assignment | `created_by`, `consumable_id`, `assigned_to` | existing `users`, `consumables` |
 
-### Licenses
-
-| Table | Purpose | Important columns | Likely references |
-|---|---|---|---|
-| `license_seats` | License seat assignment | `license_id`, `assigned_to`, `asset_id`, `created_by` | `licenses`, existing `users`, `assets` |
-
 ---
 
 # 2. Most important inferred joins
@@ -163,9 +158,6 @@ That makes it the most central table and also the hardest one to refactor safely
 | `locations` | `locations` | `locations.parent_id = locations.id` |
 | `locations` | `users` | `locations.manager_id = users.id` (existing app table) |
 | `departments` | `users` | `departments.manager_id = users.id` (existing app table) |
-| `license_seats` | `licenses` | `license_seats.license_id = licenses.id` |
-| `license_seats` | `users` | `license_seats.assigned_to = users.id` |
-| `license_seats` | `assets` | `license_seats.asset_id = assets.id` |
 | `components_assets` | `components` | `components_assets.component_id = components.id` |
 | `components_assets` | `assets` | `components_assets.asset_id = assets.id` |
 | `asset_maintenances` | `assets` | `asset_maintenances.asset_id = assets.id` |
@@ -229,46 +221,43 @@ Because `users`, auth, and RBAC already exist in the application layer, this seq
 
 ### Phase B - organizational structure
 
-9. `create_locations_table`
-10. `create_departments_table`
-11. `create_settings_table`
+8. `create_locations_table`
+9. `create_departments_table`
 
 ### Phase C - model and metadata layer
 
-12. `create_models_table`
-13. `create_custom_field_custom_fieldset_table`
-14. `create_models_custom_fields_table`
+10. `create_models_table`
+11. `create_custom_field_custom_fieldset_table`
+12. `create_models_custom_fields_table`
 
 ### Phase D - core inventory entities
 
-15. `create_assets_table`
-16. `create_accessories_table`
-17. `create_components_table`
-18. `create_consumables_table`
-19. `create_licenses_table`
+13. `create_assets_table`
+14. `create_accessories_table`
+15. `create_components_table`
+16. `create_consumables_table`
 
 ### Phase E - pivot inventory tables
 
-20. `create_components_assets_table`
-21. `create_license_seats_table`
+17. `create_components_assets_table`
 
 ### Phase F - checkout, distribution, and maintenance flows
 
-22. `create_accessories_checkout_table`
-23. `create_consumables_users_table`
-24. `create_asset_maintenances_table`
-25. `create_asset_uploads_table`
-26. `create_checkout_acceptances_table`
-27. `create_checkout_requests_table`
-28. `create_requested_assets_table`
-29. `create_requests_table`
+18. `create_accessories_checkout_table`
+19. `create_consumables_users_table`
+20. `create_asset_maintenances_table`
+21. `create_asset_uploads_table`
+22. `create_checkout_acceptances_table`
+23. `create_checkout_requests_table`
+24. `create_requested_assets_table`
+25. `create_requests_table`
 
 ### Phase G - logs, reporting, and imports
 
-30. `create_action_logs_table`
-31. `create_asset_logs_table`
-32. `create_imports_table`
-33. `create_report_templates_table`
+26. `create_action_logs_table`
+27. `create_asset_logs_table`
+28. `create_imports_table`
+29. `create_report_templates_table`
 
 > Note: `migrations` is not listed because Laravel handles it automatically. Auth and RBAC tables are also intentionally excluded because they already exist and are not part of the inventory rebuild target.
 
@@ -312,12 +301,6 @@ The table creation order above is not exactly the same as the **constraint** ord
 - `consumables.company_id -> companies.id`
 - `consumables.manufacturer_id -> manufacturers.id`
 - `consumables.supplier_id -> suppliers.id`
-- `licenses.supplier_id -> suppliers.id`
-- `licenses.company_id -> companies.id`
-- `licenses.manufacturer_id -> manufacturers.id`
-- `licenses.category_id -> categories.id`
-- `license_seats.license_id -> licenses.id`
-- `license_seats.asset_id -> assets.id`
 - `components_assets.component_id -> components.id`
 - `components_assets.asset_id -> assets.id`
 - `asset_maintenances.asset_id -> assets.id`
@@ -341,7 +324,6 @@ These are better added after the main tables exist, the current app `users` tabl
 - `requested_assets.user_id -> users.id`
 - `requests.user_id -> users.id`
 - `checkout_requests.user_id -> users.id`
-- `license_seats.assigned_to -> users.id`
 - other nullable operational actor fields if historical data is already clean
 
 ## 5.3 Keep polymorphic relations non-FK
@@ -362,7 +344,7 @@ Foreign keys alone are not enough. The inventory rebuild should also define uniq
 
 - use composite primary keys or composite unique indexes for pure pivots such as `custom_field_custom_fieldset` and `components_assets`
 - if `models_custom_fields` stores only one default value per model-field pair, enforce uniqueness on (`asset_model_id`, `custom_field_id`)
-- decide whether movement tables such as `accessories_checkout`, `consumables_users`, and `license_seats` are historical logs or current-state pivots before adding uniqueness
+- decide whether movement tables such as `accessories_checkout` and `consumables_users` are historical logs or current-state pivots before adding uniqueness
 - decide explicit uniqueness for business identifiers such as `assets.asset_tag`, and possibly `assets.serial` if the business treats serial numbers as globally unique
 
 ---

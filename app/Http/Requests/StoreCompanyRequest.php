@@ -10,7 +10,7 @@ class StoreCompanyRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return auth()->check() && auth()->user()->hasPermission('inventory.companies.create');
+        return auth()->check() && auth()->user()->hasPermission('settings.companies.create');
     }
 
     /**

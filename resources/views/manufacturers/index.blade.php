@@ -23,7 +23,7 @@
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h5 class="mb-0">Daftar Manufacturer</h5>
-                @if(auth()->user()->hasPermission('inventory.manufacturers.create'))
+                @if(auth()->user()->hasPermission('settings.manufacturers.create'))
                     <a href="{{ route('manufacturers.create') }}" class="btn btn-primary">
                         <i class="bx bx-plus me-1"></i> Tambah Manufacturer
                     </a>

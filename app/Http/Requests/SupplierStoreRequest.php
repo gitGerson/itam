@@ -10,7 +10,7 @@ class SupplierStoreRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return auth()->check() && auth()->user()->hasPermission('inventory.suppliers.create');
+        return auth()->check() && auth()->user()->hasPermission('settings.suppliers.create');
     }
 
     /**

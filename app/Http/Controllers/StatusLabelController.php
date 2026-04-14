@@ -123,19 +123,19 @@ class StatusLabelController extends Controller
                     </button>
                     <div class="dropdown-menu">';
 
-                if (auth()->user()->hasPermission('inventory.status_labels.view')) {
+                if (auth()->user()->hasPermission('settings.status_labels.view')) {
                     $actions .= '<a class="dropdown-item" href="'.route('status-labels.show', $statusLabel).'">
                         <i class="bx bx-show me-1"></i> Lihat
                     </a>';
                 }
 
-                if (auth()->user()->hasPermission('inventory.status_labels.edit')) {
+                if (auth()->user()->hasPermission('settings.status_labels.edit')) {
                     $actions .= '<a class="dropdown-item" href="'.route('status-labels.edit', $statusLabel).'">
                         <i class="bx bx-edit-alt me-1"></i> Edit
                     </a>';
                 }
 
-                if (auth()->user()->hasPermission('inventory.status_labels.delete')) {
+                if (auth()->user()->hasPermission('settings.status_labels.delete')) {
                     $actions .= '<form action="'.route('status-labels.destroy', $statusLabel).'" method="POST" style="display: inline;">
                         '.csrf_field().'
                         '.method_field('DELETE').'

@@ -110,13 +110,13 @@ class CompanyController extends Controller
                     </button>
                     <div class="dropdown-menu">';
 
-                if (auth()->user()->hasPermission('inventory.companies.view')) {
+                if (auth()->user()->hasPermission('settings.companies.view')) {
                     $actions .= '<a class="dropdown-item" href="'.route('companies.show', $company).'">
                         <i class="bx bx-show me-1"></i> Lihat
                     </a>';
                 }
 
-                if (auth()->user()->hasPermission('inventory.companies.edit')) {
+                if (auth()->user()->hasPermission('settings.companies.edit')) {
                     $companyPayload = e(json_encode([
                         'id' => $company->id,
                         'name' => $company->name,
@@ -134,7 +134,7 @@ class CompanyController extends Controller
                     </button>';
                 }
 
-                if (auth()->user()->hasPermission('inventory.companies.delete')) {
+                if (auth()->user()->hasPermission('settings.companies.delete')) {
                     $actions .= '<form action="'.route('companies.destroy', $company).'" method="POST" style="display: inline;">
                         '.csrf_field().'
                         '.method_field('DELETE').'

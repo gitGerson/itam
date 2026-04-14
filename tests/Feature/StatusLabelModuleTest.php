@@ -15,7 +15,7 @@ class StatusLabelModuleTest extends TestCase
 
     public function test_user_with_status_label_view_permission_can_load_status_label_data(): void
     {
-        $user = $this->createUserWithPermissions(['inventory.status_labels.view']);
+        $user = $this->createUserWithPermissions(['settings.status_labels.view']);
 
         $this->actingAs($user)
             ->get(route('status-labels.data'))
@@ -26,8 +26,8 @@ class StatusLabelModuleTest extends TestCase
     public function test_user_with_status_label_create_permission_can_store_status_label(): void
     {
         $user = $this->createUserWithPermissions([
-            'inventory.status_labels.view',
-            'inventory.status_labels.create',
+            'settings.status_labels.view',
+            'settings.status_labels.create',
         ]);
 
         $response = $this->actingAs($user)->post(route('status-labels.store'), [
@@ -57,8 +57,8 @@ class StatusLabelModuleTest extends TestCase
     public function test_user_with_status_label_edit_permission_can_update_status_label(): void
     {
         $user = $this->createUserWithPermissions([
-            'inventory.status_labels.view',
-            'inventory.status_labels.edit',
+            'settings.status_labels.view',
+            'settings.status_labels.edit',
         ]);
 
         $statusLabel = StatusLabel::factory()->create([

@@ -9,7 +9,7 @@ class SupplierUpdateRequest extends SupplierStoreRequest
 {
     public function authorize(): bool
     {
-        return auth()->check() && auth()->user()->hasPermission('inventory.suppliers.edit');
+        return auth()->check() && auth()->user()->hasPermission('settings.suppliers.edit');
     }
 
     /**

@@ -17,9 +17,9 @@ class PermissionSyncServiceTest extends TestCase
 
         app(PermissionSyncService::class)->sync();
 
-        $permission = Permission::where('name', 'inventory.categories.view')->firstOrFail();
+        $permission = Permission::where('name', 'settings.categories.view')->firstOrFail();
 
-        $this->assertSame('inventory.access', $permission->parent);
+        $this->assertSame('settings.access', $permission->parent);
         $this->assertSame(6, $permission->sort_order);
     }
 }

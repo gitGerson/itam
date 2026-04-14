@@ -9,7 +9,7 @@ class ManufacturerUpdateRequest extends ManufacturerStoreRequest
 {
     public function authorize(): bool
     {
-        return auth()->check() && auth()->user()->hasPermission('inventory.manufacturers.edit');
+        return auth()->check() && auth()->user()->hasPermission('settings.manufacturers.edit');
     }
 
     /**

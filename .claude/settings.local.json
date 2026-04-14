@@ -9,7 +9,9 @@
       "Bash(mkdir:*)",
       "Bash(sed:*)",
       "Bash(composer show:*)",
-      "Bash(vendor/bin/pint --dirty --format agent)"
+      "Bash(vendor/bin/pint --dirty --format agent)",
+      "Bash(git add:*)",
+      "Bash(git commit -m ':*)"
     ],
     "deny": [],
     "ask": []

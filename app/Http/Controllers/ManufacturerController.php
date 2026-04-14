@@ -104,19 +104,19 @@ class ManufacturerController extends Controller
                     </button>
                     <div class="dropdown-menu">';
 
-                if (auth()->user()->hasPermission('inventory.manufacturers.view')) {
+                if (auth()->user()->hasPermission('settings.manufacturers.view')) {
                     $actions .= '<a class="dropdown-item" href="'.route('manufacturers.show', $manufacturer).'">
                         <i class="bx bx-show me-1"></i> Lihat
                     </a>';
                 }
 
-                if (auth()->user()->hasPermission('inventory.manufacturers.edit')) {
+                if (auth()->user()->hasPermission('settings.manufacturers.edit')) {
                     $actions .= '<a class="dropdown-item" href="'.route('manufacturers.edit', $manufacturer).'">
                         <i class="bx bx-edit-alt me-1"></i> Edit
                     </a>';
                 }
 
-                if (auth()->user()->hasPermission('inventory.manufacturers.delete')) {
+                if (auth()->user()->hasPermission('settings.manufacturers.delete')) {
                     $actions .= '<form action="'.route('manufacturers.destroy', $manufacturer).'" method="POST" style="display: inline;">
                         '.csrf_field().'
                         '.method_field('DELETE').'
