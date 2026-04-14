@@ -68,6 +68,7 @@ class StatusLabelController extends Controller
     public function getData(): JsonResponse
     {
         $statusLabels = StatusLabel::query()
+            ->with('creator:id,name')
             ->select([
                 'id',
                 'name',
@@ -77,7 +78,10 @@ class StatusLabelController extends Controller
                 'archived',
                 'show_in_nav',
                 'default_label',
+                'notes',
+                'created_by',
                 'created_at',
+                'updated_at',
             ]);
 
         return datatables()->of($statusLabels)
@@ -91,31 +95,30 @@ class StatusLabelController extends Controller
                     <span>'.e($statusLabel->color).'</span>
                 </div>';
             })
-            ->addColumn('flags', function (StatusLabel $statusLabel): string {
-                $flags = [];
+            ->addColumn('status_type', function (StatusLabel $statusLabel): string {
+                $types = [];
 
                 if ($statusLabel->deployable) {
-                    $flags[] = '<span class="badge bg-label-success">Deployable</span>';
+                    $types[] = '<span class="badge bg-label-success">Deployable</span>';
                 }
 
                 if ($statusLabel->pending) {
-                    $flags[] = '<span class="badge bg-label-warning">Pending</span>';
+                    $types[] = '<span class="badge bg-label-warning">Pending</span>';
                 }
 
                 if ($statusLabel->archived) {
-                    $flags[] = '<span class="badge bg-label-secondary">Archived</span>';
+                    $types[] = '<span class="badge bg-label-secondary">Archived</span>';
                 }
 
-                if ($statusLabel->show_in_nav) {
-                    $flags[] = '<span class="badge bg-label-info">Show in Nav</span>';
-                }
-
-                if ($statusLabel->default_label) {
-                    $flags[] = '<span class="badge bg-label-primary">Default</span>';
-                }
-
-                return $flags === [] ? '<span class="text-muted">-</span>' : implode(' ', $flags);
+                return $types === [] ? '<span class="text-muted">-</span>' : implode(' ', $types);
             })
+            ->addColumn('show_in_nav_badge', fn (StatusLabel $statusLabel): string => $statusLabel->show_in_nav
+                ? '<span class="badge bg-label-info">Ya</span>'
+                : '<span class="text-muted">-</span>')
+            ->addColumn('default_label_badge', fn (StatusLabel $statusLabel): string => $statusLabel->default_label
+                ? '<span class="badge bg-label-primary">Ya</span>'
+                : '<span class="text-muted">-</span>')
+            ->addColumn('creator_name', fn (StatusLabel $statusLabel): string => e($statusLabel->creator?->name ?? '-'))
             ->addColumn('action', function (StatusLabel $statusLabel): string {
                 $actions = '<div class="dropdown">
                     <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
@@ -148,7 +151,8 @@ class StatusLabelController extends Controller
                 return $actions.'</div></div>';
             })
             ->editColumn('created_at', fn (StatusLabel $statusLabel): ?string => $statusLabel->created_at?->toIso8601String())
-            ->rawColumns(['color_preview', 'flags', 'action'])
+            ->editColumn('updated_at', fn (StatusLabel $statusLabel): ?string => $statusLabel->updated_at?->toIso8601String())
+            ->rawColumns(['color_preview', 'status_type', 'show_in_nav_badge', 'default_label_badge', 'action'])
             ->make(true);
     }
 

@@ -36,9 +36,14 @@
                             <tr>
                                 <th>ID</th>
                                 <th>Nama</th>
-                                <th>Warna</th>
-                                <th>Flags</th>
-                                <th>Dibuat</th>
+                                <th>Tipe Status</th>
+                                <th>Warna Bagan</th>
+                                <th>Tampilkan di Navigasi</th>
+                                <th>Default Label</th>
+                                <th>Catatan</th>
+                                <th>Dibuat Oleh</th>
+                                <th>Dibuat Pada</th>
+                                <th>Diperbarui Pada</th>
                                 <th>Aksi</th>
                             </tr>
                         </thead>
@@ -60,20 +65,50 @@
                     { data: 'id', name: 'id' },
                     { data: 'name', name: 'name' },
                     {
+                        data: 'status_type',
+                        name: 'status_type',
+                        orderable: false,
+                        searchable: false
+                    },
+                    {
                         data: 'color_preview',
                         name: 'color',
                         orderable: false,
                         searchable: false
                     },
                     {
-                        data: 'flags',
-                        name: 'flags',
+                        data: 'show_in_nav_badge',
+                        name: 'show_in_nav',
+                        orderable: false,
+                        searchable: false
+                    },
+                    {
+                        data: 'default_label_badge',
+                        name: 'default_label',
+                        orderable: false,
+                        searchable: false
+                    },
+                    {
+                        data: 'notes',
+                        name: 'notes',
+                        render: function(data) { return data || '-'; }
+                    },
+                    {
+                        data: 'creator_name',
+                        name: 'created_by',
                         orderable: false,
                         searchable: false
                     },
                     {
                         data: 'created_at',
                         name: 'created_at',
+                        render: function(data) {
+                            return data ? moment(data).format('DD MMM YYYY HH:mm') : '-';
+                        }
+                    },
+                    {
+                        data: 'updated_at',
+                        name: 'updated_at',
                         render: function(data) {
                             return data ? moment(data).format('DD MMM YYYY HH:mm') : '-';
                         }
