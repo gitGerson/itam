@@ -7,6 +7,7 @@ use App\Http\Controllers\CustomFieldsetController;
 use App\Http\Controllers\FileUploadController;
 use App\Http\Controllers\FormDemoController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\LocationController;
 use App\Http\Controllers\ManufacturerController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\StatusLabelController;
@@ -243,6 +244,28 @@ Route::middleware(['auth'])->group(function () {
 
     Route::middleware(['permission:inventory.custom_fieldsets.delete'])->group(function () {
         Route::delete('/custom-fieldsets/{custom_fieldset}', [CustomFieldsetController::class, 'destroy'])->name('custom-fieldsets.destroy');
+    });
+
+    // Location management routes with permissions
+    Route::middleware(['permission:inventory.locations.create'])->group(function () {
+        Route::get('/locations/create', [LocationController::class, 'create'])->name('locations.create');
+        Route::post('/locations', [LocationController::class, 'store'])->name('locations.store');
+    });
+
+    Route::middleware(['permission:inventory.locations.view'])->group(function () {
+        Route::get('/locations', [LocationController::class, 'index'])->name('locations.index');
+        Route::get('/locations/data', [LocationController::class, 'getData'])->name('locations.data');
+        Route::get('/locations/{location}', [LocationController::class, 'show'])->name('locations.show');
+    });
+
+    Route::middleware(['permission:inventory.locations.edit'])->group(function () {
+        Route::get('/locations/{location}/edit', [LocationController::class, 'edit'])->name('locations.edit');
+        Route::put('/locations/{location}', [LocationController::class, 'update'])->name('locations.update');
+        Route::patch('/locations/{location}', [LocationController::class, 'update']);
+    });
+
+    Route::middleware(['permission:inventory.locations.delete'])->group(function () {
+        Route::delete('/locations/{location}', [LocationController::class, 'destroy'])->name('locations.destroy');
     });
 
     // User role assignment routes
