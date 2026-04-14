@@ -83,7 +83,8 @@ class SupplierController extends Controller
     public function getData(): JsonResponse
     {
         $suppliers = Supplier::query()
-            ->select(['id', 'name', 'contact', 'email', 'phone', 'country', 'image', 'created_at']);
+            ->with('creator:id,name')
+            ->select(['id', 'name', 'image', 'url', 'address', 'address2', 'city', 'state', 'zip', 'country', 'phone', 'fax', 'notes', 'created_by', 'created_at']);
 
         return datatables()->of($suppliers)
             ->addColumn('logo', function (Supplier $supplier): string {
@@ -126,6 +127,7 @@ class SupplierController extends Controller
 
                 return $actions.'</div></div>';
             })
+            ->addColumn('creator_name', fn (Supplier $supplier): string => e($supplier->creator?->name ?? '-'))
             ->editColumn('created_at', fn (Supplier $supplier): ?string => $supplier->created_at?->toIso8601String())
             ->rawColumns(['logo', 'action'])
             ->make(true);

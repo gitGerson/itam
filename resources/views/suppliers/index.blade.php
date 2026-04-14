@@ -35,13 +35,20 @@
                         <thead>
                             <tr>
                                 <th>ID</th>
-                                <th>Logo</th>
                                 <th>Nama</th>
-                                <th>Contact</th>
-                                <th>Email</th>
-                                <th>Telepon</th>
+                                <th>Gambar</th>
+                                <th>URL</th>
+                                <th>Alamat</th>
+                                <th>Alamat 2</th>
+                                <th>Kota</th>
+                                <th>Provinsi</th>
+                                <th>Kode Pos</th>
                                 <th>Negara</th>
-                                <th>Dibuat</th>
+                                <th>Telepon</th>
+                                <th>Fax</th>
+                                <th>Catatan</th>
+                                <th>Dibuat Pada</th>
+                                <th>Dibuat Oleh</th>
                                 <th>Aksi</th>
                             </tr>
                         </thead>
@@ -61,40 +68,64 @@
                 ajax: '{{ route('suppliers.data') }}',
                 columns: [
                     { data: 'id', name: 'id' },
+                    { data: 'name', name: 'name' },
                     {
                         data: 'logo',
-                        name: 'logo',
+                        name: 'image',
                         orderable: false,
                         searchable: false
                     },
-                    { data: 'name', name: 'name' },
                     {
-                        data: 'contact',
-                        name: 'contact',
+                        data: 'url',
+                        name: 'url',
                         render: function(data) {
-                            return data || '-';
+                            return data ? '<a href="' + data + '" target="_blank" rel="noopener">' + data + '</a>' : '-';
                         }
                     },
                     {
-                        data: 'email',
-                        name: 'email',
-                        render: function(data) {
-                            return data || '-';
-                        }
+                        data: 'address',
+                        name: 'address',
+                        render: function(data) { return data || '-'; }
                     },
                     {
-                        data: 'phone',
-                        name: 'phone',
-                        render: function(data) {
-                            return data || '-';
-                        }
+                        data: 'address2',
+                        name: 'address2',
+                        render: function(data) { return data || '-'; }
+                    },
+                    {
+                        data: 'city',
+                        name: 'city',
+                        render: function(data) { return data || '-'; }
+                    },
+                    {
+                        data: 'state',
+                        name: 'state',
+                        render: function(data) { return data || '-'; }
+                    },
+                    {
+                        data: 'zip',
+                        name: 'zip',
+                        render: function(data) { return data || '-'; }
                     },
                     {
                         data: 'country',
                         name: 'country',
-                        render: function(data) {
-                            return data || '-';
-                        }
+                        render: function(data) { return data || '-'; }
+                    },
+                    {
+                        data: 'phone',
+                        name: 'phone',
+                        render: function(data) { return data || '-'; }
+                    },
+                    {
+                        data: 'fax',
+                        name: 'fax',
+                        render: function(data) { return data || '-'; }
+                    },
+                    {
+                        data: 'notes',
+                        name: 'notes',
+                        render: function(data) { return data || '-'; }
                     },
                     {
                         data: 'created_at',
@@ -102,6 +133,12 @@
                         render: function(data) {
                             return data ? moment(data).format('DD MMM YYYY HH:mm') : '-';
                         }
+                    },
+                    {
+                        data: 'creator_name',
+                        name: 'created_by',
+                        orderable: false,
+                        searchable: false
                     },
                     {
                         data: 'action',
