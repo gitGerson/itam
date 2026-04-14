@@ -94,16 +94,20 @@ class CategoryController extends Controller
     public function getData(): JsonResponse
     {
         $categories = Category::query()
+            ->with('creator:id,name')
             ->select([
                 'id',
                 'name',
-                'category_type',
                 'image',
+                'category_type',
+                'notes',
+                'created_by',
                 'created_at',
+                'updated_at',
             ]);
 
         return datatables()->of($categories)
-            ->addColumn('logo', function (Category $category): string {
+            ->addColumn('image_preview', function (Category $category): string {
                 if (! $category->imageUrl()) {
                     return '<div class="d-flex align-items-center justify-content-center rounded border bg-label-secondary text-muted" style="width: 44px; height: 44px;">
                         <i class="bx bx-image-alt"></i>
@@ -154,8 +158,10 @@ class CategoryController extends Controller
 
                 return $actions.'</div></div>';
             })
+            ->addColumn('creator_name', fn (Category $category): string => e($category->creator?->name ?? '-'))
             ->editColumn('created_at', fn (Category $category): ?string => $category->created_at?->toIso8601String())
-            ->rawColumns(['logo', 'action'])
+            ->editColumn('updated_at', fn (Category $category): ?string => $category->updated_at?->toIso8601String())
+            ->rawColumns(['image_preview', 'action'])
             ->make(true);
     }
 }

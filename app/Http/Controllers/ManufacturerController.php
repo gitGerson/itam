@@ -85,7 +85,8 @@ class ManufacturerController extends Controller
     public function getData(): JsonResponse
     {
         $manufacturers = Manufacturer::query()
-            ->select(['id', 'name', 'url', 'support_phone', 'support_email', 'image', 'created_at']);
+            ->with('creator:id,name')
+            ->select(['id', 'name', 'url', 'support_url', 'support_phone', 'support_email', 'warranty_lookup_url', 'image', 'created_by', 'created_at', 'updated_at']);
 
         return datatables()->of($manufacturers)
             ->addColumn('logo', function (Manufacturer $manufacturer): string {
@@ -128,7 +129,9 @@ class ManufacturerController extends Controller
 
                 return $actions.'</div></div>';
             })
+            ->addColumn('creator_name', fn (Manufacturer $manufacturer): string => e($manufacturer->creator?->name ?? '-'))
             ->editColumn('created_at', fn (Manufacturer $manufacturer): ?string => $manufacturer->created_at?->toIso8601String())
+            ->editColumn('updated_at', fn (Manufacturer $manufacturer): ?string => $manufacturer->updated_at?->toIso8601String())
             ->rawColumns(['logo', 'action'])
             ->make(true);
     }

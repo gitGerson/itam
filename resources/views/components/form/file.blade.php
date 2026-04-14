@@ -31,7 +31,15 @@
     $errorBag = $errors ?? new \Illuminate\Support\ViewErrorBag();
     $isInvalid = $errorBag->has($baseFieldName) || $errorBag->has($baseFieldName.'.*');
     $acceptedTypesJson = json_encode($acceptedFileTypes ?? []);
-    $existingFilesJson = json_encode($existingFiles ?? []);
+
+    // If a temp path was submitted before a validation failure, restore it as a limbo file.
+    $oldValue = old($baseFieldName);
+    $effectiveExistingFiles = $existingFiles ?? [];
+    if (is_string($oldValue) && str_starts_with($oldValue, 'tmp/filepond/')) {
+        $effectiveExistingFiles = [$oldValue];
+    }
+
+    $existingFilesJson = json_encode($effectiveExistingFiles);
     $useFilePond = $mode === 'filepond' && filled($resolvedProcessUrl) && filled($resolvedRevertUrl);
 @endphp
 

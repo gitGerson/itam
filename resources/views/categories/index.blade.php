@@ -35,10 +35,13 @@
                         <thead>
                             <tr>
                                 <th>ID</th>
-                                <th>Gambar</th>
                                 <th>Nama</th>
+                                <th>Gambar</th>
                                 <th>Tipe</th>
-                                <th>Dibuat</th>
+                                <th>Catatan</th>
+                                <th>Dibuat oleh</th>
+                                <th>Dibuat pada</th>
+                                <th>Diperbaharui pada</th>
                                 <th>Aksi</th>
                             </tr>
                         </thead>
@@ -117,17 +120,37 @@
                 ajax: '{{ route('categories.data') }}',
                 columns: [
                     { data: 'id', name: 'id' },
+                    { data: 'name', name: 'name' },
                     {
-                        data: 'logo',
-                        name: 'logo',
+                        data: 'image_preview',
+                        name: 'image',
                         orderable: false,
                         searchable: false
                     },
-                    { data: 'name', name: 'name' },
                     { data: 'category_type', name: 'category_type' },
+                    {
+                        data: 'notes',
+                        name: 'notes',
+                        render: function(data) {
+                            return data || '-';
+                        }
+                        },
+                    {
+                        data: 'creator_name',
+                        name: 'created_by',
+                        orderable: false,
+                        searchable: false
+                    },
                     {
                         data: 'created_at',
                         name: 'created_at',
+                        render: function(data) {
+                            return data ? moment(data).format('DD MMM YYYY HH:mm') : '-';
+                        }
+                    },
+                    {
+                        data: 'updated_at',
+                        name: 'updated_at',
                         render: function(data) {
                             return data ? moment(data).format('DD MMM YYYY HH:mm') : '-';
                         }

@@ -35,12 +35,16 @@
                         <thead>
                             <tr>
                                 <th>ID</th>
-                                <th>Logo</th>
                                 <th>Nama</th>
-                                <th>Website</th>
+                                <th>Gambar</th>
+                                <th>URL</th>
+                                <th>Support URL</th>
                                 <th>Support Phone</th>
                                 <th>Support Email</th>
-                                <th>Dibuat</th>
+                                <th>URL Garansi</th>
+                                <th>Dibuat Oleh</th>
+                                <th>Dibuat Pada</th>
+                                <th>Diperbarui Pada</th>
                                 <th>Aksi</th>
                             </tr>
                         </thead>
@@ -60,18 +64,25 @@
                 ajax: '{{ route('manufacturers.data') }}',
                 columns: [
                     { data: 'id', name: 'id' },
+                    { data: 'name', name: 'name' },
                     {
                         data: 'logo',
-                        name: 'logo',
+                        name: 'image',
                         orderable: false,
                         searchable: false
                     },
-                    { data: 'name', name: 'name' },
                     {
                         data: 'url',
                         name: 'url',
                         render: function(data) {
-                            return data || '-';
+                            return data ? '<a href="' + data + '" target="_blank" rel="noopener">' + data + '</a>' : '-';
+                        }
+                    },
+                    {
+                        data: 'support_url',
+                        name: 'support_url',
+                        render: function(data) {
+                            return data ? '<a href="' + data + '" target="_blank" rel="noopener">' + data + '</a>' : '-';
                         }
                     },
                     {
@@ -89,8 +100,28 @@
                         }
                     },
                     {
+                        data: 'warranty_lookup_url',
+                        name: 'warranty_lookup_url',
+                        render: function(data) {
+                            return data ? '<a href="' + data + '" target="_blank" rel="noopener">' + data + '</a>' : '-';
+                        }
+                    },
+                    {
+                        data: 'creator_name',
+                        name: 'created_by',
+                        orderable: false,
+                        searchable: false
+                    },
+                    {
                         data: 'created_at',
                         name: 'created_at',
+                        render: function(data) {
+                            return data ? moment(data).format('DD MMM YYYY HH:mm') : '-';
+                        }
+                    },
+                    {
+                        data: 'updated_at',
+                        name: 'updated_at',
                         render: function(data) {
                             return data ? moment(data).format('DD MMM YYYY HH:mm') : '-';
                         }

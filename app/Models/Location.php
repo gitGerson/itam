@@ -95,7 +95,7 @@ class Location extends Model
                         return;
                     }
 
-                    if (is_string($value) && $location !== null && $value === $location->image) {
+                    if (is_string($value) && $location !== null && ($value === $location->image || $value === $location->imageUrl())) {
                         return;
                     }
 

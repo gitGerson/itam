@@ -24,9 +24,19 @@ function parseExistingFiles(value) {
     }
 }
 
+const FILEPOND_TEMP_PREFIX = 'tmp/filepond/';
+
 function normalizeExistingFiles(files) {
     return files.map((file) => {
         if (typeof file === 'string') {
+            // Temp path from a previous failed submission — restore as a limbo (already processed) file.
+            if (file.startsWith(FILEPOND_TEMP_PREFIX)) {
+                return {
+                    source: file,
+                    options: { type: 'limbo' },
+                };
+            }
+
             return {
                 source: file,
                 options: {

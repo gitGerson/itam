@@ -56,7 +56,6 @@ class Category extends Model
             'accessory' => 'Accessory',
             'component' => 'Component',
             'consumable' => 'Consumable',
-            'license' => 'License',
         ];
     }
 
@@ -86,7 +85,7 @@ class Category extends Model
                         return;
                     }
 
-                    if (is_string($value) && $category !== null && $value === $category->image) {
+                    if (is_string($value) && $category !== null && ($value === $category->image || $value === $category->imageUrl())) {
                         return;
                     }
 

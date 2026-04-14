@@ -79,7 +79,7 @@ class Company extends Model
                         return;
                     }
 
-                    if (is_string($value) && $company !== null && $value === $company->image) {
+                    if (is_string($value) && $company !== null && ($value === $company->image || $value === $company->imageUrl())) {
                         return;
                     }
 

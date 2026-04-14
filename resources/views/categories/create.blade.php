@@ -12,7 +12,7 @@
                     <div class="card-header d-flex justify-content-between align-items-center">
                         <div>
                             <h5 class="mb-1">Tambah Kategori</h5>
-                            <p class="mb-0 text-muted">Buat kategori inventory untuk asset, accessory, component, consumable, atau license.</p>
+                            <p class="mb-0 text-muted">Buat kategori inventory untuk asset, accessory, component, consumable</p>
                         </div>
                         <a href="{{ route('categories.index') }}" class="btn btn-secondary">
                             <i class="bx bx-arrow-back me-1"></i> Kembali

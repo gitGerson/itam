@@ -20,6 +20,7 @@ class Supplier extends Model
 
     /** @use HasFactory<SupplierFactory> */
     use HasFactory;
+
     use SoftDeletes;
 
     /**
@@ -94,7 +95,7 @@ class Supplier extends Model
                         return;
                     }
 
-                    if (is_string($value) && $supplier !== null && $value === $supplier->image) {
+                    if (is_string($value) && $supplier !== null && ($value === $supplier->image || $value === $supplier->imageUrl())) {
                         return;
                     }
 

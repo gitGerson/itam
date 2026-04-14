@@ -80,7 +80,7 @@ class Manufacturer extends Model
                         return;
                     }
 
-                    if (is_string($value) && $manufacturer !== null && $value === $manufacturer->image) {
+                    if (is_string($value) && $manufacturer !== null && ($value === $manufacturer->image || $value === $manufacturer->imageUrl())) {
                         return;
                     }
 
