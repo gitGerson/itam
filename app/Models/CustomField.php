@@ -22,7 +22,6 @@ class CustomField extends Model
     protected $fillable = [
         'name',
         'element',
-        'format',
         'field_values',
         'help_text',
         'field_encrypted',
@@ -80,7 +79,6 @@ class CustomField extends Model
         return [
             'name' => ['required', 'string', 'max:191', Rule::unique('custom_fields', 'name')->ignore($customField)->whereNull('deleted_at')],
             'element' => ['required', 'string', Rule::in(array_keys(self::elementOptions()))],
-            'format' => ['nullable', 'string', 'max:255'],
             'field_values' => ['nullable', 'string'],
             'help_text' => ['nullable', 'string'],
             'field_encrypted' => ['sometimes', 'boolean'],

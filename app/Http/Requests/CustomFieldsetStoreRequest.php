@@ -37,7 +37,6 @@ class CustomFieldsetStoreRequest extends FormRequest
                 return collect([
                     $field['name'] ?? null,
                     $field['element'] ?? null,
-                    $field['format'] ?? null,
                     $field['field_values'] ?? null,
                     $field['help_text'] ?? null,
                 ])->contains(fn (mixed $value): bool => filled($value));
@@ -56,7 +55,6 @@ class CustomFieldsetStoreRequest extends FormRequest
                     'source' => 'new',
                     'name' => trim((string) ($field['name'] ?? '')),
                     'element' => $field['element'] ?? null,
-                    'format' => filled($field['format'] ?? null) ? trim((string) $field['format']) : null,
                     'field_values' => filled($field['field_values'] ?? null) ? trim((string) $field['field_values']) : null,
                     'help_text' => filled($field['help_text'] ?? null) ? trim((string) $field['help_text']) : null,
                     'field_encrypted' => $this->boolean("fieldset_fields.$index.field_encrypted"),

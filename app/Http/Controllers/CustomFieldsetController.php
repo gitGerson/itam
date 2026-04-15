@@ -25,7 +25,6 @@ class CustomFieldsetController extends Controller
             'id',
             'name',
             'element',
-            'format',
             'field_values',
             'help_text',
             'field_encrypted',
@@ -65,7 +64,6 @@ class CustomFieldsetController extends Controller
             'id',
             'name',
             'element',
-            'format',
             'field_values',
             'help_text',
             'field_encrypted',
@@ -163,7 +161,6 @@ class CustomFieldsetController extends Controller
                 return CustomField::create([
                     'name' => $field['name'],
                     'element' => $field['element'],
-                    'format' => $field['format'] ?? null,
                     'field_values' => $field['field_values'] ?? null,
                     'help_text' => $field['help_text'] ?? null,
                     'field_encrypted' => (bool) ($field['field_encrypted'] ?? false),

@@ -42,16 +42,6 @@
                                             </div>
                                         </div>
                                         <div class="col-md-6">
-                                            <div class="text-muted small text-uppercase fw-semibold mb-1">Format Validasi</div>
-                                            <div>
-                                                @if($customField->format)
-                                                    <code>{{ $customField->format }}</code>
-                                                @else
-                                                    <span class="text-muted">-</span>
-                                                @endif
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
                                             <div class="text-muted small text-uppercase fw-semibold mb-1">Opsi</div>
                                             <div class="d-flex gap-2 flex-wrap">
                                                 @if($customField->field_encrypted)

@@ -23,7 +23,6 @@ class CustomFieldFactory extends Factory
         return [
             'name' => fake()->unique()->words(2, true),
             'element' => $element,
-            'format' => fake()->optional(0.3)->regexify('[A-Z]{3,6}'),
             'field_values' => $hasValues
                 ? implode("\n", fake()->words(4))
                 : null,

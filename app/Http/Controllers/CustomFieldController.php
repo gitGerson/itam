@@ -76,7 +76,6 @@ class CustomFieldController extends Controller
                 'id',
                 'name',
                 'element',
-                'format',
                 'field_encrypted',
                 'show_in_email',
                 'created_at',

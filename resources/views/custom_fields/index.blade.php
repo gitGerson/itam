@@ -37,7 +37,6 @@
                                 <th>ID</th>
                                 <th>Nama Field</th>
                                 <th>Tipe Elemen</th>
-                                <th>Format</th>
                                 <th>Opsi</th>
                                 <th>Dibuat</th>
                                 <th>Aksi</th>
@@ -61,13 +60,6 @@
                     { data: 'id', name: 'id' },
                     { data: 'name', name: 'name' },
                     { data: 'element', name: 'element' },
-                    {
-                        data: 'format',
-                        name: 'format',
-                        render: function(data) {
-                            return data ? '<code>' + $('<span>').text(data).html() + '</code>' : '<span class="text-muted">-</span>';
-                        }
-                    },
                     {
                         data: 'badges',
                         name: 'badges',

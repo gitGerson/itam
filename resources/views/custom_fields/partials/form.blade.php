@@ -1,5 +1,5 @@
 <div class="row g-4">
-    {{-- Kiri: Nama, Tipe, Format, Nilai --}}
+    {{-- Kiri: Nama, Tipe, Nilai --}}
     <div class="col-md-8">
         <x-form.text
             name="name"
@@ -28,14 +28,6 @@
                 help="Isi satu pilihan nilai per baris. Digunakan untuk Select, Radio, dan Checkbox."
             />
         </div>
-
-        <x-form.text
-            name="format"
-            label="Format Validasi"
-            :value="$customField->format ?? null"
-            placeholder="Contoh: ^[A-Z]{3}-\d{4}$"
-            help="Ekspresi reguler (regex) untuk memvalidasi nilai field. Kosongkan jika tidak diperlukan."
-        />
 
         <x-form.textarea
             name="help_text"
