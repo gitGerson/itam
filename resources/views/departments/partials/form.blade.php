@@ -1,3 +1,7 @@
+@php
+    $existingImageUrl = $department?->imageUrl();
+@endphp
+
 <div class="row g-4">
     {{-- Kiri: Info utama --}}
     <div class="col-md-8">
@@ -61,7 +65,7 @@
             accept="image/*"
             :acceptedFileTypes="['image/png', 'image/jpeg', 'image/gif', 'image/webp']"
             maxFileSize="5MB"
-            :existingFiles="isset($department) && $department->image ? [$department->image] : []"
+            :existingFiles="$existingImageUrl ? [$existingImageUrl] : []"
         />
     </div>
 </div>
