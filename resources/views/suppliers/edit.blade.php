@@ -25,7 +25,6 @@
 
                             @include('suppliers.partials.form', [
                                 'supplier' => $supplier,
-                                'showCurrentImage' => true,
                             ])
 
                             <div class="d-flex justify-content-end gap-2 mt-4">

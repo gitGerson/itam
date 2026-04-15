@@ -8,6 +8,7 @@ use App\Models\Supplier;
 use App\Models\User;
 use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
@@ -107,6 +108,18 @@ class SupplierModuleTest extends TestCase
         $supplier->refresh();
         $this->assertNotSame('suppliers/existing-logo.jpg', $supplier->image);
         Storage::disk('s3')->assertExists($supplier->image);
+    }
+
+    public function test_supplier_form_relies_on_filepond_existing_files_without_current_image_block(): void
+    {
+        $viewContents = File::get(resource_path('views/suppliers/partials/form.blade.php'));
+
+        $this->assertStringContainsString('$existingImageUrl = $supplier?->imageUrl();', $viewContents);
+        $this->assertStringContainsString(':existingFiles="$existingImageUrl ? [$existingImageUrl] : []"', $viewContents);
+        $this->assertStringNotContainsString('$showCurrentImage', $viewContents);
+        $this->assertStringNotContainsString('Logo Saat Ini', $viewContents);
+        $this->assertSame(4, substr_count($viewContents, '<div class="col-md-3">'));
+        $this->assertStringContainsString('<div class="col-12">', $viewContents);
     }
 
     private function createUserWithPermissions(array $permissions): User
