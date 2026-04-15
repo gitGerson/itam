@@ -8,6 +8,8 @@ use App\Models\CustomField;
 use App\Models\CustomFieldset;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 
 class CustomFieldsetController extends Controller
@@ -19,7 +21,16 @@ class CustomFieldsetController extends Controller
 
     public function create(): View
     {
-        $customFields = CustomField::orderBy('name')->get(['id', 'name', 'element']);
+        $customFields = CustomField::orderBy('name')->get([
+            'id',
+            'name',
+            'element',
+            'format',
+            'field_values',
+            'help_text',
+            'field_encrypted',
+            'show_in_email',
+        ]);
 
         return view('custom_fieldsets.create', compact('customFields'));
     }
@@ -27,16 +38,14 @@ class CustomFieldsetController extends Controller
     public function store(CustomFieldsetStoreRequest $request): RedirectResponse
     {
         $validated = $request->validated();
-        $validated['repeatable'] = $request->boolean('repeatable');
+        $fieldsetData = Arr::except($validated, ['fieldset_fields']);
+        $fieldsetData['repeatable'] = $request->boolean('repeatable');
 
-        $customFieldset = CustomFieldset::create($validated);
+        DB::transaction(function () use ($fieldsetData, $validated): void {
+            $customFieldset = CustomFieldset::create($fieldsetData);
 
-        if (! empty($validated['custom_fields'])) {
-            $sync = collect($validated['custom_fields'])
-                ->mapWithKeys(fn (int $id, int $index): array => [$id => ['order' => $index]])
-                ->all();
-            $customFieldset->customFields()->sync($sync);
-        }
+            $this->syncCustomFields($customFieldset, $validated);
+        });
 
         return redirect()
             ->route('custom-fieldsets.index')
@@ -52,7 +61,16 @@ class CustomFieldsetController extends Controller
 
     public function edit(CustomFieldset $customFieldset): View
     {
-        $customFields = CustomField::orderBy('name')->get(['id', 'name', 'element']);
+        $customFields = CustomField::orderBy('name')->get([
+            'id',
+            'name',
+            'element',
+            'format',
+            'field_values',
+            'help_text',
+            'field_encrypted',
+            'show_in_email',
+        ]);
         $customFieldset->load('customFields');
 
         return view('custom_fieldsets.edit', compact('customFieldset', 'customFields'));
@@ -61,14 +79,14 @@ class CustomFieldsetController extends Controller
     public function update(CustomFieldsetUpdateRequest $request, CustomFieldset $customFieldset): RedirectResponse
     {
         $validated = $request->validated();
-        $validated['repeatable'] = $request->boolean('repeatable');
+        $fieldsetData = Arr::except($validated, ['fieldset_fields']);
+        $fieldsetData['repeatable'] = $request->boolean('repeatable');
 
-        $customFieldset->update($validated);
+        DB::transaction(function () use ($customFieldset, $fieldsetData, $validated): void {
+            $customFieldset->update($fieldsetData);
 
-        $sync = collect($validated['custom_fields'] ?? [])
-            ->mapWithKeys(fn (int $id, int $index): array => [$id => ['order' => $index]])
-            ->all();
-        $customFieldset->customFields()->sync($sync);
+            $this->syncCustomFields($customFieldset, $validated);
+        });
 
         return redirect()
             ->route('custom-fieldsets.index')
@@ -129,5 +147,33 @@ class CustomFieldsetController extends Controller
             ->editColumn('created_at', fn (CustomFieldset $fs): ?string => $fs->created_at?->toIso8601String())
             ->rawColumns(['repeatable_badge', 'field_count', 'action'])
             ->make(true);
+    }
+
+    /**
+     * @param  array<string, mixed>  $validated
+     */
+    private function syncCustomFields(CustomFieldset $customFieldset, array $validated): void
+    {
+        $sync = collect($validated['fieldset_fields'] ?? [])
+            ->map(function (array $field): int {
+                if (($field['source'] ?? 'new') === 'existing') {
+                    return (int) $field['custom_field_id'];
+                }
+
+                return CustomField::create([
+                    'name' => $field['name'],
+                    'element' => $field['element'],
+                    'format' => $field['format'] ?? null,
+                    'field_values' => $field['field_values'] ?? null,
+                    'help_text' => $field['help_text'] ?? null,
+                    'field_encrypted' => (bool) ($field['field_encrypted'] ?? false),
+                    'show_in_email' => (bool) ($field['show_in_email'] ?? false),
+                ])->id;
+            })
+            ->values()
+            ->mapWithKeys(fn (int $id, int $index): array => [$id => ['order' => $index]])
+            ->all();
+
+        $customFieldset->customFields()->sync($sync);
     }
 }

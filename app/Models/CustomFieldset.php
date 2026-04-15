@@ -50,8 +50,17 @@ class CustomFieldset extends Model
             'name' => ['required', 'string', 'max:191', Rule::unique('custom_fieldsets', 'name')->ignore($customFieldset)->whereNull('deleted_at')],
             'notes' => ['nullable', 'string'],
             'repeatable' => ['sometimes', 'boolean'],
-            'custom_fields' => ['nullable', 'array'],
-            'custom_fields.*' => ['integer', 'exists:custom_fields,id'],
+            'fieldset_fields' => ['nullable', 'array'],
+            'fieldset_fields.*' => ['array:source,custom_field_id,name,element,format,field_values,help_text,field_encrypted,show_in_email'],
+            'fieldset_fields.*.source' => ['required', 'string', Rule::in(['existing', 'new'])],
+            'fieldset_fields.*.custom_field_id' => ['nullable', 'integer', 'exists:custom_fields,id'],
+            'fieldset_fields.*.name' => ['nullable', 'string', 'max:191', 'distinct', Rule::unique('custom_fields', 'name')->whereNull('deleted_at')],
+            'fieldset_fields.*.element' => ['nullable', 'string', Rule::in(array_keys(CustomField::elementOptions()))],
+            'fieldset_fields.*.format' => ['nullable', 'string', 'max:255'],
+            'fieldset_fields.*.field_values' => ['nullable', 'string'],
+            'fieldset_fields.*.help_text' => ['nullable', 'string'],
+            'fieldset_fields.*.field_encrypted' => ['sometimes', 'boolean'],
+            'fieldset_fields.*.show_in_email' => ['sometimes', 'boolean'],
         ];
     }
 
@@ -63,7 +72,10 @@ class CustomFieldset extends Model
         return [
             'name.required' => 'Nama fieldset wajib diisi.',
             'name.unique' => 'Nama fieldset sudah digunakan.',
-            'custom_fields.*.exists' => 'Salah satu custom field tidak valid.',
+            'fieldset_fields.*.custom_field_id.exists' => 'Salah satu custom field tidak valid.',
+            'fieldset_fields.*.name.unique' => 'Nama custom field baru sudah digunakan.',
+            'fieldset_fields.*.name.distinct' => 'Nama custom field baru tidak boleh duplikat.',
+            'fieldset_fields.*.element.in' => 'Tipe elemen custom field tidak valid.',
         ];
     }
 
