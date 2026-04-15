@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AssetModelController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\CustomFieldController;
@@ -289,6 +290,28 @@ Route::middleware(['auth'])->group(function () {
 
     Route::middleware(['permission:settings.departments.delete'])->group(function () {
         Route::delete('/departments/{department}', [DepartmentController::class, 'destroy'])->name('departments.destroy');
+    });
+
+    // Model management routes with permissions
+    Route::middleware(['permission:settings.models.create'])->group(function () {
+        Route::get('/models/create', [AssetModelController::class, 'create'])->name('models.create');
+        Route::post('/models', [AssetModelController::class, 'store'])->name('models.store');
+    });
+
+    Route::middleware(['permission:settings.models.view'])->group(function () {
+        Route::get('/models', [AssetModelController::class, 'index'])->name('models.index');
+        Route::get('/models/data', [AssetModelController::class, 'getData'])->name('models.data');
+        Route::get('/models/{asset_model}', [AssetModelController::class, 'show'])->name('models.show');
+    });
+
+    Route::middleware(['permission:settings.models.edit'])->group(function () {
+        Route::get('/models/{asset_model}/edit', [AssetModelController::class, 'edit'])->name('models.edit');
+        Route::put('/models/{asset_model}', [AssetModelController::class, 'update'])->name('models.update');
+        Route::patch('/models/{asset_model}', [AssetModelController::class, 'update']);
+    });
+
+    Route::middleware(['permission:settings.models.delete'])->group(function () {
+        Route::delete('/models/{asset_model}', [AssetModelController::class, 'destroy'])->name('models.destroy');
     });
 
     // User role assignment routes
