@@ -762,6 +762,8 @@ Implementation notes:
 - Existing images can use FilePond preview and poster support.
 - For array uploads, use `multiple` and a field name such as `attachments`.
 - Backend validation must support either a normal upload or a stored temp path.
+- `uploads.load` is for temporary FilePond files only. Do not use a permanent stored path such as `departments/example.jpg` as the preload source.
+- For permanent files on S3/CDN, preload FilePond with the public URL, for example `:existingFiles="$record?->imageUrl() ? [$record->imageUrl()] : []"`. This avoids 404s from `/uploads/load` on edit pages such as the department form.
 
 ### Rich Editor
 

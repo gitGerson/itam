@@ -230,7 +230,7 @@ return [
         [
             'key' => 'manufacturers-index',
             'label' => 'Manufacturers',
-            'icon' => 'bx-factory',
+            'icon' => 'bx-buildings',
             'route' => 'manufacturers.index',
             'route_params' => [],
             'active_patterns' => ['manufacturers.*'],
